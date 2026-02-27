@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(git clone:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(gh api:*)",
+      "Bash(du:*)",
+      "Bash(xargs basename:*)"
+    ],
+    "additionalDirectories": [
+      "/home/nakashima/projects/OCR/.claude/skills-superpowers"
+    ]
+  }
+}

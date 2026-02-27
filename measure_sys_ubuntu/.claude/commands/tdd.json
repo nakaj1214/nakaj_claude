@@ -1,0 +1,7 @@
+{
+  "name": "tdd",
+  "description": "Start Test-Driven Development workflow for a feature",
+  "instruction": "Follow the TDD (Test-Driven Development) workflow using the Red-Green-Refactor cycle. Load the tdd-workflow skill and guide the user through implementing the feature with tests first. Ask for the feature requirements, then proceed with writing failing tests, implementing minimal code, and refactoring.",
+  "skills": ["tdd-workflow"],
+  "prompt": "What feature would you like to implement using TDD?"
+}
