@@ -14,3 +14,12 @@ VBA_extension\.claude\skills\agents は不要じゃないですか？ -->
 移植予定として確定、ただしsuperpowersのリポジトリから_shared/に活用できるものを決めてから実行する -->
 
 移植状況をdocs\unique-files-inventory.md を更新
+
+<!-- 
+移行作業が終わったら以下を確認
+https://x.com/yugen_matuni/status/2026674574059008478
+https://x.com/commte/status/2001851242683994177
+https://zenn.dev/kei31ai/articles/20260221-skill-context-optimization
+ -->
+
+
