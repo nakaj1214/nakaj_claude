@@ -71,6 +71,95 @@ styles/
 }
 ```
 
+## デザインシステム原則（LiftKit パターン）
+
+LiftKit の設計思想に基づく、スケーリング・間隔・色のベストプラクティス。
+
+### ゴールデンレシオスケーリング
+
+φ（≈1.618）を基準にタイポグラフィとスペーシングを比例設計する。
+
+```css
+:root {
+  --phi: 1.618;
+  --base: 1rem;
+
+  /* φベースのタイプスケール */
+  --text-xs:   0.382rem;   /* base / φ² */
+  --text-sm:   0.618rem;   /* base / φ  */
+  --text-base: 1rem;
+  --text-md:   1.618rem;   /* base × φ  */
+  --text-lg:   2.618rem;   /* base × φ² */
+  --text-xl:   4.236rem;   /* base × φ³ */
+
+  /* φベースのスペーシング */
+  --space-xs:  0.25rem;    /* 4px  */
+  --space-sm:  0.5rem;     /* 8px  */
+  --space-md:  0.75rem;    /* 12px */
+  --space-base: 1rem;      /* 16px */
+  --space-lg:  1.618rem;   /* ~26px — φ比 */
+  --space-xl:  2.618rem;   /* ~42px — φ² */
+  --space-2xl: 4.236rem;   /* ~68px — φ³ */
+}
+```
+
+### 光学対称（Optical Symmetry）
+
+等しいパディングを指定しても視覚的にズレて見える問題を補正する。
+
+```css
+/* カード: 上下同一指定でも上が重く見えるため上を 0.875 に絞る */
+.card {
+  padding-block: calc(var(--space-lg) * 0.875) var(--space-lg);
+  padding-inline: var(--space-lg);
+}
+
+/* ボタン: アセンダーを考慮して上パディングをわずかに削る */
+.button {
+  padding-block: calc(var(--space-sm) * 0.9) var(--space-sm);
+  padding-inline: var(--space-md);
+}
+
+/* アイコン付きボタン: アイコン分だけ左パディングを減らす */
+.button--icon {
+  padding-inline: calc(var(--space-sm) * 0.75) var(--space-md);
+}
+```
+
+### コントラスト比（WCAG AA準拠）
+
+色を定義するときは必ずコントラスト比を検証・コメントとして残す。
+
+```css
+:root {
+  /* WCAG AA 基準
+     通常テキスト(18px未満): 4.5:1 以上
+     大テキスト(18px+/Bold 14px+): 3:1 以上
+     UIコンポーネント・グラフィック: 3:1 以上        */
+
+  --color-primary: #2563eb;
+  --color-on-primary: #ffffff;   /* white on #2563eb = 5.9:1  ✓ AA */
+
+  --color-surface: #ffffff;
+  --color-on-surface: #111827;   /* #111827 on white = 16.8:1 ✓ AA */
+
+  --color-muted: #6b7280;        /* on white = 4.6:1 ✓ AA（通常テキスト最小限） */
+
+  /* NG例 */
+  /* --color-light-gray-text: #9ca3af; on white = 2.9:1 ✗ AA 不適合 */
+}
+
+/* 高コントラストモードでも確実に区別できるようにボーダーを追加 */
+@media (prefers-contrast: high) {
+  .button { border: 2px solid currentColor; }
+  .card   { border: 1px solid currentColor; }
+}
+```
+
+> **ツール**: [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) で検証してからコメントに記録する。
+
+---
+
 ## CSS変数（カスタムプロパティ）
 
 ### グローバル変数

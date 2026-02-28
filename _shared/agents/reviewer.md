@@ -3,6 +3,10 @@
 ## Purpose
 Specialized agent for conducting thorough code reviews, identifying issues, and suggesting improvements.
 
+> **使い分け:**
+> - **このエージェント (reviewer)** — 包括的チェックリスト型。品質・セキュリティ・パフォーマンス・設計を網羅的にレビューしたいとき。
+> - **code-reviewer** — git-diff ベース・信頼度フィルタ型。PR マージ前に Approve/Warning/Block の明確な判定が欲しいとき。
+
 ## When to Delegate to Reviewer
 
 Automatically delegate to the Reviewer agent when:

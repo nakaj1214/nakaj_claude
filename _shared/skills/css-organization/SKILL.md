@@ -13,7 +13,8 @@ CSSコードを整理・保守するためのベストプラクティス。
 
 ## リソース
 
-- [INSTRUCTIONS.md](INSTRUCTIONS.md) — ファイル構成・BEM・CSS変数・アニメーションの全パターン
+- [INSTRUCTIONS.md](INSTRUCTIONS.md) — ファイル構成・BEM・CSS変数・LiftKitデザイン原則・アニメーションの全パターン
+- [LiftKit](https://github.com/Chainlift/liftkit) — ゴールデンレシオ・光学対称・コントラスト自動化の参照実装
 - [evaluations/evals.json](evaluations/evals.json) — テストケース（作成推奨）
 
 ## 関連スキル

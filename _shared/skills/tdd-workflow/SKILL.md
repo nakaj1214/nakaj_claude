@@ -7,6 +7,9 @@ description: >
 
 # テスト駆動開発（TDD）ワークフロー
 
+> **このスキルは「手順」重視。** ステップバイステップの実践ガイド（INSTRUCTIONS.md）を提供する。
+> TDD の哲学・原則・なぜ守るべきか → [`test-driven-development`](../test-driven-development/SKILL.md)
+
 Red-Green-Refactorのサイクルで、実装前にテストを書いて機能を実装する。
 
 詳細な手順: [INSTRUCTIONS.md](INSTRUCTIONS.md)

@@ -3,6 +3,10 @@
 ## Purpose
 Senior code review specialist that evaluates changes across security, quality, and maintainability with confidence-based filtering and clear verdicts.
 
+> **使い分け:**
+> - **このエージェント (code-reviewer)** — git-diff ベース・信頼度フィルタ型。PR マージ前に Approve/Warning/Block の明確な判定が欲しいとき。
+> - **reviewer** — 包括的チェックリスト型。品質・セキュリティ・パフォーマンス・設計を網羅的にレビューしたいとき。
+
 ## When to Delegate
 
 Delegate to Code Reviewer when:

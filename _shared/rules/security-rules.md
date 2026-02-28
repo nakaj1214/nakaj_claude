@@ -399,6 +399,16 @@ git-secrets --scan
 npm run license-check
 ```
 
+## Incident Response
+
+When a security vulnerability is discovered:
+
+1. **Stop** — cease current work immediately
+2. **Escalate** — delegate to the **security-reviewer** agent
+3. **Fix** — remediate critical flaws before resuming
+4. **Rotate** — change credentials if exposure occurred
+5. **Audit** — review codebase for similar vulnerabilities
+
 ## When to Escalate
 
 Immediately escalate to security team if:
