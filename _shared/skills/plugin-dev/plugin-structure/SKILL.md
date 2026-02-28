@@ -1,53 +1,53 @@
 ---
 name: plugin-structure
-description: This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize plugin components", "set up plugin.json", "use ${CLAUDE_PLUGIN_ROOT}", "add commands/agents/skills/hooks", "configure auto-discovery", or needs guidance on plugin directory layout, manifest configuration, component organization, file naming conventions, or Claude Code plugin architecture best practices.
+description: このスキルは、ユーザーが「プラグインを作成する」「プラグインをスキャフォールドする」「プラグイン構造を理解する」「プラグインコンポーネントを整理する」「plugin.jsonを設定する」「${CLAUDE_PLUGIN_ROOT}を使う」「コマンド/エージェント/スキル/フックを追加する」「自動検出を設定する」と尋ねる場合、またはClaude Codeプラグインのディレクトリレイアウト、マニフェスト設定、コンポーネント整理、ファイル命名規則、プラグインアーキテクチャのベストプラクティスに関するガイダンスが必要な場合に使用すること。
 version: 0.1.0
 ---
 
-# Plugin Structure for Claude Code
+# Claude Codeのプラグイン構造
 
-## Overview
+## 概要
 
-Claude Code plugins follow a standardized directory structure with automatic component discovery. Understanding this structure enables creating well-organized, maintainable plugins that integrate seamlessly with Claude Code.
+Claude Codeプラグインは自動コンポーネント検出による標準化されたディレクトリ構造に従います。この構造を理解することで、Claude Codeにシームレスに統合する整理された維持可能なプラグインを作成できます。
 
-**Key concepts:**
-- Conventional directory layout for automatic discovery
-- Manifest-driven configuration in `.claude-plugin/plugin.json`
-- Component-based organization (commands, agents, skills, hooks)
-- Portable path references using `${CLAUDE_PLUGIN_ROOT}`
-- Explicit vs. auto-discovered component loading
+**主要概念:**
+- 自動検出のための慣習的なディレクトリレイアウト
+- `.claude-plugin/plugin.json`でのマニフェスト駆動設定
+- コンポーネントベースの整理（コマンド、エージェント、スキル、フック）
+- `${CLAUDE_PLUGIN_ROOT}`を使用したポータブルなパス参照
+- 明示的なvs.自動検出されたコンポーネントロード
 
-## Directory Structure
+## ディレクトリ構造
 
-Every Claude Code plugin follows this organizational pattern:
+全Claude Codeプラグインは以下の組織パターンに従う:
 
 ```
 plugin-name/
 ├── .claude-plugin/
-│   └── plugin.json          # Required: Plugin manifest
-├── commands/                 # Slash commands (.md files)
-├── agents/                   # Subagent definitions (.md files)
-├── skills/                   # Agent skills (subdirectories)
+│   └── plugin.json          # 必須: プラグインマニフェスト
+├── commands/                 # スラッシュコマンド（.mdファイル）
+├── agents/                   # サブエージェント定義（.mdファイル）
+├── skills/                   # エージェントスキル（サブディレクトリ）
 │   └── skill-name/
-│       └── SKILL.md         # Required for each skill
+│       └── SKILL.md         # 各スキルに必須
 ├── hooks/
-│   └── hooks.json           # Event handler configuration
-├── .mcp.json                # MCP server definitions
-└── scripts/                 # Helper scripts and utilities
+│   └── hooks.json           # イベントハンドラー設定
+├── .mcp.json                # MCPサーバー定義
+└── scripts/                 # ヘルパースクリプトとユーティリティ
 ```
 
-**Critical rules:**
+**重要なルール:**
 
-1. **Manifest location**: The `plugin.json` manifest MUST be in `.claude-plugin/` directory
-2. **Component locations**: All component directories (commands, agents, skills, hooks) MUST be at plugin root level, NOT nested inside `.claude-plugin/`
-3. **Optional components**: Only create directories for components the plugin actually uses
-4. **Naming convention**: Use kebab-case for all directory and file names
+1. **マニフェストの場所**: `plugin.json`マニフェストは`.claude-plugin/`ディレクトリに**必ず**置く
+2. **コンポーネントの場所**: 全コンポーネントディレクトリ（commands、agents、skills、hooks）はプラグインルートレベルに**必ず**置く（`.claude-plugin/`内にネストしない）
+3. **オプションのコンポーネント**: プラグインが実際に使用するコンポーネントのみのディレクトリを作成する
+4. **命名規則**: 全ディレクトリとファイル名にkebab-caseを使用する
 
-## Plugin Manifest (plugin.json)
+## プラグインマニフェスト（plugin.json）
 
-The manifest defines plugin metadata and configuration. Located at `.claude-plugin/plugin.json`:
+マニフェストはプラグインのメタデータと設定を定義する。`.claude-plugin/plugin.json`に配置:
 
-### Required Fields
+### 必須フィールド
 
 ```json
 {
@@ -55,21 +55,21 @@ The manifest defines plugin metadata and configuration. Located at `.claude-plug
 }
 ```
 
-**Name requirements:**
-- Use kebab-case format (lowercase with hyphens)
-- Must be unique across installed plugins
-- No spaces or special characters
-- Example: `code-review-assistant`, `test-runner`, `api-docs`
+**名前の要件:**
+- kebab-caseフォーマットを使用（小文字とハイフン）
+- インストール済みプラグイン間で一意
+- スペースや特殊文字なし
+- 例: `code-review-assistant`、`test-runner`、`api-docs`
 
-### Recommended Metadata
+### 推奨メタデータ
 
 ```json
 {
   "name": "plugin-name",
   "version": "1.0.0",
-  "description": "Brief explanation of plugin purpose",
+  "description": "プラグインの目的の簡単な説明",
   "author": {
-    "name": "Author Name",
+    "name": "著者名",
     "email": "author@example.com",
     "url": "https://example.com"
   },
@@ -80,12 +80,12 @@ The manifest defines plugin metadata and configuration. Located at `.claude-plug
 }
 ```
 
-**Version format**: Follow semantic versioning (MAJOR.MINOR.PATCH)
-**Keywords**: Use for plugin discovery and categorization
+**バージョンフォーマット**: セマンティックバージョニングに従う（MAJOR.MINOR.PATCH）
+**キーワード**: プラグインの検出と分類のために使用
 
-### Component Path Configuration
+### コンポーネントパス設定
 
-Specify custom paths for components (supplements default directories):
+コンポーネントのカスタムパスを指定する（デフォルトディレクトリを補完）:
 
 ```json
 {
@@ -97,49 +97,49 @@ Specify custom paths for components (supplements default directories):
 }
 ```
 
-**Important**: Custom paths supplement defaults—they don't replace them. Components in both default directories and custom paths will load.
+**重要**: カスタムパスはデフォルトを置き換えるのではなく補完する。デフォルトディレクトリとカスタムパスの両方のコンポーネントがロードされる。
 
-**Path rules:**
-- Must be relative to plugin root
-- Must start with `./`
-- Cannot use absolute paths
-- Support arrays for multiple locations
+**パスのルール:**
+- プラグインルートからの相対パス
+- `./`で始める
+- 絶対パスは使用不可
+- 複数の場所のための配列をサポート
 
-## Component Organization
+## コンポーネントの整理
 
-### Commands
+### コマンド
 
-**Location**: `commands/` directory
-**Format**: Markdown files with YAML frontmatter
-**Auto-discovery**: All `.md` files in `commands/` load automatically
+**場所**: `commands/`ディレクトリ
+**フォーマット**: YAMLフロントマターを持つMarkdownファイル
+**自動検出**: `commands/`内の全`.md`ファイルが自動的にロード
 
-**Example structure**:
+**構造の例**:
 ```
 commands/
-├── review.md        # /review command
-├── test.md          # /test command
-└── deploy.md        # /deploy command
+├── review.md        # /review コマンド
+├── test.md          # /test コマンド
+└── deploy.md        # /deploy コマンド
 ```
 
-**File format**:
+**ファイルフォーマット**:
 ```markdown
 ---
 name: command-name
-description: Command description
+description: コマンドの説明
 ---
 
-Command implementation instructions...
+コマンド実装の指示...
 ```
 
-**Usage**: Commands integrate as native slash commands in Claude Code
+**使用法**: コマンドはClaude Codeのネイティブスラッシュコマンドとして統合される
 
-### Agents
+### エージェント
 
-**Location**: `agents/` directory
-**Format**: Markdown files with YAML frontmatter
-**Auto-discovery**: All `.md` files in `agents/` load automatically
+**場所**: `agents/`ディレクトリ
+**フォーマット**: YAMLフロントマターを持つMarkdownファイル
+**自動検出**: `agents/`内の全`.md`ファイルが自動的にロード
 
-**Example structure**:
+**構造の例**:
 ```
 agents/
 ├── code-reviewer.md
@@ -147,27 +147,27 @@ agents/
 └── refactorer.md
 ```
 
-**File format**:
+**ファイルフォーマット**:
 ```markdown
 ---
-description: Agent role and expertise
+description: エージェントの役割と専門知識
 capabilities:
-  - Specific task 1
-  - Specific task 2
+  - 特定のタスク1
+  - 特定のタスク2
 ---
 
-Detailed agent instructions and knowledge...
+詳細なエージェントの指示と知識...
 ```
 
-**Usage**: Users can invoke agents manually, or Claude Code selects them automatically based on task context
+**使用法**: ユーザーがエージェントを手動で起動するか、Claude Codeがタスクコンテキストに基づいて自動的に選択する
 
-### Skills
+### スキル
 
-**Location**: `skills/` directory with subdirectories per skill
-**Format**: Each skill in its own directory with `SKILL.md` file
-**Auto-discovery**: All `SKILL.md` files in skill subdirectories load automatically
+**場所**: スキルごとにサブディレクトリを持つ`skills/`ディレクトリ
+**フォーマット**: 各スキルは`SKILL.md`ファイルを持つ独自のディレクトリ
+**自動検出**: スキルサブディレクトリ内の全`SKILL.md`ファイルが自動的にロード
 
-**Example structure**:
+**構造の例**:
 ```
 skills/
 ├── api-testing/
@@ -182,37 +182,37 @@ skills/
         └── migration-template.sql
 ```
 
-**SKILL.md format**:
+**SKILL.mdフォーマット**:
 ```markdown
 ---
 name: Skill Name
-description: When to use this skill
+description: このスキルを使用するタイミング
 version: 1.0.0
 ---
 
-Skill instructions and guidance...
+スキルの指示とガイダンス...
 ```
 
-**Supporting files**: Skills can include scripts, references, examples, or assets in subdirectories
+**サポートファイル**: スキルはサブディレクトリにスクリプト、リファレンス、例、アセットを含めることができる
 
-**Usage**: Claude Code autonomously activates skills based on task context matching the description
+**使用法**: Claude Codeはdescriptionに一致するタスクコンテキストに基づいてスキルを自律的にアクティベートする
 
-### Hooks
+### フック
 
-**Location**: `hooks/hooks.json` or inline in `plugin.json`
-**Format**: JSON configuration defining event handlers
-**Registration**: Hooks register automatically when plugin enables
+**場所**: `hooks/hooks.json`またはplugin.jsonにインライン
+**フォーマット**: イベントハンドラーを定義するJSON設定
+**登録**: プラグインが有効になると自動的にフックが登録される
 
-**Example structure**:
+**構造の例**:
 ```
 hooks/
-├── hooks.json           # Hook configuration
+├── hooks.json           # フック設定
 └── scripts/
-    ├── validate.sh      # Hook script
-    └── check-style.sh   # Hook script
+    ├── validate.sh      # フックスクリプト
+    └── check-style.sh   # フックスクリプト
 ```
 
-**Configuration format**:
+**設定フォーマット**:
 ```json
 {
   "PreToolUse": [{
@@ -226,17 +226,15 @@ hooks/
 }
 ```
 
-**Available events**: PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification
+**利用可能なイベント**: PreToolUse、PostToolUse、Stop、SubagentStop、SessionStart、SessionEnd、UserPromptSubmit、PreCompact、Notification
 
-**Usage**: Hooks execute automatically in response to Claude Code events
+### MCPサーバー
 
-### MCP Servers
+**場所**: プラグインルートの`.mcp.json`またはplugin.jsonにインライン
+**フォーマット**: MCPサーバー定義のJSON設定
+**自動起動**: プラグインが有効になると自動的にサーバーが起動
 
-**Location**: `.mcp.json` at plugin root or inline in `plugin.json`
-**Format**: JSON configuration for MCP server definitions
-**Auto-start**: Servers start automatically when plugin enables
-
-**Example format**:
+**フォーマット例**:
 ```json
 {
   "mcpServers": {
@@ -251,13 +249,13 @@ hooks/
 }
 ```
 
-**Usage**: MCP servers integrate seamlessly with Claude Code's tool system
+**使用法**: MCPサーバーはClaude Codeのツールシステムとシームレスに統合される
 
-## Portable Path References
+## ポータブルなパス参照
 
 ### ${CLAUDE_PLUGIN_ROOT}
 
-Use `${CLAUDE_PLUGIN_ROOT}` environment variable for all intra-plugin path references:
+全プラグイン内パス参照に`${CLAUDE_PLUGIN_ROOT}`環境変数を使用する:
 
 ```json
 {
@@ -265,175 +263,141 @@ Use `${CLAUDE_PLUGIN_ROOT}` environment variable for all intra-plugin path refer
 }
 ```
 
-**Why it matters**: Plugins install in different locations depending on:
-- User installation method (marketplace, local, npm)
-- Operating system conventions
-- User preferences
+**重要な理由**: プラグインはインストール方法によって異なる場所にインストールされる:
+- ユーザーのインストール方法（マーケットプレイス、ローカル、npm）
+- OSの規則
+- ユーザーの好み
 
-**Where to use it**:
-- Hook command paths
-- MCP server command arguments
-- Script execution references
-- Resource file paths
+**使用する場所**:
+- フックコマンドパス
+- MCPサーバーコマンド引数
+- スクリプト実行の参照
+- リソースファイルパス
 
-**Never use**:
-- Hardcoded absolute paths (`/Users/name/plugins/...`)
-- Relative paths from working directory (`./scripts/...` in commands)
-- Home directory shortcuts (`~/plugins/...`)
+**使用しないこと**:
+- ハードコードされた絶対パス（`/Users/name/plugins/...`）
+- 作業ディレクトリからの相対パス（コマンドの`./scripts/...`）
+- ホームディレクトリのショートカット（`~/plugins/...`）
 
-### Path Resolution Rules
+## ファイル命名規則
 
-**In manifest JSON fields** (hooks, MCP servers):
-```json
-"command": "${CLAUDE_PLUGIN_ROOT}/scripts/tool.sh"
-```
+### コンポーネントファイル
 
-**In component files** (commands, agents, skills):
-```markdown
-Reference scripts at: ${CLAUDE_PLUGIN_ROOT}/scripts/helper.py
-```
-
-**In executed scripts**:
-```bash
-#!/bin/bash
-# ${CLAUDE_PLUGIN_ROOT} available as environment variable
-source "${CLAUDE_PLUGIN_ROOT}/lib/common.sh"
-```
-
-## File Naming Conventions
-
-### Component Files
-
-**Commands**: Use kebab-case `.md` files
+**コマンド**: kebab-caseの`.md`ファイル
 - `code-review.md` → `/code-review`
 - `run-tests.md` → `/run-tests`
 - `api-docs.md` → `/api-docs`
 
-**Agents**: Use kebab-case `.md` files describing role
+**エージェント**: 役割を説明するkebab-caseの`.md`ファイル
 - `test-generator.md`
 - `code-reviewer.md`
 - `performance-analyzer.md`
 
-**Skills**: Use kebab-case directory names
+**スキル**: kebab-caseのディレクトリ名
 - `api-testing/`
 - `database-migrations/`
 - `error-handling/`
 
-### Supporting Files
+### サポートファイル
 
-**Scripts**: Use descriptive kebab-case names with appropriate extensions
+**スクリプト**: 適切な拡張子を持つ説明的なkebab-caseの名前
 - `validate-input.sh`
 - `generate-report.py`
 - `process-data.js`
 
-**Documentation**: Use kebab-case markdown files
+**ドキュメント**: kebab-caseのMarkdownファイル
 - `api-reference.md`
 - `migration-guide.md`
 - `best-practices.md`
 
-**Configuration**: Use standard names
+**設定**: 標準名を使用
 - `hooks.json`
 - `.mcp.json`
 - `plugin.json`
 
-## Auto-Discovery Mechanism
+## 自動検出メカニズム
 
-Claude Code automatically discovers and loads components:
+Claude Codeはコンポーネントを自動的に検出してロードする:
 
-1. **Plugin manifest**: Reads `.claude-plugin/plugin.json` when plugin enables
-2. **Commands**: Scans `commands/` directory for `.md` files
-3. **Agents**: Scans `agents/` directory for `.md` files
-4. **Skills**: Scans `skills/` for subdirectories containing `SKILL.md`
-5. **Hooks**: Loads configuration from `hooks/hooks.json` or manifest
-6. **MCP servers**: Loads configuration from `.mcp.json` or manifest
+1. **プラグインマニフェスト**: プラグインが有効になった時に`.claude-plugin/plugin.json`を読む
+2. **コマンド**: `.md`ファイルの`commands/`ディレクトリをスキャン
+3. **エージェント**: `.md`ファイルの`agents/`ディレクトリをスキャン
+4. **スキル**: `SKILL.md`を含むサブディレクトリの`skills/`をスキャン
+5. **フック**: `hooks/hooks.json`またはマニフェストから設定をロード
+6. **MCPサーバー**: `.mcp.json`またはマニフェストから設定をロード
 
-**Discovery timing**:
-- Plugin installation: Components register with Claude Code
-- Plugin enable: Components become available for use
-- No restart required: Changes take effect on next Claude Code session
+**検出のタイミング**:
+- プラグインインストール: コンポーネントがClaude Codeに登録される
+- プラグイン有効化: コンポーネントが使用可能になる
+- 再起動不要: 変更は次のClaude Codeセッションで有効になる
 
-**Override behavior**: Custom paths in `plugin.json` supplement (not replace) default directories
+## ベストプラクティス
 
-## Best Practices
+### 整理
 
-### Organization
+1. **論理的なグループ化**: 関連するコンポーネントをまとめる
+   - テスト関連のコマンド、エージェント、スキルをまとめる
+   - `scripts/`に異なる目的のためのサブディレクトリを作成
 
-1. **Logical grouping**: Group related components together
-   - Put test-related commands, agents, and skills together
-   - Create subdirectories in `scripts/` for different purposes
+2. **最小限のマニフェスト**: `plugin.json`をリーンに保つ
+   - 必要な時のみカスタムパスを指定
+   - 標準レイアウトの自動検出に依存する
 
-2. **Minimal manifest**: Keep `plugin.json` lean
-   - Only specify custom paths when necessary
-   - Rely on auto-discovery for standard layouts
-   - Use inline configuration only for simple cases
+3. **ドキュメント**: READMEファイルを含める
+   - プラグインルート: 全体的な目的と使用法
+   - コンポーネントディレクトリ: 具体的なガイダンス
+   - スクリプトディレクトリ: 使用法と要件
 
-3. **Documentation**: Include README files
-   - Plugin root: Overall purpose and usage
-   - Component directories: Specific guidance
-   - Script directories: Usage and requirements
+### 命名
 
-### Naming
+1. **一貫性**: コンポーネント全体で一貫した命名を使用
+   - コマンドが`test-runner`なら、関連エージェントは`test-runner-agent`
+   - スキルディレクトリ名はその目的に一致させる
 
-1. **Consistency**: Use consistent naming across components
-   - If command is `test-runner`, name related agent `test-runner-agent`
-   - Match skill directory names to their purpose
+2. **明確性**: 目的を示す説明的な名前を使用
+   - 良い: `api-integration-testing/`、`code-quality-checker.md`
+   - 避ける: `utils/`、`misc.md`、`temp.sh`
 
-2. **Clarity**: Use descriptive names that indicate purpose
-   - Good: `api-integration-testing/`, `code-quality-checker.md`
-   - Avoid: `utils/`, `misc.md`, `temp.sh`
+### ポータビリティ
 
-3. **Length**: Balance brevity with clarity
-   - Commands: 2-3 words (`review-pr`, `run-ci`)
-   - Agents: Describe role clearly (`code-reviewer`, `test-generator`)
-   - Skills: Topic-focused (`error-handling`, `api-design`)
+1. **常に${CLAUDE_PLUGIN_ROOT}を使用**: パスをハードコードしない
+2. **複数のシステムでテスト**: macOS、Linux、Windowsで確認
+3. **依存関係を文書化**: 必要なツールとバージョンを一覧表示
+4. **システム固有の機能を避ける**: ポータブルなbash/Pythonの構造を使用
 
-### Portability
+## 一般的なパターン
 
-1. **Always use ${CLAUDE_PLUGIN_ROOT}**: Never hardcode paths
-2. **Test on multiple systems**: Verify on macOS, Linux, Windows
-3. **Document dependencies**: List required tools and versions
-4. **Avoid system-specific features**: Use portable bash/Python constructs
+### 最小限プラグイン
 
-### Maintenance
-
-1. **Version consistently**: Update version in plugin.json for releases
-2. **Deprecate gracefully**: Mark old components clearly before removal
-3. **Document breaking changes**: Note changes affecting existing users
-4. **Test thoroughly**: Verify all components work after changes
-
-## Common Patterns
-
-### Minimal Plugin
-
-Single command with no dependencies:
+依存関係のない単一コマンド:
 ```
 my-plugin/
 ├── .claude-plugin/
-│   └── plugin.json    # Just name field
+│   └── plugin.json    # nameフィールドのみ
 └── commands/
-    └── hello.md       # Single command
+    └── hello.md       # 単一コマンド
 ```
 
-### Full-Featured Plugin
+### フル機能プラグイン
 
-Complete plugin with all component types:
+全コンポーネントタイプを持つ完全なプラグイン:
 ```
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
-├── commands/          # User-facing commands
-├── agents/            # Specialized subagents
-├── skills/            # Auto-activating skills
-├── hooks/             # Event handlers
+├── commands/          # ユーザー向けコマンド
+├── agents/            # 特殊サブエージェント
+├── skills/            # 自動アクティベートスキル
+├── hooks/             # イベントハンドラー
 │   ├── hooks.json
 │   └── scripts/
-├── .mcp.json          # External integrations
-└── scripts/           # Shared utilities
+├── .mcp.json          # 外部統合
+└── scripts/           # 共有ユーティリティ
 ```
 
-### Skill-Focused Plugin
+### スキル重視プラグイン
 
-Plugin providing only skills:
+スキルのみを提供するプラグイン:
 ```
 my-plugin/
 ├── .claude-plugin/
@@ -445,32 +409,26 @@ my-plugin/
         └── SKILL.md
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
-**Component not loading**:
-- Verify file is in correct directory with correct extension
-- Check YAML frontmatter syntax (commands, agents, skills)
-- Ensure skill has `SKILL.md` (not `README.md` or other name)
-- Confirm plugin is enabled in Claude Code settings
+**コンポーネントがロードされない**:
+- ファイルが正しいディレクトリに正しい拡張子で存在するか確認
+- YAMLフロントマターの構文を確認（コマンド、エージェント、スキル）
+- スキルに`SKILL.md`があるか確認（`README.md`や他の名前ではなく）
+- プラグインがClaude Code設定で有効になっているか確認
 
-**Path resolution errors**:
-- Replace all hardcoded paths with `${CLAUDE_PLUGIN_ROOT}`
-- Verify paths are relative and start with `./` in manifest
-- Check that referenced files exist at specified paths
-- Test with `echo $CLAUDE_PLUGIN_ROOT` in hook scripts
+**パス解決エラー**:
+- 全ハードコードされたパスを`${CLAUDE_PLUGIN_ROOT}`に置き換える
+- マニフェストのパスが相対パスで`./`で始まるか確認
+- 指定されたパスに参照ファイルが存在するか確認
+- フックスクリプトで`echo $CLAUDE_PLUGIN_ROOT`でテスト
 
-**Auto-discovery not working**:
-- Confirm directories are at plugin root (not in `.claude-plugin/`)
-- Check file naming follows conventions (kebab-case, correct extensions)
-- Verify custom paths in manifest are correct
-- Restart Claude Code to reload plugin configuration
-
-**Conflicts between plugins**:
-- Use unique, descriptive component names
-- Namespace commands with plugin name if needed
-- Document potential conflicts in plugin README
-- Consider command prefixes for related functionality
+**自動検出が機能しない**:
+- ディレクトリがプラグインルートにあることを確認（`.claude-plugin/`内にネストしない）
+- ファイル命名が規則に従っているか確認（kebab-case、正しい拡張子）
+- マニフェストのカスタムパスが正しいか確認
+- プラグイン設定をリロードするためにClaude Codeを再起動
 
 ---
 
-For detailed examples and advanced patterns, see files in `references/` and `examples/` directories.
+詳細な例と高度なパターンについては、`references/`と`examples/`ディレクトリのファイルを参照。

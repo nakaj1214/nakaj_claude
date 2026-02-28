@@ -1,25 +1,25 @@
 ---
 name: agent-development
-description: This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when to use description", "agent examples", "agent tools", "agent colors", "autonomous agent", or needs guidance on agent structure, system prompts, triggering conditions, or agent development best practices for Claude Code plugins.
+description: このスキルは、ユーザーが「エージェントを作成する」「エージェントを追加する」「サブエージェントを書く」「エージェントのフロントマター」「descriptionの使い方」「エージェントの例」「エージェントのツール」「エージェントの色」「自律エージェント」と尋ねる場合、またはClaude Codeプラグインのエージェント構造、システムプロンプト、トリガー条件、エージェント開発のベストプラクティスに関するガイダンスが必要な場合に使用すること。
 version: 0.1.0
 ---
 
-# Agent Development for Claude Code Plugins
+# Claude Codeプラグインのエージェント開発
 
-## Overview
+## 概要
 
-Agents are autonomous subprocesses that handle complex, multi-step tasks independently. Understanding agent structure, triggering conditions, and system prompt design enables creating powerful autonomous capabilities.
+エージェントは複雑な複数ステップのタスクを独立して処理する自律サブプロセスです。エージェント構造、トリガー条件、システムプロンプト設計を理解することで、強力な自律機能を作成できます。
 
-**Key concepts:**
-- Agents are FOR autonomous work, commands are FOR user-initiated actions
-- Markdown file format with YAML frontmatter
-- Triggering via description field with examples
-- System prompt defines agent behavior
-- Model and color customization
+**主要概念:**
+- エージェントは自律的な作業のため、コマンドはユーザーが起動するアクションのため
+- フロントマターを持つMarkdownファイル形式
+- descriptionフィールドと例によるトリガー
+- システムプロンプトがエージェントの動作を定義
+- モデルと色のカスタマイズ
 
-## Agent File Structure
+## エージェントファイル構造
 
-### Complete Format
+### 完全なフォーマット
 
 ```markdown
 ---
@@ -57,39 +57,39 @@ You are [agent role description]...
 [What to return]
 ```
 
-## Frontmatter Fields
+## フロントマターフィールド
 
-### name (required)
+### name（必須）
 
-Agent identifier used for namespacing and invocation.
+名前空間と呼び出しに使用するエージェント識別子。
 
-**Format:** lowercase, numbers, hyphens only
-**Length:** 3-50 characters
-**Pattern:** Must start and end with alphanumeric
+**フォーマット:** 小文字、数字、ハイフンのみ
+**長さ:** 3〜50文字
+**パターン:** 英数字で始まり終わること
 
-**Good examples:**
+**良い例:**
 - `code-reviewer`
 - `test-generator`
 - `api-docs-writer`
 - `security-analyzer`
 
-**Bad examples:**
-- `helper` (too generic)
-- `-agent-` (starts/ends with hyphen)
-- `my_agent` (underscores not allowed)
-- `ag` (too short, < 3 chars)
+**悪い例:**
+- `helper`（汎用すぎる）
+- `-agent-`（ハイフンで始まり/終わる）
+- `my_agent`（アンダースコア不可）
+- `ag`（短すぎる、3文字未満）
 
-### description (required)
+### description（必須）
 
-Defines when Claude should trigger this agent. **This is the most critical field.**
+Claudeがこのエージェントをトリガーすべき時を定義する。**最も重要なフィールド。**
 
-**Must include:**
-1. Triggering conditions ("Use this agent when...")
-2. Multiple `<example>` blocks showing usage
-3. Context, user request, and assistant response in each example
-4. `<commentary>` explaining why agent triggers
+**含める必要があるもの:**
+1. トリガー条件（「このエージェントを使用するのは...」）
+2. 使用方法を示す複数の`<example>`ブロック
+3. 各例のコンテキスト、ユーザーリクエスト、アシスタントの応答
+4. エージェントがトリガーされる理由を説明する`<commentary>`
 
-**Format:**
+**フォーマット:**
 ```
 Use this agent when [conditions]. Examples:
 
@@ -105,67 +105,67 @@ assistant: "[How Claude should respond]"
 [More examples...]
 ```
 
-**Best practices:**
-- Include 2-4 concrete examples
-- Show proactive and reactive triggering
-- Cover different phrasings of same intent
-- Explain reasoning in commentary
-- Be specific about when NOT to use the agent
+**ベストプラクティス:**
+- 2〜4の具体的な例を含める
+- プロアクティブおよびリアクティブなトリガーを示す
+- 同じ意図の異なるフレーズをカバーする
+- コメンタリーで理由を説明する
+- エージェントを使用しない場合について具体的に記載する
 
-### model (required)
+### model（必須）
 
-Which model the agent should use.
+エージェントが使用するモデル。
 
-**Options:**
-- `inherit` - Use same model as parent (recommended)
-- `sonnet` - Claude Sonnet (balanced)
-- `opus` - Claude Opus (most capable, expensive)
-- `haiku` - Claude Haiku (fast, cheap)
+**オプション:**
+- `inherit` - 親と同じモデルを使用（推奨）
+- `sonnet` - Claude Sonnet（バランス型）
+- `opus` - Claude Opus（最も高性能、高コスト）
+- `haiku` - Claude Haiku（高速、低コスト）
 
-**Recommendation:** Use `inherit` unless agent needs specific model capabilities.
+**推奨:** エージェントが特定のモデル機能を必要とする場合を除き、`inherit`を使用する。
 
-### color (required)
+### color（必須）
 
-Visual identifier for agent in UI.
+UIでのエージェントの視覚的識別子。
 
-**Options:** `blue`, `cyan`, `green`, `yellow`, `magenta`, `red`
+**オプション:** `blue`、`cyan`、`green`、`yellow`、`magenta`、`red`
 
-**Guidelines:**
-- Choose distinct colors for different agents in same plugin
-- Use consistent colors for similar agent types
-- Blue/cyan: Analysis, review
-- Green: Success-oriented tasks
-- Yellow: Caution, validation
-- Red: Critical, security
-- Magenta: Creative, generation
+**ガイドライン:**
+- 同じプラグイン内の異なるエージェントには異なる色を選択
+- 類似したエージェントタイプには一貫した色を使用
+- Blue/cyan: 分析、レビュー
+- Green: 成功指向のタスク
+- Yellow: 注意、検証
+- Red: クリティカル、セキュリティ
+- Magenta: クリエイティブ、生成
 
-### tools (optional)
+### tools（オプション）
 
-Restrict agent to specific tools.
+エージェントを特定のツールに制限する。
 
-**Format:** Array of tool names
+**フォーマット:** ツール名の配列
 
 ```yaml
 tools: ["Read", "Write", "Grep", "Bash"]
 ```
 
-**Default:** If omitted, agent has access to all tools
+**デフォルト:** 省略した場合、エージェントは全ツールにアクセス可能
 
-**Best practice:** Limit tools to minimum needed (principle of least privilege)
+**ベストプラクティス:** 最小限必要なツールに制限する（最小権限の原則）
 
-**Common tool sets:**
-- Read-only analysis: `["Read", "Grep", "Glob"]`
-- Code generation: `["Read", "Write", "Grep"]`
-- Testing: `["Read", "Bash", "Grep"]`
-- Full access: Omit field or use `["*"]`
+**一般的なツールセット:**
+- 読み取り専用分析: `["Read", "Grep", "Glob"]`
+- コード生成: `["Read", "Write", "Grep"]`
+- テスト: `["Read", "Bash", "Grep"]`
+- フルアクセス: フィールドを省略するか`["*"]`を使用
 
-## System Prompt Design
+## システムプロンプト設計
 
-The markdown body becomes the agent's system prompt. Write in second person, addressing the agent directly.
+Markdownの本文がエージェントのシステムプロンプトになる。エージェントに直接話しかける2人称で書く。
 
-### Structure
+### 構造
 
-**Standard template:**
+**標準テンプレート:**
 ```markdown
 You are [role] specializing in [domain].
 
@@ -195,30 +195,30 @@ Handle these situations:
 - [Edge case 2]: [How to handle]
 ```
 
-### Best Practices
+### ベストプラクティス
 
-✅ **DO:**
-- Write in second person ("You are...", "You will...")
-- Be specific about responsibilities
-- Provide step-by-step process
-- Define output format
-- Include quality standards
-- Address edge cases
-- Keep under 10,000 characters
+✅ **すること:**
+- 2人称で書く（"You are..."、"You will..."）
+- 責任を具体的に記述する
+- ステップバイステップのプロセスを提供する
+- 出力フォーマットを定義する
+- 品質基準を含める
+- エッジケースに対処する
+- 10,000文字以下に保つ
 
-❌ **DON'T:**
-- Write in first person ("I am...", "I will...")
-- Be vague or generic
-- Omit process steps
-- Leave output format undefined
-- Skip quality guidance
-- Ignore error cases
+❌ **しないこと:**
+- 1人称で書く（"I am..."、"I will..."）
+- 曖昧または汎用的に書く
+- プロセスステップを省略する
+- 出力フォーマットを未定義のままにする
+- 品質ガイダンスを省く
+- エラーケースを無視する
 
-## Creating Agents
+## エージェントの作成
 
-### Method 1: AI-Assisted Generation
+### 方法1: AI支援による生成
 
-Use this prompt pattern (extracted from Claude Code):
+このプロンプトパターンを使用する（Claude Codeから抽出）:
 
 ```
 Create an agent configuration based on this request: "[YOUR DESCRIPTION]"
@@ -243,50 +243,50 @@ Return JSON with:
 }
 ```
 
-Then convert to agent file format with frontmatter.
+その後、フロントマターを持つエージェントファイル形式に変換する。
 
-See `examples/agent-creation-prompt.md` for complete template.
+完全なテンプレートは`examples/agent-creation-prompt.md`を参照。
 
-### Method 2: Manual Creation
+### 方法2: 手動作成
 
-1. Choose agent identifier (3-50 chars, lowercase, hyphens)
-2. Write description with examples
-3. Select model (usually `inherit`)
-4. Choose color for visual identification
-5. Define tools (if restricting access)
-6. Write system prompt with structure above
-7. Save as `agents/agent-name.md`
+1. エージェント識別子を選ぶ（3〜50文字、小文字、ハイフン）
+2. 例を含むdescriptionを書く
+3. モデルを選択する（通常は`inherit`）
+4. 視覚的識別のための色を選ぶ
+5. ツールを定義する（アクセスを制限する場合）
+6. 上記の構造でシステムプロンプトを書く
+7. `agents/agent-name.md`として保存する
 
-## Validation Rules
+## バリデーションルール
 
-### Identifier Validation
+### 識別子のバリデーション
 
 ```
-✅ Valid: code-reviewer, test-gen, api-analyzer-v2
-❌ Invalid: ag (too short), -start (starts with hyphen), my_agent (underscore)
+✅ 有効: code-reviewer, test-gen, api-analyzer-v2
+❌ 無効: ag（短すぎ）, -start（ハイフンで始まる）, my_agent（アンダースコア）
 ```
 
-**Rules:**
-- 3-50 characters
-- Lowercase letters, numbers, hyphens only
-- Must start and end with alphanumeric
-- No underscores, spaces, or special characters
+**ルール:**
+- 3〜50文字
+- 小文字、数字、ハイフンのみ
+- 英数字で始まり終わること
+- アンダースコア、スペース、特殊文字は不可
 
-### Description Validation
+### descriptionのバリデーション
 
-**Length:** 10-5,000 characters
-**Must include:** Triggering conditions and examples
-**Best:** 200-1,000 characters with 2-4 examples
+**長さ:** 10〜5,000文字
+**含める必要があるもの:** トリガー条件と例
+**推奨:** 2〜4の例を含む200〜1,000文字
 
-### System Prompt Validation
+### システムプロンプトのバリデーション
 
-**Length:** 20-10,000 characters
-**Best:** 500-3,000 characters
-**Structure:** Clear responsibilities, process, output format
+**長さ:** 20〜10,000文字
+**推奨:** 500〜3,000文字
+**構造:** 明確な責任、プロセス、出力フォーマット
 
-## Agent Organization
+## エージェントの整理
 
-### Plugin Agents Directory
+### プラグインエージェントディレクトリ
 
 ```
 plugin-name/
@@ -296,38 +296,38 @@ plugin-name/
     └── generator.md
 ```
 
-All `.md` files in `agents/` are auto-discovered.
+`agents/`内のすべての`.md`ファイルが自動検出される。
 
-### Namespacing
+### 名前空間
 
-Agents are namespaced automatically:
-- Single plugin: `agent-name`
-- With subdirectories: `plugin:subdir:agent-name`
+エージェントは自動的に名前空間が付けられる:
+- 単一プラグイン: `agent-name`
+- サブディレクトリあり: `plugin:subdir:agent-name`
 
-## Testing Agents
+## エージェントのテスト
 
-### Test Triggering
+### トリガーのテスト
 
-Create test scenarios to verify agent triggers correctly:
+エージェントが正しくトリガーされることを確認するためのテストシナリオを作成する:
 
-1. Write agent with specific triggering examples
-2. Use similar phrasing to examples in test
-3. Check Claude loads the agent
-4. Verify agent provides expected functionality
+1. 特定のトリガー例を持つエージェントを書く
+2. テストで例と似たフレーズを使用する
+3. ClaudeがエージェントをロードすることをVerify
+4. エージェントが期待される機能を提供することを確認する
 
-### Test System Prompt
+### システムプロンプトのテスト
 
-Ensure system prompt is complete:
+システムプロンプトが完全であることを確認する:
 
-1. Give agent typical task
-2. Check it follows process steps
-3. Verify output format is correct
-4. Test edge cases mentioned in prompt
-5. Confirm quality standards are met
+1. エージェントに典型的なタスクを与える
+2. プロセスステップに従っているかチェックする
+3. 出力フォーマットが正しいか確認する
+4. プロンプトで言及されているエッジケースをテストする
+5. 品質基準が満たされているか確認する
 
-## Quick Reference
+## クイックリファレンス
 
-### Minimal Agent
+### 最小エージェント
 
 ```markdown
 ---
@@ -346,70 +346,70 @@ Process:
 Output: [What to provide]
 ```
 
-### Frontmatter Fields Summary
+### フロントマターフィールドのまとめ
 
-| Field | Required | Format | Example |
+| フィールド | 必須 | フォーマット | 例 |
 |-------|----------|--------|---------|
 | name | Yes | lowercase-hyphens | code-reviewer |
-| description | Yes | Text + examples | Use when... <example>... |
+| description | Yes | テキスト + 例 | Use when... <example>... |
 | model | Yes | inherit/sonnet/opus/haiku | inherit |
-| color | Yes | Color name | blue |
-| tools | No | Array of tool names | ["Read", "Grep"] |
+| color | Yes | 色の名前 | blue |
+| tools | No | ツール名の配列 | ["Read", "Grep"] |
 
-### Best Practices
+### ベストプラクティス
 
-**DO:**
-- ✅ Include 2-4 concrete examples in description
-- ✅ Write specific triggering conditions
-- ✅ Use `inherit` for model unless specific need
-- ✅ Choose appropriate tools (least privilege)
-- ✅ Write clear, structured system prompts
-- ✅ Test agent triggering thoroughly
+**すること:**
+- ✅ descriptionに2〜4の具体的な例を含める
+- ✅ 具体的なトリガー条件を書く
+- ✅ 特定の必要がなければモデルに`inherit`を使用
+- ✅ 適切なツールを選択する（最小権限）
+- ✅ 明確で構造化されたシステムプロンプトを書く
+- ✅ エージェントのトリガーを徹底的にテストする
 
-**DON'T:**
-- ❌ Use generic descriptions without examples
-- ❌ Omit triggering conditions
-- ❌ Give all agents same color
-- ❌ Grant unnecessary tool access
-- ❌ Write vague system prompts
-- ❌ Skip testing
+**しないこと:**
+- ❌ 例のない汎用的なdescriptionを使用する
+- ❌ トリガー条件を省略する
+- ❌ 全エージェントに同じ色を使用する
+- ❌ 不必要なツールアクセスを付与する
+- ❌ 曖昧なシステムプロンプトを書く
+- ❌ テストを省略する
 
-## Additional Resources
+## 追加リソース
 
-### Reference Files
+### リファレンスファイル
 
-For detailed guidance, consult:
+詳細なガイダンスについては以下を参照:
 
-- **`references/system-prompt-design.md`** - Complete system prompt patterns
-- **`references/triggering-examples.md`** - Example formats and best practices
-- **`references/agent-creation-system-prompt.md`** - The exact prompt from Claude Code
+- **`references/system-prompt-design.md`** - 完全なシステムプロンプトパターン
+- **`references/triggering-examples.md`** - 例のフォーマットとベストプラクティス
+- **`references/agent-creation-system-prompt.md`** - Claude Codeからの正確なプロンプト
 
-### Example Files
+### サンプルファイル
 
-Working examples in `examples/`:
+`examples/`内の動作例:
 
-- **`agent-creation-prompt.md`** - AI-assisted agent generation template
-- **`complete-agent-examples.md`** - Full agent examples for different use cases
+- **`agent-creation-prompt.md`** - AI支援エージェント生成テンプレート
+- **`complete-agent-examples.md`** - 様々なユースケースの完全なエージェント例
 
-### Utility Scripts
+### ユーティリティスクリプト
 
-Development tools in `scripts/`:
+`scripts/`内の開発ツール:
 
-- **`validate-agent.sh`** - Validate agent file structure
-- **`test-agent-trigger.sh`** - Test if agent triggers correctly
+- **`validate-agent.sh`** - エージェントファイル構造を検証
+- **`test-agent-trigger.sh`** - エージェントが正しくトリガーされるかテスト
 
-## Implementation Workflow
+## 実装ワークフロー
 
-To create an agent for a plugin:
+プラグインのエージェントを作成するには:
 
-1. Define agent purpose and triggering conditions
-2. Choose creation method (AI-assisted or manual)
-3. Create `agents/agent-name.md` file
-4. Write frontmatter with all required fields
-5. Write system prompt following best practices
-6. Include 2-4 triggering examples in description
-7. Validate with `scripts/validate-agent.sh`
-8. Test triggering with real scenarios
-9. Document agent in plugin README
+1. エージェントの目的とトリガー条件を定義する
+2. 作成方法を選択する（AI支援または手動）
+3. `agents/agent-name.md`ファイルを作成する
+4. 全必須フィールドを含むフロントマターを書く
+5. ベストプラクティスに従ってシステムプロンプトを書く
+6. descriptionに2〜4のトリガー例を含める
+7. `scripts/validate-agent.sh`で検証する
+8. 実際のシナリオでトリガーをテストする
+9. プラグインREADMEにエージェントを文書化する
 
-Focus on clear triggering conditions and comprehensive system prompts for autonomous operation.
+自律動作のために明確なトリガー条件と包括的なシステムプロンプトに集中すること。

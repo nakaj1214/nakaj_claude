@@ -1,57 +1,57 @@
 ---
 name: design-tracker
-description: PROACTIVELY track and document project design decisions without being asked. Activate automatically when detecting architecture discussions, implementation decisions, pattern choices, library selections, or any technical decisions. Also use when user explicitly says "記録して", "設計どうなってる", "record this". Do NOT wait for user to ask - record important decisions immediately.
+description: 頼まれなくても積極的にプロジェクトの設計決定を追跡・記録する。アーキテクチャの議論、実装上の決定、パターンの選択、ライブラリの選定、その他技術的な決定を検出した際に自動的に起動する。ユーザーが「記録して」「設計どうなってる」と言った場合にも使用する。ユーザーに頼まれるのを待たず、重要な決定をすぐに記録すること。
 ---
 
-# Design Tracker Skill
+# Design Trackerスキル
 
-## Purpose
+## 目的
 
-This skill manages the project's design documentation (`.claude/docs/DESIGN.md`). It automatically tracks:
-- Architecture decisions
-- Implementation plans
-- Library choices and their rationale
-- TODO items and open questions
+このスキルはプロジェクトの設計ドキュメント（`.claude/docs/DESIGN.md`）を管理する。以下を自動的に追跡する:
+- アーキテクチャの決定
+- 実装計画
+- ライブラリの選択とその根拠
+- TODOリストとオープンな質問
 
-## When to Activate
+## 起動するタイミング
 
-- User discusses architecture or design patterns
-- User makes implementation decisions (e.g., "let's use ReAct pattern")
-- User says "record this", "add to design", "document this"
-- User asks "what's our current design?" or "what have we decided?"
-- Important technical decisions are made during conversation
+- ユーザーがアーキテクチャや設計パターンについて話し合うとき
+- ユーザーが実装上の決定を行うとき（例: 「ReActパターンを使おう」）
+- ユーザーが「記録して」「設計に追加して」「ドキュメント化して」と言うとき
+- ユーザーが「今の設計はどうなってる？」「何を決めた？」と聞くとき
+- 会話中に重要な技術的決定が行われたとき
 
-## Workflow
+## ワークフロー
 
-### Recording Decisions
+### 決定事項の記録
 
-1. Read existing `.claude/docs/DESIGN.md`
-2. Extract the decision/information from conversation
-3. Update the appropriate section
-4. Add entry to Changelog with today's date
+1. 既存の `.claude/docs/DESIGN.md` を読み込む
+2. 会話から決定事項/情報を抽出する
+3. 適切なセクションを更新する
+4. 今日の日付でChangelogにエントリを追加する
 
-### Sections to Update
+### 更新するセクション
 
-| Conversation Topic | Target Section |
-|-------------------|----------------|
-| Overall goals, purpose | Overview |
-| System structure, components | Architecture |
-| Patterns (ReAct, etc.) | Implementation Plan > Patterns |
-| Library choices | Implementation Plan > Libraries |
-| Why we chose X over Y | Implementation Plan > Key Decisions |
-| Things to implement later | TODO |
-| Unresolved questions | Open Questions |
+| 会話のトピック | 対象セクション |
+|-------------|--------------|
+| 全体の目標、目的 | Overview |
+| システム構造、コンポーネント | Architecture |
+| パターン（ReActなど） | Implementation Plan > Patterns |
+| ライブラリの選択 | Implementation Plan > Libraries |
+| XではなくYを選んだ理由 | Implementation Plan > Key Decisions |
+| 後で実装する予定のもの | TODO |
+| 未解決の質問 | Open Questions |
 
-## Output Format
+## 出力フォーマット
 
-When recording, confirm in Japanese:
-- What was recorded
-- Which section was updated
-- Brief summary of the change
+記録後、日本語で確認する:
+- 何を記録したか
+- どのセクションを更新したか
+- 変更内容の簡単なサマリー
 
-## Language Rules
+## 言語ルール
 
-- **Thinking/Reasoning**: English
-- **Code examples**: English
-- **Document content**: English (technical terms) + Japanese (descriptions OK)
-- **User communication**: Japanese
+- **思考/推論**: English
+- **コード例**: English
+- **ドキュメントの内容**: English（技術用語） + Japanese（説明は可）
+- **ユーザーとのコミュニケーション**: Japanese

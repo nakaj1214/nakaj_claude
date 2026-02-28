@@ -1,47 +1,47 @@
 ---
 name: hook-development
-description: This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "implement prompt-based hooks", "use ${CLAUDE_PLUGIN_ROOT}", "set up event-driven automation", "block dangerous commands", or mentions hook events (PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification). Provides comprehensive guidance for creating and implementing Claude Code plugin hooks with focus on advanced prompt-based hooks API.
+description: このスキルは、ユーザーが「フックを作成する」「PreToolUse/PostToolUse/Stopフックを追加する」「ツール使用を検証する」「プロンプトベースのフックを実装する」「${CLAUDE_PLUGIN_ROOT}を使う」「イベント駆動の自動化を設定する」「危険なコマンドをブロックする」と尋ねる場合、またはフックイベント（PreToolUse、PostToolUse、Stop、SubagentStop、SessionStart、SessionEnd、UserPromptSubmit、PreCompact、Notification）について言及する場合に使用すること。高度なプロンプトベースのフックAPIに焦点を当てたClaude Codeプラグインフックの作成と実装の包括的なガイダンスを提供する。
 version: 0.1.0
 ---
 
-# Hook Development for Claude Code Plugins
+# Claude Codeプラグインのフック開発
 
-## Overview
+## 概要
 
-Hooks are event-driven automation scripts that execute in response to Claude Code events. Use hooks to validate operations, enforce policies, add context, and integrate external tools into workflows.
+フックはClaude Codeのイベントに応答して実行されるイベント駆動の自動化スクリプトです。フックを使用して、操作の検証、ポリシーの強制、コンテキストの追加、外部ツールのワークフローへの統合を行います。
 
-**Key capabilities:**
-- Validate tool calls before execution (PreToolUse)
-- React to tool results (PostToolUse)
-- Enforce completion standards (Stop, SubagentStop)
-- Load project context (SessionStart)
-- Automate workflows across the development lifecycle
+**主要機能:**
+- 実行前のツール呼び出しの検証（PreToolUse）
+- ツール結果への反応（PostToolUse）
+- 完了基準の強制（Stop、SubagentStop）
+- プロジェクトコンテキストのロード（SessionStart）
+- 開発ライフサイクル全体のワークフロー自動化
 
-## Hook Types
+## フックの種類
 
-### Prompt-Based Hooks (Recommended)
+### プロンプトベースのフック（推奨）
 
-Use LLM-driven decision making for context-aware validation:
+コンテキスト対応の検証のためにLLM駆動の意思決定を使用する:
 
 ```json
 {
   "type": "prompt",
-  "prompt": "Evaluate if this tool use is appropriate: $TOOL_INPUT",
+  "prompt": "このツール使用が適切かどうかを評価する: $TOOL_INPUT",
   "timeout": 30
 }
 ```
 
-**Supported events:** Stop, SubagentStop, UserPromptSubmit, PreToolUse
+**対応イベント:** Stop、SubagentStop、UserPromptSubmit、PreToolUse
 
-**Benefits:**
-- Context-aware decisions based on natural language reasoning
-- Flexible evaluation logic without bash scripting
-- Better edge case handling
-- Easier to maintain and extend
+**メリット:**
+- 自然言語推論に基づくコンテキスト対応の決定
+- bashスクリプトなしの柔軟な評価ロジック
+- エッジケースの処理が容易
+- 維持・拡張が容易
 
-### Command Hooks
+### コマンドフック
 
-Execute bash commands for deterministic checks:
+決定論的チェックのためにbashコマンドを実行する:
 
 ```json
 {
@@ -51,21 +51,21 @@ Execute bash commands for deterministic checks:
 }
 ```
 
-**Use for:**
-- Fast deterministic validations
-- File system operations
-- External tool integrations
-- Performance-critical checks
+**用途:**
+- 高速な決定論的検証
+- ファイルシステム操作
+- 外部ツールの統合
+- パフォーマンスが重要なチェック
 
-## Hook Configuration Formats
+## フック設定フォーマット
 
-### Plugin hooks.json Format
+### プラグインのhooks.jsonフォーマット
 
-**For plugin hooks** in `hooks/hooks.json`, use wrapper format:
+`hooks/hooks.json`の**プラグインフック**には、ラッパーフォーマットを使用する:
 
 ```json
 {
-  "description": "Brief explanation of hooks (optional)",
+  "description": "フックの簡単な説明（オプション）",
   "hooks": {
     "PreToolUse": [...],
     "Stop": [...],
@@ -74,15 +74,15 @@ Execute bash commands for deterministic checks:
 }
 ```
 
-**Key points:**
-- `description` field is optional
-- `hooks` field is required wrapper containing actual hook events
-- This is the **plugin-specific format**
+**重要なポイント:**
+- `description`フィールドはオプション
+- `hooks`フィールドは実際のフックイベントを含む必須ラッパー
+- これは**プラグイン固有のフォーマット**
 
-**Example:**
+**例:**
 ```json
 {
-  "description": "Validation hooks for code quality",
+  "description": "コード品質のための検証フック",
   "hooks": {
     "PreToolUse": [
       {
@@ -99,9 +99,9 @@ Execute bash commands for deterministic checks:
 }
 ```
 
-### Settings Format (Direct)
+### 設定フォーマット（直接）
 
-**For user settings** in `.claude/settings.json`, use direct format:
+`.claude/settings.json`の**ユーザー設定**には、直接フォーマットを使用する:
 
 ```json
 {
@@ -111,20 +111,18 @@ Execute bash commands for deterministic checks:
 }
 ```
 
-**Key points:**
-- No wrapper - events directly at top level
-- No description field
-- This is the **settings format**
+**重要なポイント:**
+- ラッパーなし — イベントをトップレベルに直接記述
+- descriptionフィールドなし
+- これは**設定フォーマット**
 
-**Important:** The examples below show the hook event structure that goes inside either format. For plugin hooks.json, wrap these in `{"hooks": {...}}`.
-
-## Hook Events
+## フックイベント
 
 ### PreToolUse
 
-Execute before any tool runs. Use to approve, deny, or modify tool calls.
+ツールが実行される前に実行される。ツール呼び出しの承認、拒否、または変更に使用する。
 
-**Example (prompt-based):**
+**例（プロンプトベース）:**
 ```json
 {
   "PreToolUse": [
@@ -133,7 +131,7 @@ Execute before any tool runs. Use to approve, deny, or modify tool calls.
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Validate file write safety. Check: system paths, credentials, path traversal, sensitive content. Return 'approve' or 'deny'."
+          "prompt": "ファイル書き込みの安全性を検証する。確認事項: システムパス、認証情報、パストラバーサル、センシティブなコンテンツ。'approve'または'deny'を返す。"
         }
       ]
     }
@@ -141,22 +139,22 @@ Execute before any tool runs. Use to approve, deny, or modify tool calls.
 }
 ```
 
-**Output for PreToolUse:**
+**PreToolUseの出力:**
 ```json
 {
   "hookSpecificOutput": {
     "permissionDecision": "allow|deny|ask",
     "updatedInput": {"field": "modified_value"}
   },
-  "systemMessage": "Explanation for Claude"
+  "systemMessage": "Claudeへの説明"
 }
 ```
 
 ### PostToolUse
 
-Execute after tool completes. Use to react to results, provide feedback, or log.
+ツールが完了した後に実行される。結果への反応、フィードバックの提供、ログ記録に使用する。
 
-**Example:**
+**例:**
 ```json
 {
   "PostToolUse": [
@@ -165,7 +163,7 @@ Execute after tool completes. Use to react to results, provide feedback, or log.
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Analyze edit result for potential issues: syntax errors, security vulnerabilities, breaking changes. Provide feedback."
+          "prompt": "編集結果の潜在的な問題を分析する: 構文エラー、セキュリティ脆弱性、破壊的変更。フィードバックを提供する。"
         }
       ]
     }
@@ -173,16 +171,16 @@ Execute after tool completes. Use to react to results, provide feedback, or log.
 }
 ```
 
-**Output behavior:**
-- Exit 0: stdout shown in transcript
-- Exit 2: stderr fed back to Claude
-- systemMessage included in context
+**出力の動作:**
+- Exit 0: stdoutがトランスクリプトに表示
+- Exit 2: stderrがClaudeにフィードバック
+- systemMessageがコンテキストに含まれる
 
 ### Stop
 
-Execute when main agent considers stopping. Use to validate completeness.
+メインエージェントが停止を検討する時に実行される。完了の検証に使用する。
 
-**Example:**
+**例:**
 ```json
 {
   "Stop": [
@@ -191,7 +189,7 @@ Execute when main agent considers stopping. Use to validate completeness.
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Verify task completion: tests run, build succeeded, questions answered. Return 'approve' to stop or 'block' with reason to continue."
+          "prompt": "タスクの完了を確認する: テスト実行、ビルド成功、質問への回答。停止する場合は'approve'を、続けるべき理由とともに'block'を返す。"
         }
       ]
     }
@@ -199,26 +197,24 @@ Execute when main agent considers stopping. Use to validate completeness.
 }
 ```
 
-**Decision output:**
+**決定の出力:**
 ```json
 {
   "decision": "approve|block",
-  "reason": "Explanation",
-  "systemMessage": "Additional context"
+  "reason": "説明",
+  "systemMessage": "追加のコンテキスト"
 }
 ```
 
 ### SubagentStop
 
-Execute when subagent considers stopping. Use to ensure subagent completed its task.
-
-Similar to Stop hook, but for subagents.
+サブエージェントが停止を検討する時に実行される。Stopフックと同様だが、サブエージェント用。
 
 ### UserPromptSubmit
 
-Execute when user submits a prompt. Use to add context, validate, or block prompts.
+ユーザーがプロンプトを送信する時に実行される。コンテキストの追加、検証、またはプロンプトのブロックに使用する。
 
-**Example:**
+**例:**
 ```json
 {
   "UserPromptSubmit": [
@@ -227,7 +223,7 @@ Execute when user submits a prompt. Use to add context, validate, or block promp
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Check if prompt requires security guidance. If discussing auth, permissions, or API security, return relevant warnings."
+          "prompt": "プロンプトにセキュリティガイダンスが必要かチェックする。認証、権限、またはAPIセキュリティについて議論している場合は、関連する警告を返す。"
         }
       ]
     }
@@ -237,9 +233,9 @@ Execute when user submits a prompt. Use to add context, validate, or block promp
 
 ### SessionStart
 
-Execute when Claude Code session begins. Use to load context and set environment.
+Claude Codeセッションが開始する時に実行される。コンテキストのロードと環境の設定に使用する。
 
-**Example:**
+**例:**
 ```json
 {
   "SessionStart": [
@@ -256,50 +252,50 @@ Execute when Claude Code session begins. Use to load context and set environment
 }
 ```
 
-**Special capability:** Persist environment variables using `$CLAUDE_ENV_FILE`:
+**特別な機能:** `$CLAUDE_ENV_FILE`を使用して環境変数を永続化:
 ```bash
 echo "export PROJECT_TYPE=nodejs" >> "$CLAUDE_ENV_FILE"
 ```
 
-See `examples/load-context.sh` for complete example.
+完全な例は`examples/load-context.sh`を参照。
 
 ### SessionEnd
 
-Execute when session ends. Use for cleanup, logging, and state preservation.
+セッションが終了する時に実行される。クリーンアップ、ログ、状態の保存に使用する。
 
 ### PreCompact
 
-Execute before context compaction. Use to add critical information to preserve.
+コンテキストの圧縮前に実行される。保存すべき重要な情報を追加するために使用する。
 
 ### Notification
 
-Execute when Claude sends notifications. Use to react to user notifications.
+Claudeが通知を送る時に実行される。ユーザー通知への反応に使用する。
 
-## Hook Output Format
+## フック出力フォーマット
 
-### Standard Output (All Hooks)
+### 標準出力（全フック）
 
 ```json
 {
   "continue": true,
   "suppressOutput": false,
-  "systemMessage": "Message for Claude"
+  "systemMessage": "Claudeへのメッセージ"
 }
 ```
 
-- `continue`: If false, halt processing (default true)
-- `suppressOutput`: Hide output from transcript (default false)
-- `systemMessage`: Message shown to Claude
+- `continue`: falseの場合、処理を停止（デフォルトtrue）
+- `suppressOutput`: トランスクリプトから出力を非表示（デフォルトfalse）
+- `systemMessage`: Claudeに表示されるメッセージ
 
-### Exit Codes
+### 終了コード
 
-- `0` - Success (stdout shown in transcript)
-- `2` - Blocking error (stderr fed back to Claude)
-- Other - Non-blocking error
+- `0` - 成功（stdoutがトランスクリプトに表示）
+- `2` - ブロッキングエラー（stderrがClaudeにフィードバック）
+- その他 - 非ブロッキングエラー
 
-## Hook Input Format
+## フック入力フォーマット
 
-All hooks receive JSON via stdin with common fields:
+全フックは共通フィールドを持つJSONをstdinで受け取る:
 
 ```json
 {
@@ -311,24 +307,24 @@ All hooks receive JSON via stdin with common fields:
 }
 ```
 
-**Event-specific fields:**
+**イベント固有のフィールド:**
 
-- **PreToolUse/PostToolUse:** `tool_name`, `tool_input`, `tool_result`
+- **PreToolUse/PostToolUse:** `tool_name`、`tool_input`、`tool_result`
 - **UserPromptSubmit:** `user_prompt`
 - **Stop/SubagentStop:** `reason`
 
-Access fields in prompts using `$TOOL_INPUT`, `$TOOL_RESULT`, `$USER_PROMPT`, etc.
+プロンプトでフィールドにアクセスするには`$TOOL_INPUT`、`$TOOL_RESULT`、`$USER_PROMPT`などを使用。
 
-## Environment Variables
+## 環境変数
 
-Available in all command hooks:
+全コマンドフックで利用可能:
 
-- `$CLAUDE_PROJECT_DIR` - Project root path
-- `$CLAUDE_PLUGIN_ROOT` - Plugin directory (use for portable paths)
-- `$CLAUDE_ENV_FILE` - SessionStart only: persist env vars here
-- `$CLAUDE_CODE_REMOTE` - Set if running in remote context
+- `$CLAUDE_PROJECT_DIR` - プロジェクトルートパス
+- `$CLAUDE_PLUGIN_ROOT` - プラグインディレクトリ（ポータブルなパス用に使用）
+- `$CLAUDE_ENV_FILE` - SessionStartのみ: 環境変数をここに永続化
+- `$CLAUDE_CODE_REMOTE` - リモートコンテキストで実行中の場合に設定
 
-**Always use ${CLAUDE_PLUGIN_ROOT} in hook commands for portability:**
+**ポータビリティのためにフックコマンドで常に${CLAUDE_PLUGIN_ROOT}を使用する:**
 
 ```json
 {
@@ -337,9 +333,9 @@ Available in all command hooks:
 }
 ```
 
-## Plugin Hook Configuration
+## プラグインフック設定
 
-In plugins, define hooks in `hooks/hooks.json`:
+プラグインでは`hooks/hooks.json`でフックを定義する:
 
 ```json
 {
@@ -349,7 +345,7 @@ In plugins, define hooks in `hooks/hooks.json`:
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Validate file write safety"
+          "prompt": "ファイル書き込みの安全性を検証する"
         }
       ]
     }
@@ -360,7 +356,7 @@ In plugins, define hooks in `hooks/hooks.json`:
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Verify task completion"
+          "prompt": "タスクの完了を確認する"
         }
       ]
     }
@@ -380,55 +376,39 @@ In plugins, define hooks in `hooks/hooks.json`:
 }
 ```
 
-Plugin hooks merge with user's hooks and run in parallel.
+プラグインフックはユーザーのフックとマージされ、並行して実行される。
 
-## Matchers
+## マッチャー
 
-### Tool Name Matching
+### ツール名のマッチング
 
-**Exact match:**
+**完全一致:**
 ```json
 "matcher": "Write"
 ```
 
-**Multiple tools:**
+**複数のツール:**
 ```json
 "matcher": "Read|Write|Edit"
 ```
 
-**Wildcard (all tools):**
+**ワイルドカード（全ツール）:**
 ```json
 "matcher": "*"
 ```
 
-**Regex patterns:**
+**正規表現パターン:**
 ```json
-"matcher": "mcp__.*__delete.*"  // All MCP delete tools
+"matcher": "mcp__.*__delete.*"  // 全MCPのdeleteツール
 ```
 
-**Note:** Matchers are case-sensitive.
+**注意:** マッチャーは大文字小文字を区別する。
 
-### Common Patterns
+## セキュリティのベストプラクティス
 
-```json
-// All MCP tools
-"matcher": "mcp__.*"
+### 入力バリデーション
 
-// Specific plugin's MCP tools
-"matcher": "mcp__plugin_asana_.*"
-
-// All file operations
-"matcher": "Read|Write|Edit"
-
-// Bash commands only
-"matcher": "Bash"
-```
-
-## Security Best Practices
-
-### Input Validation
-
-Always validate inputs in command hooks:
+コマンドフックでは常に入力を検証する:
 
 ```bash
 #!/bin/bash
@@ -437,48 +417,48 @@ set -euo pipefail
 input=$(cat)
 tool_name=$(echo "$input" | jq -r '.tool_name')
 
-# Validate tool name format
+# ツール名フォーマットを検証
 if [[ ! "$tool_name" =~ ^[a-zA-Z0-9_]+$ ]]; then
-  echo '{"decision": "deny", "reason": "Invalid tool name"}' >&2
+  echo '{"decision": "deny", "reason": "無効なツール名"}' >&2
   exit 2
 fi
 ```
 
-### Path Safety
+### パスの安全性
 
-Check for path traversal and sensitive files:
+パストラバーサルとセンシティブなファイルを確認する:
 
 ```bash
 file_path=$(echo "$input" | jq -r '.tool_input.file_path')
 
-# Deny path traversal
+# パストラバーサルを拒否
 if [[ "$file_path" == *".."* ]]; then
-  echo '{"decision": "deny", "reason": "Path traversal detected"}' >&2
+  echo '{"decision": "deny", "reason": "パストラバーサルを検出"}' >&2
   exit 2
 fi
 
-# Deny sensitive files
+# センシティブなファイルを拒否
 if [[ "$file_path" == *".env"* ]]; then
-  echo '{"decision": "deny", "reason": "Sensitive file"}' >&2
+  echo '{"decision": "deny", "reason": "センシティブなファイル"}' >&2
   exit 2
 fi
 ```
 
-See `examples/validate-write.sh` and `examples/validate-bash.sh` for complete examples.
+完全な例は`examples/validate-write.sh`と`examples/validate-bash.sh`を参照。
 
-### Quote All Variables
+### 全変数を引用符で囲む
 
 ```bash
-# GOOD: Quoted
+# 良い: 引用符あり
 echo "$file_path"
 cd "$CLAUDE_PROJECT_DIR"
 
-# BAD: Unquoted (injection risk)
+# 悪い: 引用符なし（インジェクションリスク）
 echo $file_path
 cd $CLAUDE_PROJECT_DIR
 ```
 
-### Set Appropriate Timeouts
+### 適切なタイムアウトを設定する
 
 ```json
 {
@@ -488,13 +468,13 @@ cd $CLAUDE_PROJECT_DIR
 }
 ```
 
-**Defaults:** Command hooks (60s), Prompt hooks (30s)
+**デフォルト:** コマンドフック（60秒）、プロンプトフック（30秒）
 
-## Performance Considerations
+## パフォーマンスの考慮事項
 
-### Parallel Execution
+### 並行実行
 
-All matching hooks run **in parallel**:
+マッチングした全フックは**並行して**実行される:
 
 ```json
 {
@@ -502,211 +482,187 @@ All matching hooks run **in parallel**:
     {
       "matcher": "Write",
       "hooks": [
-        {"type": "command", "command": "check1.sh"},  // Parallel
-        {"type": "command", "command": "check2.sh"},  // Parallel
-        {"type": "prompt", "prompt": "Validate..."}   // Parallel
+        {"type": "command", "command": "check1.sh"},  // 並行
+        {"type": "command", "command": "check2.sh"},  // 並行
+        {"type": "prompt", "prompt": "検証する..."}   // 並行
       ]
     }
   ]
 }
 ```
 
-**Design implications:**
-- Hooks don't see each other's output
-- Non-deterministic ordering
-- Design for independence
+**設計上の意味:**
+- フックはお互いの出力を見ない
+- 非決定論的な順序
+- 独立性を前提に設計する
 
-### Optimization
+### 最適化
 
-1. Use command hooks for quick deterministic checks
-2. Use prompt hooks for complex reasoning
-3. Cache validation results in temp files
-4. Minimize I/O in hot paths
+1. 高速な決定論的チェックにはコマンドフックを使用
+2. 複雑な推論にはプロンプトフックを使用
+3. 一時ファイルに検証結果をキャッシュ
+4. ホットパスでのI/Oを最小化
 
-## Temporarily Active Hooks
+## 一時的にアクティブなフック
 
-Create hooks that activate conditionally by checking for a flag file or configuration:
+フラグファイルまたは設定を確認することで条件付きでアクティブになるフックを作成する:
 
-**Pattern: Flag file activation**
+**パターン: フラグファイルによるアクティベーション**
 ```bash
 #!/bin/bash
-# Only active when flag file exists
+# フラグファイルが存在する時のみアクティブ
 FLAG_FILE="$CLAUDE_PROJECT_DIR/.enable-strict-validation"
 
 if [ ! -f "$FLAG_FILE" ]; then
-  # Flag not present, skip validation
+  # フラグなし、検証をスキップ
   exit 0
 fi
 
-# Flag present, run validation
+# フラグあり、検証を実行
 input=$(cat)
-# ... validation logic ...
+# ... 検証ロジック ...
 ```
 
-**Pattern: Configuration-based activation**
+**パターン: 設定ベースのアクティベーション**
 ```bash
 #!/bin/bash
-# Check configuration for activation
+# アクティベーションのために設定を確認
 CONFIG_FILE="$CLAUDE_PROJECT_DIR/.claude/plugin-config.json"
 
 if [ -f "$CONFIG_FILE" ]; then
   enabled=$(jq -r '.strictMode // false' "$CONFIG_FILE")
   if [ "$enabled" != "true" ]; then
-    exit 0  # Not enabled, skip
+    exit 0  # 有効でない、スキップ
   fi
 fi
 
-# Enabled, run hook logic
+# 有効、フックロジックを実行
 input=$(cat)
-# ... hook logic ...
+# ... フックロジック ...
 ```
 
-**Use cases:**
-- Enable strict validation only when needed
-- Temporary debugging hooks
-- Project-specific hook behavior
-- Feature flags for hooks
+## フックのライフサイクルと制限
 
-**Best practice:** Document activation mechanism in plugin README so users know how to enable/disable temporary hooks.
+### フックはセッション開始時にロードされる
 
-## Hook Lifecycle and Limitations
+**重要:** フックはClaude Codeセッション開始時にロードされる。フック設定の変更はClaude Codeの再起動が必要。
 
-### Hooks Load at Session Start
+**フックをホットスワップできない:**
+- `hooks/hooks.json`の編集は現在のセッションに影響しない
+- 新しいフックスクリプトは認識されない
+- フックコマンド/プロンプトの変更は更新されない
+- Claude Codeを再起動する必要がある: 終了して`claude`を再実行
 
-**Important:** Hooks are loaded when Claude Code session starts. Changes to hook configuration require restarting Claude Code.
+**フック変更のテスト:**
+1. フック設定またはスクリプトを編集する
+2. Claude Codeセッションを終了する
+3. 再起動: `claude`または`cc`
+4. 新しいフック設定がロードされる
+5. `claude --debug`でフックをテストする
 
-**Cannot hot-swap hooks:**
-- Editing `hooks/hooks.json` won't affect current session
-- Adding new hook scripts won't be recognized
-- Changing hook commands/prompts won't update
-- Must restart Claude Code: exit and run `claude` again
+## フックのデバッグ
 
-**To test hook changes:**
-1. Edit hook configuration or scripts
-2. Exit Claude Code session
-3. Restart: `claude` or `cc`
-4. New hook configuration loads
-5. Test hooks with `claude --debug`
-
-### Hook Validation at Startup
-
-Hooks are validated when Claude Code starts:
-- Invalid JSON in hooks.json causes loading failure
-- Missing scripts cause warnings
-- Syntax errors reported in debug mode
-
-Use `/hooks` command to review loaded hooks in current session.
-
-## Debugging Hooks
-
-### Enable Debug Mode
+### デバッグモードを有効にする
 
 ```bash
 claude --debug
 ```
 
-Look for hook registration, execution logs, input/output JSON, and timing information.
+フック登録、実行ログ、入出力JSON、タイミング情報を確認する。
 
-### Test Hook Scripts
+### フックスクリプトをテストする
 
-Test command hooks directly:
+コマンドフックを直接テストする:
 
 ```bash
 echo '{"tool_name": "Write", "tool_input": {"file_path": "/test"}}' | \
   bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh
 
-echo "Exit code: $?"
+echo "終了コード: $?"
 ```
 
-### Validate JSON Output
+### JSON出力を検証する
 
-Ensure hooks output valid JSON:
+フックが有効なJSONを出力することを確認する:
 
 ```bash
 output=$(./your-hook.sh < test-input.json)
 echo "$output" | jq .
 ```
 
-## Quick Reference
+## クイックリファレンス
 
-### Hook Events Summary
+### フックイベントのまとめ
 
-| Event | When | Use For |
+| イベント | タイミング | 用途 |
 |-------|------|---------|
-| PreToolUse | Before tool | Validation, modification |
-| PostToolUse | After tool | Feedback, logging |
-| UserPromptSubmit | User input | Context, validation |
-| Stop | Agent stopping | Completeness check |
-| SubagentStop | Subagent done | Task validation |
-| SessionStart | Session begins | Context loading |
-| SessionEnd | Session ends | Cleanup, logging |
-| PreCompact | Before compact | Preserve context |
-| Notification | User notified | Logging, reactions |
+| PreToolUse | ツール前 | 検証、変更 |
+| PostToolUse | ツール後 | フィードバック、ログ |
+| UserPromptSubmit | ユーザー入力 | コンテキスト、検証 |
+| Stop | エージェント停止 | 完了チェック |
+| SubagentStop | サブエージェント完了 | タスク検証 |
+| SessionStart | セッション開始 | コンテキストロード |
+| SessionEnd | セッション終了 | クリーンアップ、ログ |
+| PreCompact | 圧縮前 | コンテキスト保存 |
+| Notification | ユーザー通知 | ログ、反応 |
 
-### Best Practices
+### ベストプラクティス
 
-**DO:**
-- ✅ Use prompt-based hooks for complex logic
-- ✅ Use ${CLAUDE_PLUGIN_ROOT} for portability
-- ✅ Validate all inputs in command hooks
-- ✅ Quote all bash variables
-- ✅ Set appropriate timeouts
-- ✅ Return structured JSON output
-- ✅ Test hooks thoroughly
+**すること:**
+- ✅ 複雑なロジックにはプロンプトベースのフックを使用
+- ✅ ポータビリティのために${CLAUDE_PLUGIN_ROOT}を使用
+- ✅ コマンドフックで全入力を検証
+- ✅ 全bash変数を引用符で囲む
+- ✅ 適切なタイムアウトを設定
+- ✅ 構造化されたJSON出力を返す
+- ✅ フックを徹底的にテストする
 
-**DON'T:**
-- ❌ Use hardcoded paths
-- ❌ Trust user input without validation
-- ❌ Create long-running hooks
-- ❌ Rely on hook execution order
-- ❌ Modify global state unpredictably
-- ❌ Log sensitive information
+**しないこと:**
+- ❌ ハードコードされたパスを使用する
+- ❌ ユーザー入力を検証なしで信頼する
+- ❌ 長時間実行のフックを作成する
+- ❌ フックの実行順序に依存する
+- ❌ グローバル状態を予測不可能に変更する
+- ❌ センシティブな情報をログに記録する
 
-## Additional Resources
+## 追加リソース
 
-### Reference Files
+### リファレンスファイル
 
-For detailed patterns and advanced techniques, consult:
+詳細なパターンと高度なテクニックについては以下を参照:
 
-- **`references/patterns.md`** - Common hook patterns (8+ proven patterns)
-- **`references/migration.md`** - Migrating from basic to advanced hooks
-- **`references/advanced.md`** - Advanced use cases and techniques
+- **`references/patterns.md`** - 一般的なフックパターン（8以上の実績あるパターン）
+- **`references/migration.md`** - 基本フックから高度なフックへの移行
+- **`references/advanced.md`** - 高度なユースケースとテクニック
 
-### Example Hook Scripts
+### サンプルフックスクリプト
 
-Working examples in `examples/`:
+`examples/`内の動作例:
 
-- **`validate-write.sh`** - File write validation example
-- **`validate-bash.sh`** - Bash command validation example
-- **`load-context.sh`** - SessionStart context loading example
+- **`validate-write.sh`** - ファイル書き込み検証の例
+- **`validate-bash.sh`** - Bashコマンド検証の例
+- **`load-context.sh`** - SessionStartコンテキストロードの例
 
-### Utility Scripts
+### ユーティリティスクリプト
 
-Development tools in `scripts/`:
+`scripts/`内の開発ツール:
 
-- **`validate-hook-schema.sh`** - Validate hooks.json structure and syntax
-- **`test-hook.sh`** - Test hooks with sample input before deployment
-- **`hook-linter.sh`** - Check hook scripts for common issues and best practices
+- **`validate-hook-schema.sh`** - hooks.jsonの構造と構文を検証
+- **`test-hook.sh`** - デプロイ前にサンプル入力でフックをテスト
+- **`hook-linter.sh`** - フックスクリプトの一般的な問題とベストプラクティスをチェック
 
-### External Resources
+## 実装ワークフロー
 
-- **Official Docs**: https://docs.claude.com/en/docs/claude-code/hooks
-- **Examples**: See security-guidance plugin in marketplace
-- **Testing**: Use `claude --debug` for detailed logs
-- **Validation**: Use `jq` to validate hook JSON output
+プラグインにフックを実装するには:
 
-## Implementation Workflow
+1. フックするイベントを特定する（PreToolUse、Stop、SessionStartなど）
+2. プロンプトベース（柔軟）またはコマンド（決定論的）フックを決定する
+3. `hooks/hooks.json`にフック設定を書く
+4. コマンドフックの場合はフックスクリプトを作成する
+5. 全ファイル参照に${CLAUDE_PLUGIN_ROOT}を使用する
+6. `scripts/validate-hook-schema.sh hooks/hooks.json`で設定を検証する
+7. デプロイ前に`scripts/test-hook.sh`でフックをテストする
+8. `claude --debug`でClaude Codeでテストする
+9. プラグインREADMEにフックを文書化する
 
-To implement hooks in a plugin:
-
-1. Identify events to hook into (PreToolUse, Stop, SessionStart, etc.)
-2. Decide between prompt-based (flexible) or command (deterministic) hooks
-3. Write hook configuration in `hooks/hooks.json`
-4. For command hooks, create hook scripts
-5. Use ${CLAUDE_PLUGIN_ROOT} for all file references
-6. Validate configuration with `scripts/validate-hook-schema.sh hooks/hooks.json`
-7. Test hooks with `scripts/test-hook.sh` before deployment
-8. Test in Claude Code with `claude --debug`
-9. Document hooks in plugin README
-
-Focus on prompt-based hooks for most use cases. Reserve command hooks for performance-critical or deterministic checks.
+ほとんどのユースケースにはプロンプトベースのフックに集中する。パフォーマンスが重要または決定論的なチェックのためにコマンドフックを予約する。

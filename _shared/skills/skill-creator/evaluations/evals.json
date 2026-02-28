@@ -1,0 +1,42 @@
+{
+  "skill_name": "skill-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "GitのコミットメッセージをConventional Commits形式で自動生成するスキルを作ってほしい",
+      "expected_output": "スキルの意図把握 → インタビュー → SKILL.md ドラフト → evals.json → テスト実行 → 評価 の順で進める",
+      "files": [],
+      "assertions": [
+        "スキルの目的・トリガー条件・期待する出力フォーマットをインタビューで確認する",
+        "SKILL.md に適切なフロントマター（name: gerund形式、third-person description）を含める",
+        "evals/evals.json に最低3つのテストケースを作成する",
+        "with-skill と baseline の2つのサブエージェントを同一ターンで起動してテストする",
+        "eval-viewer でユーザーが定性・定量両面のフィードバックを確認できるようにする"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "既存のcode-reviewスキルのdescriptionを最適化したい。トリガー精度が低い気がする",
+      "expected_output": "Description最適化ループを実行し、should-trigger / should-not-trigger の精度を改善した新しいdescriptionを提案する",
+      "files": [],
+      "assertions": [
+        "should-trigger と should-not-trigger が混在した20件のevalクエリを生成する",
+        "eval_review.html テンプレートを使ってユーザーにevalセットを提示する",
+        "scripts/run_loop.py で最適化ループをバックグラウンド実行する",
+        "最終的に改善されたdescriptionをSKILL.mdのフロントマターに反映する"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "さっき一緒に作ったPDF変換ワークフローをスキルにして",
+      "expected_output": "会話履歴から既存のワークフローを抽出し、スキルとして体系化する",
+      "files": [],
+      "assertions": [
+        "会話履歴から使用したツール・ステップ順序・ユーザーが行った修正を抽出する",
+        "再利用可能なパターンを特定してSKILL.mdに落とし込む",
+        "特定の例に過学習せず、汎用的なスキルとして設計する",
+        "ユーザーが確認・承認するためのevalを提案する"
+      ]
+    }
+  ]
+}

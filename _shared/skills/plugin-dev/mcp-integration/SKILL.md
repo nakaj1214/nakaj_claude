@@ -1,28 +1,28 @@
 ---
 name: mcp-integration
-description: This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "set up Model Context Protocol", "connect external service", mentions "${CLAUDE_PLUGIN_ROOT} with MCP", or discusses MCP server types (SSE, stdio, HTTP, WebSocket). Provides comprehensive guidance for integrating Model Context Protocol servers into Claude Code plugins for external tool and service integration.
+description: このスキルは、ユーザーが「MCPサーバーを追加する」「MCPを統合する」「プラグインにMCPを設定する」「.mcp.jsonを使う」「Model Context Protocolを設定する」「外部サービスを接続する」と尋ねる場合、「${CLAUDE_PLUGIN_ROOT}とMCP」について言及する場合、またはMCPサーバータイプ（SSE、stdio、HTTP、WebSocket）について議論する場合に使用すること。外部ツールとサービス統合のためにClaude CodeプラグインにModel Context Protocolサーバーを統合するための包括的なガイダンスを提供する。
 version: 0.1.0
 ---
 
-# MCP Integration for Claude Code Plugins
+# Claude CodeプラグインのMCP統合
 
-## Overview
+## 概要
 
-Model Context Protocol (MCP) enables Claude Code plugins to integrate with external services and APIs by providing structured tool access. Use MCP integration to expose external service capabilities as tools within Claude Code.
+Model Context Protocol（MCP）はClaude Codeプラグインが外部サービスやAPIと統合することを可能にし、構造化されたツールアクセスを提供します。MCP統合を使用して外部サービスの機能をClaude Code内のツールとして公開します。
 
-**Key capabilities:**
-- Connect to external services (databases, APIs, file systems)
-- Provide 10+ related tools from a single service
-- Handle OAuth and complex authentication flows
-- Bundle MCP servers with plugins for automatic setup
+**主要機能:**
+- 外部サービスへの接続（データベース、API、ファイルシステム）
+- 単一サービスから10以上の関連ツールを提供
+- OAuthと複雑な認証フローを処理
+- プラグインとMCPサーバーをバンドルして自動セットアップ
 
-## MCP Server Configuration Methods
+## MCPサーバー設定方法
 
-Plugins can bundle MCP servers in two ways:
+プラグインは2つの方法でMCPサーバーをバンドルできる:
 
-### Method 1: Dedicated .mcp.json (Recommended)
+### 方法1: 専用の.mcp.json（推奨）
 
-Create `.mcp.json` at plugin root:
+プラグインルートに`.mcp.json`を作成する:
 
 ```json
 {
@@ -36,14 +36,14 @@ Create `.mcp.json` at plugin root:
 }
 ```
 
-**Benefits:**
-- Clear separation of concerns
-- Easier to maintain
-- Better for multiple servers
+**メリット:**
+- 関心事の明確な分離
+- 維持が容易
+- 複数のサーバーに適している
 
-### Method 2: Inline in plugin.json
+### 方法2: plugin.jsonにインライン
 
-Add `mcpServers` field to plugin.json:
+plugin.jsonに`mcpServers`フィールドを追加する:
 
 ```json
 {
@@ -58,17 +58,17 @@ Add `mcpServers` field to plugin.json:
 }
 ```
 
-**Benefits:**
-- Single configuration file
-- Good for simple single-server plugins
+**メリット:**
+- 単一の設定ファイル
+- シンプルな単一サーバープラグインに適している
 
-## MCP Server Types
+## MCPサーバータイプ
 
-### stdio (Local Process)
+### stdio（ローカルプロセス）
 
-Execute local MCP servers as child processes. Best for local tools and custom servers.
+ローカルMCPサーバーを子プロセスとして実行する。ローカルツールとカスタムサーバーに最適。
 
-**Configuration:**
+**設定:**
 ```json
 {
   "filesystem": {
@@ -81,22 +81,22 @@ Execute local MCP servers as child processes. Best for local tools and custom se
 }
 ```
 
-**Use cases:**
-- File system access
-- Local database connections
-- Custom MCP servers
-- NPM-packaged MCP servers
+**ユースケース:**
+- ファイルシステムアクセス
+- ローカルデータベース接続
+- カスタムMCPサーバー
+- NPMパッケージのMCPサーバー
 
-**Process management:**
-- Claude Code spawns and manages the process
-- Communicates via stdin/stdout
-- Terminates when Claude Code exits
+**プロセス管理:**
+- Claude CodeがプロセスをSpawnして管理
+- stdin/stdoutで通信
+- Claude Code終了時に終了
 
-### SSE (Server-Sent Events)
+### SSE（Server-Sent Events）
 
-Connect to hosted MCP servers with OAuth support. Best for cloud services.
+OAuthサポートを持つホストされたMCPサーバーに接続する。クラウドサービスに最適。
 
-**Configuration:**
+**設定:**
 ```json
 {
   "asana": {
@@ -106,22 +106,22 @@ Connect to hosted MCP servers with OAuth support. Best for cloud services.
 }
 ```
 
-**Use cases:**
-- Official hosted MCP servers (Asana, GitHub, etc.)
-- Cloud services with MCP endpoints
-- OAuth-based authentication
-- No local installation needed
+**ユースケース:**
+- 公式ホスティングMCPサーバー（Asana、GitHubなど）
+- MCPエンドポイントを持つクラウドサービス
+- OAuthベースの認証
+- ローカルインストール不要
 
-**Authentication:**
-- OAuth flows handled automatically
-- User prompted on first use
-- Tokens managed by Claude Code
+**認証:**
+- OAuthフローが自動的に処理される
+- 初回使用時にユーザーがプロンプト
+- トークンはClaude Codeが管理
 
-### HTTP (REST API)
+### HTTP（REST API）
 
-Connect to RESTful MCP servers with token authentication.
+トークン認証を持つRESTful MCPサーバーに接続する。
 
-**Configuration:**
+**設定:**
 ```json
 {
   "api-service": {
@@ -135,17 +135,17 @@ Connect to RESTful MCP servers with token authentication.
 }
 ```
 
-**Use cases:**
-- REST API-based MCP servers
-- Token-based authentication
-- Custom API backends
-- Stateless interactions
+**ユースケース:**
+- REST APIベースのMCPサーバー
+- トークンベースの認証
+- カスタムAPIバックエンド
+- ステートレスなインタラクション
 
-### WebSocket (Real-time)
+### WebSocket（リアルタイム）
 
-Connect to WebSocket MCP servers for real-time bidirectional communication.
+リアルタイムの双方向通信のためにWebSocket MCPサーバーに接続する。
 
-**Configuration:**
+**設定:**
 ```json
 {
   "realtime-service": {
@@ -158,24 +158,24 @@ Connect to WebSocket MCP servers for real-time bidirectional communication.
 }
 ```
 
-**Use cases:**
-- Real-time data streaming
-- Persistent connections
-- Push notifications from server
-- Low-latency requirements
+**ユースケース:**
+- リアルタイムデータストリーミング
+- 永続接続
+- サーバーからのプッシュ通知
+- 低レイテンシの要件
 
-## Environment Variable Expansion
+## 環境変数の展開
 
-All MCP configurations support environment variable substitution:
+全MCP設定は環境変数の置換をサポートする:
 
-**${CLAUDE_PLUGIN_ROOT}** - Plugin directory (always use for portability):
+**${CLAUDE_PLUGIN_ROOT}** - プラグインディレクトリ（ポータビリティのために常に使用）:
 ```json
 {
   "command": "${CLAUDE_PLUGIN_ROOT}/servers/my-server"
 }
 ```
 
-**User environment variables** - From user's shell:
+**ユーザー環境変数** - ユーザーのシェルから:
 ```json
 {
   "env": {
@@ -185,23 +185,23 @@ All MCP configurations support environment variable substitution:
 }
 ```
 
-**Best practice:** Document all required environment variables in plugin README.
+**ベストプラクティス:** プラグインREADMEに全ての必要な環境変数を文書化する。
 
-## MCP Tool Naming
+## MCPツールの命名
 
-When MCP servers provide tools, they're automatically prefixed:
+MCPサーバーがツールを提供する場合、自動的にプレフィックスが付く:
 
-**Format:** `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`
+**フォーマット:** `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`
 
-**Example:**
-- Plugin: `asana`
-- Server: `asana`
-- Tool: `create_task`
-- **Full name:** `mcp__plugin_asana_asana__asana_create_task`
+**例:**
+- プラグイン: `asana`
+- サーバー: `asana`
+- ツール: `create_task`
+- **完全名:** `mcp__plugin_asana_asana__asana_create_task`
 
-### Using MCP Tools in Commands
+### コマンドでMCPツールを使用する
 
-Pre-allow specific MCP tools in command frontmatter:
+コマンドのフロントマターで特定のMCPツールを事前許可する:
 
 ```markdown
 ---
@@ -212,37 +212,37 @@ allowed-tools: [
 ---
 ```
 
-**Wildcard (use sparingly):**
+**ワイルドカード（慎重に使用）:**
 ```markdown
 ---
 allowed-tools: ["mcp__plugin_asana_asana__*"]
 ---
 ```
 
-**Best practice:** Pre-allow specific tools, not wildcards, for security.
+**ベストプラクティス:** セキュリティのためにワイルドカードではなく特定のツールを事前許可する。
 
-## Lifecycle Management
+## ライフサイクル管理
 
-**Automatic startup:**
-- MCP servers start when plugin enables
-- Connection established before first tool use
-- Restart required for configuration changes
+**自動起動:**
+- プラグインが有効になった時にMCPサーバーが起動
+- 最初のツール使用前に接続が確立
+- 設定変更には再起動が必要
 
-**Lifecycle:**
-1. Plugin loads
-2. MCP configuration parsed
-3. Server process started (stdio) or connection established (SSE/HTTP/WS)
-4. Tools discovered and registered
-5. Tools available as `mcp__plugin_...__...`
+**ライフサイクル:**
+1. プラグインがロードされる
+2. MCP設定が解析される
+3. サーバープロセスが起動（stdio）または接続が確立（SSE/HTTP/WS）
+4. ツールが検出・登録される
+5. ツールが`mcp__plugin_...__...`として利用可能に
 
-**Viewing servers:**
-Use `/mcp` command to see all servers including plugin-provided ones.
+**サーバーの確認:**
+`/mcp`コマンドを使用してプラグイン提供のサーバーを含む全サーバーを確認する。
 
-## Authentication Patterns
+## 認証パターン
 
-### OAuth (SSE/HTTP)
+### OAuth（SSE/HTTP）
 
-OAuth handled automatically by Claude Code:
+OAuthはClaude Codeが自動的に処理する:
 
 ```json
 {
@@ -251,11 +251,11 @@ OAuth handled automatically by Claude Code:
 }
 ```
 
-User authenticates in browser on first use. No additional configuration needed.
+初回使用時にユーザーがブラウザで認証する。追加設定は不要。
 
-### Token-Based (Headers)
+### トークンベース（ヘッダー）
 
-Static or environment variable tokens:
+静的または環境変数のトークン:
 
 ```json
 {
@@ -267,11 +267,11 @@ Static or environment variable tokens:
 }
 ```
 
-Document required environment variables in README.
+READMEに必要な環境変数を文書化する。
 
-### Environment Variables (stdio)
+### 環境変数（stdio）
 
-Pass configuration to MCP server:
+MCPサーバーに設定を渡す:
 
 ```json
 {
@@ -285,44 +285,44 @@ Pass configuration to MCP server:
 }
 ```
 
-## Integration Patterns
+## 統合パターン
 
-### Pattern 1: Simple Tool Wrapper
+### パターン1: シンプルなツールラッパー
 
-Commands use MCP tools with user interaction:
+コマンドがユーザーインタラクションでMCPツールを使用する:
 
 ```markdown
-# Command: create-item.md
+# コマンド: create-item.md
 ---
 allowed-tools: ["mcp__plugin_name_server__create_item"]
 ---
 
-Steps:
-1. Gather item details from user
-2. Use mcp__plugin_name_server__create_item
-3. Confirm creation
+手順:
+1. ユーザーからアイテムの詳細を収集する
+2. mcp__plugin_name_server__create_itemを使用する
+3. 作成を確認する
 ```
 
-**Use for:** Adding validation or preprocessing before MCP calls.
+**用途:** MCPを呼び出す前の検証や前処理を追加する場合。
 
-### Pattern 2: Autonomous Agent
+### パターン2: 自律エージェント
 
-Agents use MCP tools autonomously:
+エージェントがMCPツールを自律的に使用する:
 
 ```markdown
-# Agent: data-analyzer.md
+# エージェント: data-analyzer.md
 
-Analysis Process:
-1. Query data via mcp__plugin_db_server__query
-2. Process and analyze results
-3. Generate insights report
+分析プロセス:
+1. mcp__plugin_db_server__queryでデータをクエリ
+2. 結果を処理・分析
+3. 洞察レポートを生成
 ```
 
-**Use for:** Multi-step MCP workflows without user interaction.
+**用途:** ユーザーインタラクションなしの複数ステップMCPワークフロー。
 
-### Pattern 3: Multi-Server Plugin
+### パターン3: マルチサーバープラグイン
 
-Integrate multiple MCP servers:
+複数のMCPサーバーを統合する:
 
 ```json
 {
@@ -337,34 +337,34 @@ Integrate multiple MCP servers:
 }
 ```
 
-**Use for:** Workflows spanning multiple services.
+**用途:** 複数のサービスにまたがるワークフロー。
 
-## Security Best Practices
+## セキュリティのベストプラクティス
 
-### Use HTTPS/WSS
+### HTTPS/WSSを使用する
 
-Always use secure connections:
+常にセキュアな接続を使用する:
 
 ```json
 ✅ "url": "https://mcp.example.com/sse"
 ❌ "url": "http://mcp.example.com/sse"
 ```
 
-### Token Management
+### トークン管理
 
-**DO:**
-- ✅ Use environment variables for tokens
-- ✅ Document required env vars in README
-- ✅ Let OAuth flow handle authentication
+**すること:**
+- ✅ トークンに環境変数を使用
+- ✅ READMEに必要な環境変数を文書化
+- ✅ OAuthフローに認証を任せる
 
-**DON'T:**
-- ❌ Hardcode tokens in configuration
-- ❌ Commit tokens to git
-- ❌ Share tokens in documentation
+**しないこと:**
+- ❌ 設定にトークンをハードコード
+- ❌ gitにトークンをコミット
+- ❌ ドキュメントでトークンを共有
 
-### Permission Scoping
+### 権限のスコープ
 
-Pre-allow only necessary MCP tools:
+必要なMCPツールのみを事前許可する:
 
 ```markdown
 ✅ allowed-tools: [
@@ -375,180 +375,93 @@ Pre-allow only necessary MCP tools:
 ❌ allowed-tools: ["mcp__plugin_api_server__*"]
 ```
 
-## Error Handling
+## エラーハンドリング
 
-### Connection Failures
+### 接続の失敗
 
-Handle MCP server unavailability:
-- Provide fallback behavior in commands
-- Inform user of connection issues
-- Check server URL and configuration
+MCPサーバーが利用できない場合の処理:
+- コマンドにフォールバック動作を提供
+- 接続の問題をユーザーに通知
+- サーバーURLと設定を確認
 
-### Tool Call Errors
+### ツール呼び出しエラー
 
-Handle failed MCP operations:
-- Validate inputs before calling MCP tools
-- Provide clear error messages
-- Check rate limiting and quotas
+失敗したMCP操作の処理:
+- MCPツールを呼び出す前に入力を検証
+- 明確なエラーメッセージを提供
+- レート制限とクォータを確認
 
-### Configuration Errors
+## テスト
 
-Validate MCP configuration:
-- Test server connectivity during development
-- Validate JSON syntax
-- Check required environment variables
+### ローカルテスト
 
-## Performance Considerations
+1. `.mcp.json`にMCPサーバーを設定する
+2. プラグインをローカルにインストール（`.claude-plugin/`）
+3. `/mcp`を実行してサーバーが表示されることを確認
+4. コマンドでツール呼び出しをテスト
+5. 接続の問題は`claude --debug`ログを確認
 
-### Lazy Loading
+### バリデーションチェックリスト
 
-MCP servers connect on-demand:
-- Not all servers connect at startup
-- First tool use triggers connection
-- Connection pooling managed automatically
+- [ ] MCP設定が有効なJSON
+- [ ] サーバーURLが正しくアクセス可能
+- [ ] 必要な環境変数が文書化されている
+- [ ] `/mcp`出力にツールが表示される
+- [ ] 認証が機能している（OAuthまたはトークン）
+- [ ] コマンドからのツール呼び出しが成功する
+- [ ] エラーケースが丁寧に処理される
 
-### Batching
+## クイックリファレンス
 
-Batch similar requests when possible:
+### MCPサーバータイプ
 
-```
-# Good: Single query with filters
-tasks = search_tasks(project="X", assignee="me", limit=50)
-
-# Avoid: Many individual queries
-for id in task_ids:
-    task = get_task(id)
-```
-
-## Testing MCP Integration
-
-### Local Testing
-
-1. Configure MCP server in `.mcp.json`
-2. Install plugin locally (`.claude-plugin/`)
-3. Run `/mcp` to verify server appears
-4. Test tool calls in commands
-5. Check `claude --debug` logs for connection issues
-
-### Validation Checklist
-
-- [ ] MCP configuration is valid JSON
-- [ ] Server URL is correct and accessible
-- [ ] Required environment variables documented
-- [ ] Tools appear in `/mcp` output
-- [ ] Authentication works (OAuth or tokens)
-- [ ] Tool calls succeed from commands
-- [ ] Error cases handled gracefully
-
-## Debugging
-
-### Enable Debug Logging
-
-```bash
-claude --debug
-```
-
-Look for:
-- MCP server connection attempts
-- Tool discovery logs
-- Authentication flows
-- Tool call errors
-
-### Common Issues
-
-**Server not connecting:**
-- Check URL is correct
-- Verify server is running (stdio)
-- Check network connectivity
-- Review authentication configuration
-
-**Tools not available:**
-- Verify server connected successfully
-- Check tool names match exactly
-- Run `/mcp` to see available tools
-- Restart Claude Code after config changes
-
-**Authentication failing:**
-- Clear cached auth tokens
-- Re-authenticate
-- Check token scopes and permissions
-- Verify environment variables set
-
-## Quick Reference
-
-### MCP Server Types
-
-| Type | Transport | Best For | Auth |
+| タイプ | トランスポート | 最適な用途 | 認証 |
 |------|-----------|----------|------|
-| stdio | Process | Local tools, custom servers | Env vars |
-| SSE | HTTP | Hosted services, cloud APIs | OAuth |
-| HTTP | REST | API backends, token auth | Tokens |
-| ws | WebSocket | Real-time, streaming | Tokens |
+| stdio | プロセス | ローカルツール、カスタムサーバー | 環境変数 |
+| SSE | HTTP | ホスティングサービス、クラウドAPI | OAuth |
+| HTTP | REST | APIバックエンド、トークン認証 | トークン |
+| ws | WebSocket | リアルタイム、ストリーミング | トークン |
 
-### Configuration Checklist
+### ベストプラクティス
 
-- [ ] Server type specified (stdio/SSE/HTTP/ws)
-- [ ] Type-specific fields complete (command or url)
-- [ ] Authentication configured
-- [ ] Environment variables documented
-- [ ] HTTPS/WSS used (not HTTP/WS)
-- [ ] ${CLAUDE_PLUGIN_ROOT} used for paths
+**すること:**
+- ✅ ポータブルなパスに${CLAUDE_PLUGIN_ROOT}を使用
+- ✅ 必要な環境変数を文書化
+- ✅ セキュアな接続（HTTPS/WSS）を使用
+- ✅ コマンドで特定のMCPツールを事前許可
+- ✅ 公開前にMCP統合をテスト
+- ✅ 接続とツールのエラーを丁寧に処理
 
-### Best Practices
+**しないこと:**
+- ❌ 絶対パスをハードコード
+- ❌ 認証情報をgitにコミット
+- ❌ HTTPの代わりにHTTPSを使用しない
+- ❌ ワイルドカードで全ツールを事前許可
+- ❌ エラーハンドリングをスキップ
+- ❌ セットアップの文書化を忘れる
 
-**DO:**
-- ✅ Use ${CLAUDE_PLUGIN_ROOT} for portable paths
-- ✅ Document required environment variables
-- ✅ Use secure connections (HTTPS/WSS)
-- ✅ Pre-allow specific MCP tools in commands
-- ✅ Test MCP integration before publishing
-- ✅ Handle connection and tool errors gracefully
+## 追加リソース
 
-**DON'T:**
-- ❌ Hardcode absolute paths
-- ❌ Commit credentials to git
-- ❌ Use HTTP instead of HTTPS
-- ❌ Pre-allow all tools with wildcards
-- ❌ Skip error handling
-- ❌ Forget to document setup
+### リファレンスファイル
 
-## Additional Resources
+詳細については以下を参照:
 
-### Reference Files
+- **`references/server-types.md`** - 各サーバータイプの詳細解説
+- **`references/authentication.md`** - 認証パターンとOAuth
+- **`references/tool-usage.md`** - コマンドとエージェントでのMCPツールの使用
 
-For detailed information, consult:
+## 実装ワークフロー
 
-- **`references/server-types.md`** - Deep dive on each server type
-- **`references/authentication.md`** - Authentication patterns and OAuth
-- **`references/tool-usage.md`** - Using MCP tools in commands and agents
+プラグインにMCP統合を追加するには:
 
-### Example Configurations
+1. MCPサーバータイプを選択する（stdio、SSE、HTTP、ws）
+2. プラグインルートに設定を含む`.mcp.json`を作成する
+3. 全ファイル参照に${CLAUDE_PLUGIN_ROOT}を使用する
+4. READMEに必要な環境変数を文書化する
+5. `/mcp`コマンドでローカルテストする
+6. 関連するコマンドでMCPツールを事前許可する
+7. 認証を処理する（OAuthまたはトークン）
+8. エラーケースをテストする（接続失敗、認証エラー）
+9. プラグインREADMEにMCP統合を文書化する
 
-Working examples in `examples/`:
-
-- **`stdio-server.json`** - Local stdio MCP server
-- **`sse-server.json`** - Hosted SSE server with OAuth
-- **`http-server.json`** - REST API with token auth
-
-### External Resources
-
-- **Official MCP Docs**: https://modelcontextprotocol.io/
-- **Claude Code MCP Docs**: https://docs.claude.com/en/docs/claude-code/mcp
-- **MCP SDK**: @modelcontextprotocol/sdk
-- **Testing**: Use `claude --debug` and `/mcp` command
-
-## Implementation Workflow
-
-To add MCP integration to a plugin:
-
-1. Choose MCP server type (stdio, SSE, HTTP, ws)
-2. Create `.mcp.json` at plugin root with configuration
-3. Use ${CLAUDE_PLUGIN_ROOT} for all file references
-4. Document required environment variables in README
-5. Test locally with `/mcp` command
-6. Pre-allow MCP tools in relevant commands
-7. Handle authentication (OAuth or tokens)
-8. Test error cases (connection failures, auth errors)
-9. Document MCP integration in plugin README
-
-Focus on stdio for custom/local servers, SSE for hosted services with OAuth.
+カスタム/ローカルサーバーにはstdio、OAuthを持つホスティングサービスにはSSEを使用する。

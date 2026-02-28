@@ -1,25 +1,28 @@
-<!-- docs\unique-files-inventory.md について、ややこしいので移植したファイルと削除したファイルの記述を消して -->
+_shared\agent_usage_guide.md
+_shared\CHANGELOG.md
+_shared\context-management.md
+_shared\custom_instructions.md
+_shared\INSTALLATION.md
+_shared\prompt_templates.md
+_shared\quick_start.md
+_shared\STRUCTURE.md
 
-<!-- blade_management\.claude\archive と VBA_extension\.claude\skills-unused について docs\unique-files-inventory.md に記載 -->
-
-_shared/ は基本的にlaravelやpythonが動作するdockerプロジェクトで使用される想定です
-skills-best-practice/ ってあくまでサンプルですか？具体的に効果のある設定ファイルではないなら削除
+これらのファイルの役割と改善点（ファイル配置場所や同じようなファイルとの統合など）などあれば教えてください
 
 
-<!-- 実装に関してはcreate-planを使用するので
-VBA_extension\.claude\skills\agents は不要じゃないですか？ -->
+<!-- https://x.com/yugen_matuni/status/2026674574059008478
+正直Skills.mdだけでSkills語ってるのはあかんと思ってる。
+確度を求めるならassetやreference、evaluation必須級だし、個人を超えるならSDKやClaude -pも必須。
 
-<!-- 削除候補についての詳細な挙動を教えて、それで判断します -->
-<!-- ## VBA_extension/.claude/skills/agents
-移植予定として確定、ただしsuperpowersのリポジトリから_shared/に活用できるものを決めてから実行する -->
+https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 
-移植状況をdocs\unique-files-inventory.md を更新
-
-<!-- 
-移行作業が終わったら以下を確認
-https://x.com/yugen_matuni/status/2026674574059008478
-https://x.com/commte/status/2001851242683994177
 https://zenn.dev/kei31ai/articles/20260221-skill-context-optimization
- -->
+
+この3つのURLの内容を参考にして_sharedを改善して -->
+
+
+<!-- https://x.com/commte/status/2001851242683994177
+
+<!-- 移植、削除状況をdocs\unique-files-inventory.md を更新 -->
 
 

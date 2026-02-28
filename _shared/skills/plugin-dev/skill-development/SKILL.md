@@ -1,165 +1,134 @@
 ---
 name: skill-development
-description: This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill description", "organize skill content", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.
+description: このスキルは、ユーザーが「スキルを作成する」「プラグインにスキルを追加する」「新しいスキルを書く」「スキルのdescriptionを改善する」「スキルコンテンツを整理する」と尋ねる場合、またはClaude Codeプラグインのスキル構造、プログレッシブディスクロージャー、スキル開発のベストプラクティスに関するガイダンスが必要な場合に使用すること。
 version: 0.1.0
 ---
 
-# Skill Development for Claude Code Plugins
+# Claude Codeプラグインのスキル開発
 
-This skill provides guidance for creating effective skills for Claude Code plugins.
+このスキルはClaude Codeプラグインのための効果的なスキルを作成するためのガイダンスを提供する。
 
-## About Skills
+## スキルについて
 
-Skills are modular, self-contained packages that extend Claude's capabilities by providing
-specialized knowledge, workflows, and tools. Think of them as "onboarding guides" for specific
-domains or tasks—they transform Claude from a general-purpose agent into a specialized agent
-equipped with procedural knowledge that no model can fully possess.
+スキルは特殊な知識、ワークフロー、ツールを提供することでClaudeの能力を拡張するモジュール式で自己完結型のパッケージです。スキルはClaudeを汎用エージェントから、どのモデルも完全には持てない手続き的知識を持つ特殊エージェントに変換する「オンボーディングガイド」と考えてください。
 
-### What Skills Provide
+### スキルが提供するもの
 
-1. Specialized workflows - Multi-step procedures for specific domains
-2. Tool integrations - Instructions for working with specific file formats or APIs
-3. Domain expertise - Company-specific knowledge, schemas, business logic
-4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks
+1. 特殊ワークフロー — 特定のドメインのための複数ステップの手順
+2. ツール統合 — 特定のファイル形式やAPIを扱うための指示
+3. ドメイン専門知識 — 企業固有の知識、スキーマ、ビジネスロジック
+4. バンドルリソース — 複雑で反復的なタスクのためのスクリプト、リファレンス、アセット
 
-### Anatomy of a Skill
+### スキルの構造
 
-Every skill consists of a required SKILL.md file and optional bundled resources:
+各スキルは必須のSKILL.mdファイルとオプションのバンドルリソースで構成される:
 
 ```
 skill-name/
-├── SKILL.md (required)
-│   ├── YAML frontmatter metadata (required)
-│   │   ├── name: (required)
-│   │   └── description: (required)
-│   └── Markdown instructions (required)
-└── Bundled Resources (optional)
-    ├── scripts/          - Executable code (Python/Bash/etc.)
-    ├── references/       - Documentation intended to be loaded into context as needed
-    └── assets/           - Files used in output (templates, icons, fonts, etc.)
+├── SKILL.md (必須)
+│   ├── YAMLフロントマターメタデータ（必須）
+│   │   ├── name: (必須)
+│   │   └── description: (必須)
+│   └── Markdownの指示（必須）
+└── バンドルリソース（オプション）
+    ├── scripts/          - 実行可能コード（Python/Bashなど）
+    ├── references/       - 必要に応じてコンテキストに読み込まれるドキュメント
+    └── assets/           - 出力で使用するファイル（テンプレート、アイコン、フォントなど）
 ```
 
-#### SKILL.md (required)
+#### SKILL.md（必須）
 
-**Metadata Quality:** The `name` and `description` in YAML frontmatter determine when Claude will use the skill. Be specific about what the skill does and when to use it. Use the third-person (e.g. "This skill should be used when..." instead of "Use this skill when...").
+**メタデータの品質:** YAMLフロントマターの`name`と`description`は、Claudeがスキルをいつ使用するかを決定する。スキルが何をするか、いつ使用するかについて具体的に書く。3人称を使用する（例: 「Use this skill when...」の代わりに「This skill should be used when...」）。
 
-#### Bundled Resources (optional)
+#### バンドルリソース（オプション）
 
-##### Scripts (`scripts/`)
+##### スクリプト（`scripts/`）
 
-Executable code (Python/Bash/etc.) for tasks that require deterministic reliability or are repeatedly rewritten.
+決定論的な信頼性が必要なタスクや繰り返し書き直されるタスクのための実行可能コード（Python/Bashなど）。
 
-- **When to include**: When the same code is being rewritten repeatedly or deterministic reliability is needed
-- **Example**: `scripts/rotate_pdf.py` for PDF rotation tasks
-- **Benefits**: Token efficient, deterministic, may be executed without loading into context
-- **Note**: Scripts may still need to be read by Claude for patching or environment-specific adjustments
+- **含める時**: 同じコードが繰り返し書き直されている場合や決定論的な信頼性が必要な場合
+- **例**: PDFローテーションタスクの`scripts/rotate_pdf.py`
+- **メリット**: トークン効率的、決定論的、コンテキストに読み込まずに実行可能
 
-##### References (`references/`)
+##### リファレンス（`references/`）
 
-Documentation and reference material intended to be loaded as needed into context to inform Claude's process and thinking.
+ClaudeのプロセスとThinkingを情報提供するために必要に応じてコンテキストにロードするドキュメントとリファレンス資料。
 
-- **When to include**: For documentation that Claude should reference while working
-- **Examples**: `references/finance.md` for financial schemas, `references/mnda.md` for company NDA template, `references/policies.md` for company policies, `references/api_docs.md` for API specifications
-- **Use cases**: Database schemas, API documentation, domain knowledge, company policies, detailed workflow guides
-- **Benefits**: Keeps SKILL.md lean, loaded only when Claude determines it's needed
-- **Best practice**: If files are large (>10k words), include grep search patterns in SKILL.md
-- **Avoid duplication**: Information should live in either SKILL.md or references files, not both. Prefer references files for detailed information unless it's truly core to the skill—this keeps SKILL.md lean while making information discoverable without hogging the context window. Keep only essential procedural instructions and workflow guidance in SKILL.md; move detailed reference material, schemas, and examples to references files.
+- **含める時**: Claudeが作業中に参照すべきドキュメントがある場合
+- **例**: 財務スキーマの`references/finance.md`、会社のNDAテンプレートの`references/mnda.md`
+- **ベストプラクティス**: SKILL.mdをリーンに保つため詳細情報はreferecesファイルに置く
 
-##### Assets (`assets/`)
+##### アセット（`assets/`）
 
-Files not intended to be loaded into context, but rather used within the output Claude produces.
+コンテキストにロードすることを意図せず、Claudeが生成する出力内で使用するファイル。
 
-- **When to include**: When the skill needs files that will be used in the final output
-- **Examples**: `assets/logo.png` for brand assets, `assets/slides.pptx` for PowerPoint templates, `assets/frontend-template/` for HTML/React boilerplate, `assets/font.ttf` for typography
-- **Use cases**: Templates, images, icons, boilerplate code, fonts, sample documents that get copied or modified
-- **Benefits**: Separates output resources from documentation, enables Claude to use files without loading them into context
+- **含める時**: スキルが最終出力で使用するファイルが必要な場合
+- **例**: ブランドアセットの`assets/logo.png`、テンプレートの`assets/slides.pptx`
 
-### Progressive Disclosure Design Principle
+### プログレッシブディスクロージャーの設計原則
 
-Skills use a three-level loading system to manage context efficiently:
+スキルはコンテキストを効率的に管理するための3レベルのローディングシステムを使用する:
 
-1. **Metadata (name + description)** - Always in context (~100 words)
-2. **SKILL.md body** - When skill triggers (<5k words)
-3. **Bundled resources** - As needed by Claude (Unlimited*)
+1. **メタデータ（name + description）** - 常にコンテキストに（約100ワード）
+2. **SKILL.md本文** - スキルがトリガーされた時（5,000ワード以下）
+3. **バンドルリソース** - Claudeが必要に応じて（無制限*）
 
-*Unlimited because scripts can be executed without reading into context window.
+*スクリプトはコンテキストウィンドウに読み込まずに実行できるため無制限。
 
-## Skill Creation Process
+## スキル作成プロセス
 
-To create a skill, follow the "Skill Creation Process" in order, skipping steps only if there is a clear reason why they are not applicable.
+スキルを作成するには、「スキル作成プロセス」を順番に従い、適用されない明確な理由がある場合のみステップをスキップする。
 
-### Step 1: Understanding the Skill with Concrete Examples
+### ステップ1: 具体的な例でスキルを理解する
 
-Skip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.
+スキルの使用パターンがすでに明確に理解されている場合のみこのステップをスキップする。
 
-To create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.
+効果的なスキルを作成するには、スキルがどのように使用されるかの具体的な例を明確に理解する。例えば、image-editorスキルを構築する際の関連質問:
 
-For example, when building an image-editor skill, relevant questions include:
+- 「image-editorスキルはどんな機能をサポートすべきですか？編集、ローテーション、他に何か？」
+- 「このスキルがどのように使われるかの例を教えてもらえますか？」
+- 「'この画像の赤目を除去して'や'この画像をローテートして'のような操作が考えられます。他にはどんな使い方が考えられますか？」
 
-- "What functionality should the image-editor skill support? Editing, rotating, anything else?"
-- "Can you give some examples of how this skill would be used?"
-- "I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?"
-- "What would a user say that should trigger this skill?"
+### ステップ2: 再利用可能なスキルコンテンツの計画
 
-To avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.
+具体的な例を効果的なスキルに変換するには、各例を分析する:
 
-Conclude this step when there is a clear sense of the functionality the skill should support.
+1. その例をゼロから実行する方法を考える
+2. これらのワークフローを繰り返し実行する際に役立つスクリプト、リファレンス、アセットを特定する
 
-### Step 2: Planning the Reusable Skill Contents
+**例: `pdf-editor`スキル**
+- PDFのローテーションは毎回同じコードを書き直す必要がある
+- スキルに保存する`scripts/rotate_pdf.py`スクリプトが役立つ
 
-To turn concrete examples into an effective skill, analyze each example by:
+**例: `big-query`スキル**
+- BigQueryのクエリは毎回テーブルスキーマと関係を再発見する必要がある
+- スキルに保存するテーブルスキーマを文書化した`references/schema.md`が役立つ
 
-1. Considering how to execute on the example from scratch
-2. Identifying what scripts, references, and assets would be helpful when executing these workflows repeatedly
+**Claude Codeプラグインの場合（hooksスキル）:**
+1. 開発者は繰り返しhooks.jsonを検証しフックスクリプトをテストする必要がある
+2. `scripts/validate-hook-schema.sh`と`scripts/test-hook.sh`ユーティリティが役立つ
+3. SKILL.mdを肥大化させないための詳細なフックパターンの`references/patterns.md`が役立つ
 
-Example: When building a `pdf-editor` skill to handle queries like "Help me rotate this PDF," the analysis shows:
+### ステップ3: スキル構造の作成
 
-1. Rotating a PDF requires re-writing the same code each time
-2. A `scripts/rotate_pdf.py` script would be helpful to store in the skill
-
-Example: When designing a `frontend-webapp-builder` skill for queries like "Build me a todo app" or "Build me a dashboard to track my steps," the analysis shows:
-
-1. Writing a frontend webapp requires the same boilerplate HTML/React each time
-2. An `assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill
-
-Example: When building a `big-query` skill to handle queries like "How many users have logged in today?" the analysis shows:
-
-1. Querying BigQuery requires re-discovering the table schemas and relationships each time
-2. A `references/schema.md` file documenting the table schemas would be helpful to store in the skill
-
-**For Claude Code plugins:** When building a hooks skill, the analysis shows:
-1. Developers repeatedly need to validate hooks.json and test hook scripts
-2. `scripts/validate-hook-schema.sh` and `scripts/test-hook.sh` utilities would be helpful
-3. `references/patterns.md` for detailed hook patterns to avoid bloating SKILL.md
-
-To establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.
-
-### Step 3: Create Skill Structure
-
-For Claude Code plugins, create the skill directory structure:
+Claude Codeプラグインのために、スキルディレクトリ構造を作成する:
 
 ```bash
 mkdir -p plugin-name/skills/skill-name/{references,examples,scripts}
 touch plugin-name/skills/skill-name/SKILL.md
 ```
 
-**Note:** Unlike the generic skill-creator which uses `init_skill.py`, plugin skills are created directly in the plugin's `skills/` directory with a simpler manual structure.
+**注意:** 汎用的なskill-creatorとは異なり、プラグインスキルはプラグインの`skills/`ディレクトリに直接作成する。
 
-### Step 4: Edit the Skill
+### ステップ4: スキルを編集する
 
-When editing the (newly-created or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.
+SKILL.mdを編集する際、スキルは別のClaudeインスタンスが使用するために作成されていることを覚えておく。Claudeにとって有益で明白でない情報を含めることに集中する。
 
-#### Start with Reusable Skill Contents
+#### SKILL.mdの更新
 
-To begin implementation, start with the reusable resources identified above: `scripts/`, `references/`, and `assets/` files. Note that this step may require user input. For example, when implementing a `brand-guidelines` skill, the user may need to provide brand assets or templates to store in `assets/`, or documentation to store in `references/`.
+**文章スタイル:** 2人称ではなく**命令形/不定詞形**（動詞始まりの指示）を使用してスキル全体を書く。客観的で指示的な言葉を使う（「あなたはXをすべき」の代わりに「XをするにはYをする」）。
 
-Also, delete any example files and directories not needed for the skill. Create only the directories you actually need (references/, examples/, scripts/).
-
-#### Update SKILL.md
-
-**Writing Style:** Write the entire skill using **imperative/infinitive form** (verb-first instructions), not second person. Use objective, instructional language (e.g., "To accomplish X, do Y" rather than "You should do X" or "If you need to do X"). This maintains consistency and clarity for AI consumption.
-
-**Description (Frontmatter):** Use third-person format with specific trigger phrases:
+**Description（フロントマター）:** 特定のトリガーフレーズを含む3人称フォーマットを使用:
 
 ```yaml
 ---
@@ -169,88 +138,64 @@ version: 0.1.0
 ---
 ```
 
-**Good description examples:**
+**良いdescriptionの例:**
 ```yaml
 description: This skill should be used when the user asks to "create a hook", "add a PreToolUse hook", "validate tool use", "implement prompt-based hooks", or mentions hook events (PreToolUse, PostToolUse, Stop).
 ```
 
-**Bad description examples:**
+**悪いdescriptionの例:**
 ```yaml
-description: Use this skill when working with hooks.  # Wrong person, vague
-description: Load when user needs hook help.  # Not third person
-description: Provides hook guidance.  # No trigger phrases
+description: Use this skill when working with hooks.  # 間違った人称、曖昧
+description: Load when user needs hook help.  # 3人称でない
+description: Provides hook guidance.  # トリガーフレーズなし
 ```
 
-To complete SKILL.md body, answer the following questions:
+SKILL.md本文を完成させるために以下の質問に答える:
 
-1. What is the purpose of the skill, in a few sentences?
-2. When should the skill be used? (Include this in frontmatter description with specific triggers)
-3. In practice, how should Claude use the skill? All reusable skill contents developed above should be referenced so that Claude knows how to use them.
+1. スキルの目的は何か（数文で）？
+2. スキルはいつ使用すべきか？（特定のトリガーを含むフロントマターのdescriptionに含める）
+3. 実際には、Claudeはスキルをどのように使用すべきか？
 
-**Keep SKILL.md lean:** Target 1,500-2,000 words for the body. Move detailed content to references/:
-- Detailed patterns → `references/patterns.md`
-- Advanced techniques → `references/advanced.md`
-- Migration guides → `references/migration.md`
-- API references → `references/api-reference.md`
+**SKILL.mdをリーンに保つ:** 本文は1,500〜2,000ワードを目標にする。詳細コンテンツはreferences/に移動:
+- 詳細なパターン → `references/patterns.md`
+- 高度なテクニック → `references/advanced.md`
+- 移行ガイド → `references/migration.md`
 
-**Reference resources in SKILL.md:**
-```markdown
-## Additional Resources
+### ステップ5: 検証とテスト
 
-### Reference Files
+**プラグインスキルの検証:**
 
-For detailed patterns and techniques, consult:
-- **`references/patterns.md`** - Common patterns
-- **`references/advanced.md`** - Advanced use cases
+1. **構造を確認**: `plugin-name/skills/skill-name/`にスキルディレクトリがある
+2. **SKILL.mdを検証**: nameとdescriptionを持つフロントマターがある
+3. **トリガーフレーズを確認**: descriptionにユーザーが言いそうな具体的なクエリが含まれている
+4. **文章スタイルを確認**: 本文が命令形/不定詞形を使用、2人称でない
+5. **プログレッシブディスクロージャーをテスト**: SKILL.mdがリーン（1,500〜2,000ワード）、詳細コンテンツがreferences/にある
+6. **リファレンスを確認**: 参照されたファイルが全て存在する
+7. **例を検証**: 例が完全で正しい
+8. **スクリプトをテスト**: スクリプトが実行可能で正しく機能する
 
-### Example Files
+### ステップ6: 反復する
 
-Working examples in `examples/`:
-- **`example-script.sh`** - Working example
-```
+スキルをテストした後、ユーザーが改善を要求することがある。
 
-### Step 5: Validate and Test
+**反復ワークフロー:**
+1. 実際のタスクでスキルを使用する
+2. 苦労や非効率に気づく
+3. SKILL.mdやバンドルリソースをどのように更新すべきか特定する
+4. 変更を実施して再度テストする
 
-**For plugin skills, validation is different from generic skills:**
+**一般的な改善:**
+- descriptionのトリガーフレーズを強化する
+- SKILL.mdの長いセクションをreferences/に移動する
+- 欠落している例やスクリプトを追加する
+- 曖昧な指示を明確にする
+- エッジケース処理を追加する
 
-1. **Check structure**: Skill directory in `plugin-name/skills/skill-name/`
-2. **Validate SKILL.md**: Has frontmatter with name and description
-3. **Check trigger phrases**: Description includes specific user queries
-4. **Verify writing style**: Body uses imperative/infinitive form, not second person
-5. **Test progressive disclosure**: SKILL.md is lean (~1,500-2,000 words), detailed content in references/
-6. **Check references**: All referenced files exist
-7. **Validate examples**: Examples are complete and correct
-8. **Test scripts**: Scripts are executable and work correctly
+## プラグイン固有の考慮事項
 
-**Use the skill-reviewer agent:**
-```
-Ask: "Review my skill and check if it follows best practices"
-```
+### プラグイン内のスキルの場所
 
-The skill-reviewer agent will check description quality, content organization, and progressive disclosure.
-
-### Step 6: Iterate
-
-After testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.
-
-**Iteration workflow:**
-1. Use the skill on real tasks
-2. Notice struggles or inefficiencies
-3. Identify how SKILL.md or bundled resources should be updated
-4. Implement changes and test again
-
-**Common improvements:**
-- Strengthen trigger phrases in description
-- Move long sections from SKILL.md to references/
-- Add missing examples or scripts
-- Clarify ambiguous instructions
-- Add edge case handling
-
-## Plugin-Specific Considerations
-
-### Skill Location in Plugins
-
-Plugin skills live in the plugin's `skills/` directory:
+プラグインスキルはプラグインの`skills/`ディレクトリに置く:
 
 ```
 my-plugin/
@@ -266,290 +211,177 @@ my-plugin/
         └── scripts/
 ```
 
-### Auto-Discovery
+### 自動検出
 
-Claude Code automatically discovers skills:
-- Scans `skills/` directory
-- Finds subdirectories containing `SKILL.md`
-- Loads skill metadata (name + description) always
-- Loads SKILL.md body when skill triggers
-- Loads references/examples when needed
+Claude Codeはスキルを自動的に検出する:
+- `skills/`ディレクトリをスキャン
+- `SKILL.md`を含むサブディレクトリを検出
+- スキルメタデータ（name + description）を常にロード
+- スキルがトリガーされた時にSKILL.md本文をロード
+- 必要に応じてreferences/examplesをロード
 
-### No Packaging Needed
+## プログレッシブディスクロージャーの実践
 
-Plugin skills are distributed as part of the plugin, not as separate ZIP files. Users get skills when they install the plugin.
+### SKILL.mdに含めるもの
 
-### Testing in Plugins
+**含める（スキルがトリガーされた時に常にロード）:**
+- コアコンセプトと概要
+- 必須の手順とワークフロー
+- クイックリファレンステーブル
+- references/examples/scriptsへのポインター
+- 最も一般的なユースケース
 
-Test skills by installing plugin locally:
+**3,000ワード以下、理想は1,500〜2,000ワード**
 
-```bash
-# Test with --plugin-dir
-cc --plugin-dir /path/to/plugin
+### references/に含めるもの
 
-# Ask questions that should trigger the skill
-# Verify skill loads correctly
+**references/に移動（必要に応じてロード）:**
+- 詳細なパターンと高度なテクニック
+- 包括的なAPIドキュメント
+- 移行ガイド
+- エッジケースとトラブルシューティング
+- 広範な例とウォークスルー
+
+### examples/に含めるもの
+
+**動作するコード例:**
+- 完全で実行可能なスクリプト
+- 設定ファイル
+- テンプレートファイル
+- 実際の使用例
+
+### scripts/に含めるもの
+
+**ユーティリティスクリプト:**
+- 検証ツール
+- テストヘルパー
+- パースユーティリティ
+- 自動化スクリプト
+
+## 文章スタイルの要件
+
+### 命令形/不定詞形
+
+2人称ではなく動詞始まりの指示を書く:
+
+**正しい（命令形）:**
+```
+フックを作成するには、イベントタイプを定義する。
+認証でMCPサーバーを設定する。
+使用前に設定を検証する。
 ```
 
-## Examples from Plugin-Dev
-
-Study the skills in this plugin as examples of best practices:
-
-**hook-development skill:**
-- Excellent trigger phrases: "create a hook", "add a PreToolUse hook", etc.
-- Lean SKILL.md (1,651 words)
-- 3 references/ files for detailed content
-- 3 examples/ of working hooks
-- 3 scripts/ utilities
-
-**agent-development skill:**
-- Strong triggers: "create an agent", "agent frontmatter", etc.
-- Focused SKILL.md (1,438 words)
-- References include the AI generation prompt from Claude Code
-- Complete agent examples
-
-**plugin-settings skill:**
-- Specific triggers: "plugin settings", ".local.md files", "YAML frontmatter"
-- References show real implementations (multi-agent-swarm, ralph-loop)
-- Working parsing scripts
-
-Each demonstrates progressive disclosure and strong triggering.
-
-## Progressive Disclosure in Practice
-
-### What Goes in SKILL.md
-
-**Include (always loaded when skill triggers):**
-- Core concepts and overview
-- Essential procedures and workflows
-- Quick reference tables
-- Pointers to references/examples/scripts
-- Most common use cases
-
-**Keep under 3,000 words, ideally 1,500-2,000 words**
-
-### What Goes in references/
-
-**Move to references/ (loaded as needed):**
-- Detailed patterns and advanced techniques
-- Comprehensive API documentation
-- Migration guides
-- Edge cases and troubleshooting
-- Extensive examples and walkthroughs
-
-**Each reference file can be large (2,000-5,000+ words)**
-
-### What Goes in examples/
-
-**Working code examples:**
-- Complete, runnable scripts
-- Configuration files
-- Template files
-- Real-world usage examples
-
-**Users can copy and adapt these directly**
-
-### What Goes in scripts/
-
-**Utility scripts:**
-- Validation tools
-- Testing helpers
-- Parsing utilities
-- Automation scripts
-
-**Should be executable and documented**
-
-## Writing Style Requirements
-
-### Imperative/Infinitive Form
-
-Write using verb-first instructions, not second person:
-
-**Correct (imperative):**
+**間違い（2人称）:**
 ```
-To create a hook, define the event type.
-Configure the MCP server with authentication.
-Validate settings before use.
+フックを作成するためにイベントタイプを定義すべきです。
+MCPサーバーを設定する必要があります。
+使用前に設定を検証しなければなりません。
 ```
 
-**Incorrect (second person):**
-```
-You should create a hook by defining the event type.
-You need to configure the MCP server.
-You must validate settings before use.
-```
+### Descriptionで3人称を使用
 
-### Third-Person in Description
+フロントマターのdescriptionは3人称を使用すること:
 
-The frontmatter description must use third person:
-
-**Correct:**
+**正しい:**
 ```yaml
 description: This skill should be used when the user asks to "create X", "configure Y"...
 ```
 
-**Incorrect:**
+**間違い:**
 ```yaml
 description: Use this skill when you want to create X...
 description: Load this skill when user asks...
 ```
 
-### Objective, Instructional Language
+## バリデーションチェックリスト
 
-Focus on what to do, not who should do it:
+スキルを最終確認する前に:
 
-**Correct:**
-```
-Parse the frontmatter using sed.
-Extract fields with grep.
-Validate values before use.
-```
+**構造:**
+- [ ] 有効なYAMLフロントマターを持つSKILL.mdファイルが存在する
+- [ ] フロントマターに`name`と`description`フィールドがある
+- [ ] Markdown本文が存在して実質的な内容がある
+- [ ] 参照されたファイルが実際に存在する
 
-**Incorrect:**
-```
-You can parse the frontmatter...
-Claude should extract fields...
-The user might validate values...
-```
+**Descriptionの品質:**
+- [ ] 3人称を使用している（「This skill should be used when...」）
+- [ ] ユーザーが言いそうな具体的なトリガーフレーズが含まれている
+- [ ] 具体的なシナリオが一覧されている（「create X」「configure Y」）
+- [ ] 曖昧または汎用的でない
 
-## Validation Checklist
+**コンテンツの品質:**
+- [ ] SKILL.md本文が命令形/不定詞形を使用している
+- [ ] 本文がフォーカスされリーン（理想1,500〜2,000ワード、最大5,000）
+- [ ] 詳細コンテンツがreferences/に移動されている
+- [ ] 例が完全で機能している
+- [ ] スクリプトが実行可能で文書化されている
 
-Before finalizing a skill:
+**プログレッシブディスクロージャー:**
+- [ ] コアコンセプトがSKILL.mdに
+- [ ] 詳細ドキュメントがreferences/に
+- [ ] 動作コードがexamples/に
+- [ ] ユーティリティがscripts/に
+- [ ] SKILL.mdがこれらのリソースを参照している
 
-**Structure:**
-- [ ] SKILL.md file exists with valid YAML frontmatter
-- [ ] Frontmatter has `name` and `description` fields
-- [ ] Markdown body is present and substantial
-- [ ] Referenced files actually exist
+## よくある間違い
 
-**Description Quality:**
-- [ ] Uses third person ("This skill should be used when...")
-- [ ] Includes specific trigger phrases users would say
-- [ ] Lists concrete scenarios ("create X", "configure Y")
-- [ ] Not vague or generic
+### 間違い1: 弱いトリガーdescription
 
-**Content Quality:**
-- [ ] SKILL.md body uses imperative/infinitive form
-- [ ] Body is focused and lean (1,500-2,000 words ideal, <5k max)
-- [ ] Detailed content moved to references/
-- [ ] Examples are complete and working
-- [ ] Scripts are executable and documented
-
-**Progressive Disclosure:**
-- [ ] Core concepts in SKILL.md
-- [ ] Detailed docs in references/
-- [ ] Working code in examples/
-- [ ] Utilities in scripts/
-- [ ] SKILL.md references these resources
-
-**Testing:**
-- [ ] Skill triggers on expected user queries
-- [ ] Content is helpful for intended tasks
-- [ ] No duplicated information across files
-- [ ] References load when needed
-
-## Common Mistakes to Avoid
-
-### Mistake 1: Weak Trigger Description
-
-❌ **Bad:**
+❌ **悪い:**
 ```yaml
-description: Provides guidance for working with hooks.
+description: フックの操作に関するガイダンスを提供します。
 ```
+曖昧、具体的なトリガーフレーズなし、3人称でない
 
-**Why bad:** Vague, no specific trigger phrases, not third person
-
-✅ **Good:**
+✅ **良い:**
 ```yaml
 description: This skill should be used when the user asks to "create a hook", "add a PreToolUse hook", "validate tool use", or mentions hook events. Provides comprehensive hooks API guidance.
 ```
 
-**Why good:** Third person, specific phrases, concrete scenarios
+### 間違い2: SKILL.mdに内容を詰め込みすぎる
 
-### Mistake 2: Too Much in SKILL.md
-
-❌ **Bad:**
+❌ **悪い:**
 ```
 skill-name/
-└── SKILL.md  (8,000 words - everything in one file)
+└── SKILL.md  (8,000ワード - 全てを1ファイルに)
 ```
+スキルがロードされた時にコンテキストを肥大化させ、詳細コンテンツが常にロードされる
 
-**Why bad:** Bloats context when skill loads, detailed content always loaded
-
-✅ **Good:**
+✅ **良い:**
 ```
 skill-name/
-├── SKILL.md  (1,800 words - core essentials)
+├── SKILL.md  (1,800ワード - コアの本質)
 └── references/
-    ├── patterns.md (2,500 words)
-    └── advanced.md (3,700 words)
+    ├── patterns.md (2,500ワード)
+    └── advanced.md (3,700ワード)
 ```
 
-**Why good:** Progressive disclosure, detailed content loaded only when needed
+### 間違い3: 2人称での文章
 
-### Mistake 3: Second Person Writing
-
-❌ **Bad:**
+❌ **悪い:**
 ```markdown
-You should start by reading the configuration file.
-You need to validate the input.
-You can use the grep tool to search.
+まず設定ファイルを読む必要があります。
+入力を検証すべきです。
+grepツールを使って検索できます。
 ```
 
-**Why bad:** Second person, not imperative form
-
-✅ **Good:**
+✅ **良い:**
 ```markdown
-Start by reading the configuration file.
-Validate the input before processing.
-Use the grep tool to search for patterns.
+設定ファイルを読むことから始める。
+処理前に入力を検証する。
+パターンを検索するためにgrepツールを使用する。
 ```
 
-**Why good:** Imperative form, direct instructions
+## クイックリファレンス
 
-### Mistake 4: Missing Resource References
-
-❌ **Bad:**
-```markdown
-# SKILL.md
-
-[Core content]
-
-[No mention of references/ or examples/]
-```
-
-**Why bad:** Claude doesn't know references exist
-
-✅ **Good:**
-```markdown
-# SKILL.md
-
-[Core content]
-
-## Additional Resources
-
-### Reference Files
-- **`references/patterns.md`** - Detailed patterns
-- **`references/advanced.md`** - Advanced techniques
-
-### Examples
-- **`examples/script.sh`** - Working example
-```
-
-**Why good:** Claude knows where to find additional information
-
-## Quick Reference
-
-### Minimal Skill
+### 最小限スキル
 
 ```
 skill-name/
 └── SKILL.md
 ```
 
-Good for: Simple knowledge, no complex resources needed
-
-### Standard Skill (Recommended)
+### 標準スキル（推奨）
 
 ```
 skill-name/
@@ -560,9 +392,7 @@ skill-name/
     └── working-example.sh
 ```
 
-Good for: Most plugin skills with detailed documentation
-
-### Complete Skill
+### 完全スキル
 
 ```
 skill-name/
@@ -577,61 +407,41 @@ skill-name/
     └── validate.sh
 ```
 
-Good for: Complex domains with validation utilities
+## ベストプラクティスのまとめ
 
-## Best Practices Summary
+✅ **すること:**
+- descriptionで3人称を使用する（「This skill should be used when...」）
+- 具体的なトリガーフレーズを含める
+- SKILL.mdをリーンに保つ（1,500〜2,000ワード）
+- プログレッシブディスクロージャーを使用する（詳細はreferences/に）
+- 命令形/不定詞形で書く
+- サポートファイルを明確に参照する
+- 動作する例を提供する
+- 一般的な操作のためのユーティリティスクリプトを作成する
 
-✅ **DO:**
-- Use third-person in description ("This skill should be used when...")
-- Include specific trigger phrases ("create X", "configure Y")
-- Keep SKILL.md lean (1,500-2,000 words)
-- Use progressive disclosure (move details to references/)
-- Write in imperative/infinitive form
-- Reference supporting files clearly
-- Provide working examples
-- Create utility scripts for common operations
-- Study plugin-dev's skills as templates
+❌ **しないこと:**
+- どこでも2人称を使用する
+- 曖昧なトリガー条件を持つ
+- 全てをSKILL.mdに入れる（references/なしで3,000ワード超）
+- 2人称で書く（「You should...」）
+- リソースを参照せずに放置する
+- 壊れたまたは不完全な例を含める
+- 検証をスキップする
 
-❌ **DON'T:**
-- Use second person anywhere
-- Have vague trigger conditions
-- Put everything in SKILL.md (>3,000 words without references/)
-- Write in second person ("You should...")
-- Leave resources unreferenced
-- Include broken or incomplete examples
-- Skip validation
+## 実装ワークフロー
 
-## Additional Resources
+プラグインのスキルを作成するには:
 
-### Study These Skills
+1. **ユースケースを理解する**: スキル使用の具体的な例を特定する
+2. **リソースを計画する**: 必要なスクリプト/references/examplesを決定する
+3. **構造を作成する**: `mkdir -p skills/skill-name/{references,examples,scripts}`
+4. **SKILL.mdを書く**:
+   - トリガーフレーズを含む3人称descriptionのフロントマター
+   - リーンな本文（1,500〜2,000ワード）を命令形で
+   - サポートファイルを参照する
+5. **リソースを追加する**: 必要に応じてreferences/、examples/、scripts/を作成
+6. **検証する**: description、文章スタイル、整理を確認
+7. **テストする**: 期待されるトリガーでスキルがロードされることを確認
+8. **反復する**: 使用状況に基づいて改善する
 
-Plugin-dev's skills demonstrate best practices:
-- `../hook-development/` - Progressive disclosure, utilities
-- `../agent-development/` - AI-assisted creation, references
-- `../mcp-integration/` - Comprehensive references
-- `../plugin-settings/` - Real-world examples
-- `../command-development/` - Clear critical concepts
-- `../plugin-structure/` - Good organization
-
-### Reference Files
-
-For complete skill-creator methodology:
-- **`references/skill-creator-original.md`** - Full original skill-creator content
-
-## Implementation Workflow
-
-To create a skill for your plugin:
-
-1. **Understand use cases**: Identify concrete examples of skill usage
-2. **Plan resources**: Determine what scripts/references/examples needed
-3. **Create structure**: `mkdir -p skills/skill-name/{references,examples,scripts}`
-4. **Write SKILL.md**:
-   - Frontmatter with third-person description and trigger phrases
-   - Lean body (1,500-2,000 words) in imperative form
-   - Reference supporting files
-5. **Add resources**: Create references/, examples/, scripts/ as needed
-6. **Validate**: Check description, writing style, organization
-7. **Test**: Verify skill loads on expected triggers
-8. **Iterate**: Improve based on usage
-
-Focus on strong trigger descriptions, progressive disclosure, and imperative writing style for effective skills that load when needed and provide targeted guidance.
+強力なトリガーdescription、プログレッシブディスクロージャー、命令形の文章スタイルに集中して、必要な時にロードされ対象を絞ったガイダンスを提供する効果的なスキルを作成する。

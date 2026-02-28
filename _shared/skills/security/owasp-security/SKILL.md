@@ -1,99 +1,99 @@
 ---
 name: owasp-security
-description: Use when reviewing code for security vulnerabilities, implementing authentication/authorization, handling user input, or discussing web application security. Covers OWASP Top 10:2025, ASVS 5.0, and Agentic AI security (2026).
+description: コードのセキュリティ脆弱性レビュー、認証・認可の実装、ユーザー入力の処理、またはWebアプリケーションセキュリティについて議論する際に使用する。OWASP Top 10:2025、ASVS 5.0、およびエージェントAIセキュリティ（2026）をカバー。
 ---
 
-# OWASP Security Best Practices Skill
+# OWASPセキュリティベストプラクティス スキル
 
-Apply these security standards when writing or reviewing code.
+コードを書く・レビューする際にこれらのセキュリティ標準を適用する。
 
-## Quick Reference: OWASP Top 10:2025
+## クイックリファレンス: OWASP Top 10:2025
 
-| # | Vulnerability | Key Prevention |
+| # | 脆弱性 | 主な対策 |
 |---|---------------|----------------|
-| A01 | Broken Access Control | Deny by default, enforce server-side, verify ownership |
-| A02 | Security Misconfiguration | Harden configs, disable defaults, minimize features |
-| A03 | Supply Chain Failures | Lock versions, verify integrity, audit dependencies |
-| A04 | Cryptographic Failures | TLS 1.2+, AES-256-GCM, Argon2/bcrypt for passwords |
-| A05 | Injection | Parameterized queries, input validation, safe APIs |
-| A06 | Insecure Design | Threat model, rate limit, design security controls |
-| A07 | Auth Failures | MFA, check breached passwords, secure sessions |
-| A08 | Integrity Failures | Sign packages, SRI for CDN, safe serialization |
-| A09 | Logging Failures | Log security events, structured format, alerting |
-| A10 | Exception Handling | Fail-closed, hide internals, log with context |
+| A01 | アクセス制御の不備 | デフォルト拒否、サーバーサイドで強制、所有権を確認 |
+| A02 | セキュリティの設定ミス | 設定を堅牢化、デフォルト無効化、機能を最小化 |
+| A03 | サプライチェーンの失敗 | バージョンを固定、整合性を確認、依存関係を監査 |
+| A04 | 暗号化の失敗 | TLS 1.2+、AES-256-GCM、パスワードにArgon2/bcrypt |
+| A05 | インジェクション | パラメータ化クエリ、入力検証、安全なAPI |
+| A06 | 不安全な設計 | 脅威モデリング、レート制限、セキュリティ制御の設計 |
+| A07 | 認証の失敗 | MFA、漏洩パスワードチェック、セキュアなセッション |
+| A08 | 整合性の失敗 | パッケージの署名、CDNにSRI、安全なデシリアライゼーション |
+| A09 | ロギングの失敗 | セキュリティイベントのログ、構造化フォーマット、アラート |
+| A10 | 例外処理の失敗 | フェイルクローズド、内部情報の隠蔽、コンテキスト付きログ |
 
-## Security Code Review Checklist
+## セキュリティコードレビューチェックリスト
 
-When reviewing code, check for these issues:
+コードをレビューする際に以下の問題をチェックする:
 
-### Input Handling
-- [ ] All user input validated server-side
-- [ ] Using parameterized queries (not string concatenation)
-- [ ] Input length limits enforced
-- [ ] Allowlist validation preferred over denylist
+### 入力処理
+- [ ] 全ユーザー入力をサーバーサイドで検証
+- [ ] パラメータ化クエリを使用（文字列連結は不使用）
+- [ ] 入力長制限を強制
+- [ ] デニーリストよりアローリスト検証を優先
 
-### Authentication & Sessions
-- [ ] Passwords hashed with Argon2/bcrypt (not MD5/SHA1)
-- [ ] Session tokens have sufficient entropy (128+ bits)
-- [ ] Sessions invalidated on logout
-- [ ] MFA available for sensitive operations
+### 認証とセッション
+- [ ] パスワードをArgon2/bcryptでハッシュ（MD5/SHA1は不使用）
+- [ ] セッショントークンに十分なエントロピー（128ビット以上）
+- [ ] ログアウト時にセッションを無効化
+- [ ] センシティブな操作にMFAを利用可能
 
-### Access Control
-- [ ] Authorization checked on every request
-- [ ] Using object references user cannot manipulate
-- [ ] Deny by default policy
-- [ ] Privilege escalation paths reviewed
+### アクセス制御
+- [ ] 全リクエストで認可を確認
+- [ ] ユーザーが操作できないオブジェクト参照を使用
+- [ ] デフォルト拒否ポリシー
+- [ ] 特権昇格パスを確認
 
-### Data Protection
-- [ ] Sensitive data encrypted at rest
-- [ ] TLS for all data in transit
-- [ ] No sensitive data in URLs/logs
-- [ ] Secrets in environment/vault (not code)
+### データ保護
+- [ ] センシティブデータを静止時に暗号化
+- [ ] 全データ転送にTLS
+- [ ] URL/ログにセンシティブデータを含めない
+- [ ] シークレットは環境/バルトに（コードには含めない）
 
-### Error Handling
-- [ ] No stack traces exposed to users
-- [ ] Fail-closed on errors (deny, not allow)
-- [ ] All exceptions logged with context
-- [ ] Consistent error responses (no enumeration)
+### エラーハンドリング
+- [ ] ユーザーにスタックトレースを露出しない
+- [ ] エラー時はフェイルクローズド（拒否、許可しない）
+- [ ] 全例外をコンテキスト付きでログ
+- [ ] 一貫したエラーレスポンス（列挙なし）
 
-## Secure Code Patterns
+## セキュアなコードパターン
 
-### SQL Injection Prevention
+### SQLインジェクション対策
 ```python
-# UNSAFE
+# 危険
 cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
 
-# SAFE
+# 安全
 cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
-### Command Injection Prevention
+### コマンドインジェクション対策
 ```python
-# UNSAFE
+# 危険
 os.system(f"convert {filename} output.png")
 
-# SAFE
+# 安全
 subprocess.run(["convert", filename, "output.png"], shell=False)
 ```
 
-### Password Storage
+### パスワードの保存
 ```python
-# UNSAFE
+# 危険
 hashlib.md5(password.encode()).hexdigest()
 
-# SAFE
+# 安全
 from argon2 import PasswordHasher
 PasswordHasher().hash(password)
 ```
 
-### Access Control
+### アクセス制御
 ```python
-# UNSAFE - No authorization check
+# 危険 - 認可チェックなし
 @app.route('/api/user/<user_id>')
 def get_user(user_id):
     return db.get_user(user_id)
 
-# SAFE - Authorization enforced
+# 安全 - 認可を強制
 @app.route('/api/user/<user_id>')
 @login_required
 def get_user(user_id):
@@ -102,14 +102,14 @@ def get_user(user_id):
     return db.get_user(user_id)
 ```
 
-### Error Handling
+### エラーハンドリング
 ```python
-# UNSAFE - Exposes internals
+# 危険 - 内部情報を露出
 @app.errorhandler(Exception)
 def handle_error(e):
     return str(e), 500
 
-# SAFE - Fail-closed, log context
+# 安全 - フェイルクローズド、コンテキスト付きログ
 @app.errorhandler(Exception)
 def handle_error(e):
     error_id = uuid.uuid4()
@@ -117,419 +117,419 @@ def handle_error(e):
     return {"error": "An error occurred", "id": str(error_id)}, 500
 ```
 
-### Fail-Closed Pattern
+### フェイルクローズドパターン
 ```python
-# UNSAFE - Fail-open
+# 危険 - フェイルオープン
 def check_permission(user, resource):
     try:
         return auth_service.check(user, resource)
     except Exception:
-        return True  # DANGEROUS!
+        return True  # 危険！
 
-# SAFE - Fail-closed
+# 安全 - フェイルクローズド
 def check_permission(user, resource):
     try:
         return auth_service.check(user, resource)
     except Exception as e:
         logger.error(f"Auth check failed: {e}")
-        return False  # Deny on error
+        return False  # エラー時は拒否
 ```
 
-## Agentic AI Security (OWASP 2026)
+## エージェントAIセキュリティ（OWASP 2026）
 
-When building or reviewing AI agent systems, check for:
+AIエージェントシステムを構築・レビューする際のチェック項目:
 
-| Risk | Description | Mitigation |
+| リスク | 説明 | 軽減策 |
 |------|-------------|------------|
-| ASI01: Goal Hijack | Prompt injection alters agent objectives | Input sanitization, goal boundaries, behavioral monitoring |
-| ASI02: Tool Misuse | Tools used in unintended ways | Least privilege, fine-grained permissions, validate I/O |
-| ASI03: Privilege Abuse | Credential escalation across agents | Short-lived scoped tokens, identity verification |
-| ASI04: Supply Chain | Compromised plugins/MCP servers | Verify signatures, sandbox, allowlist plugins |
-| ASI05: Code Execution | Unsafe code generation/execution | Sandbox execution, static analysis, human approval |
-| ASI06: Memory Poisoning | Corrupted RAG/context data | Validate stored content, segment by trust level |
-| ASI07: Agent Comms | Spoofing between agents | Authenticate, encrypt, verify message integrity |
-| ASI08: Cascading Failures | Errors propagate across systems | Circuit breakers, graceful degradation, isolation |
-| ASI09: Trust Exploitation | Social engineering via AI | Label AI content, user education, verification steps |
-| ASI10: Rogue Agents | Compromised agents acting maliciously | Behavior monitoring, kill switches, anomaly detection |
+| ASI01: ゴールハイジャック | プロンプトインジェクションがエージェントの目標を変更 | 入力サニタイズ、ゴール境界、行動監視 |
+| ASI02: ツールの悪用 | ツールが意図しない方法で使用される | 最小権限、細粒度の権限、I/Oの検証 |
+| ASI03: 特権の乱用 | エージェント間での認証情報のエスカレーション | 短命のスコープ付きトークン、ID検証 |
+| ASI04: サプライチェーン | 侵害されたプラグイン/MCPサーバー | 署名を確認、サンドボックス、プラグインのアローリスト |
+| ASI05: コード実行 | 安全でないコード生成/実行 | サンドボックス実行、静的解析、人間の承認 |
+| ASI06: メモリ汚染 | 破損したRAG/コンテキストデータ | 保存コンテンツの検証、信頼レベルでセグメント化 |
+| ASI07: エージェント通信 | エージェント間のなりすまし | 認証、暗号化、メッセージ整合性の確認 |
+| ASI08: カスケード障害 | エラーがシステム間で伝播 | サーキットブレーカー、グレースフルデグラデーション、分離 |
+| ASI09: 信頼の悪用 | AIを介したソーシャルエンジニアリング | AIコンテンツのラベル付け、ユーザー教育、確認ステップ |
+| ASI10: 悪意のあるエージェント | 侵害されたエージェントが悪意を持って行動 | 行動監視、キルスイッチ、異常検知 |
 
-### Agent Security Checklist
+### エージェントセキュリティチェックリスト
 
-- [ ] All agent inputs sanitized and validated
-- [ ] Tools operate with minimum required permissions
-- [ ] Credentials are short-lived and scoped
-- [ ] Third-party plugins verified and sandboxed
-- [ ] Code execution happens in isolated environments
-- [ ] Agent communications authenticated and encrypted
-- [ ] Circuit breakers between agent components
-- [ ] Human approval for sensitive operations
-- [ ] Behavior monitoring for anomaly detection
-- [ ] Kill switch available for agent systems
+- [ ] 全エージェント入力がサニタイズ・検証されている
+- [ ] ツールが最小必要権限で動作する
+- [ ] 認証情報が短命でスコープ付き
+- [ ] サードパーティプラグインが検証・サンドボックス化されている
+- [ ] コード実行が隔離された環境で行われる
+- [ ] エージェント通信が認証・暗号化されている
+- [ ] エージェントコンポーネント間にサーキットブレーカーがある
+- [ ] センシティブな操作に人間の承認が必要
+- [ ] 異常検知のための行動監視がある
+- [ ] エージェントシステムのキルスイッチが利用可能
 
-## ASVS 5.0 Key Requirements
+## ASVS 5.0の主要要件
 
-### Level 1 (All Applications)
-- Passwords minimum 12 characters
-- Check against breached password lists
-- Rate limiting on authentication
-- Session tokens 128+ bits entropy
-- HTTPS everywhere
+### レベル1（全アプリケーション）
+- パスワードは最低12文字
+- 漏洩パスワードリストとの照合
+- 認証のレート制限
+- セッショントークンは128ビット以上のエントロピー
+- HTTPS必須
 
-### Level 2 (Sensitive Data)
-- All L1 requirements plus:
-- MFA for sensitive operations
-- Cryptographic key management
-- Comprehensive security logging
-- Input validation on all parameters
+### レベル2（センシティブデータ）
+- L1の全要件に加えて:
+- センシティブな操作にMFA
+- 暗号鍵の管理
+- 包括的なセキュリティログ
+- 全パラメータの入力検証
 
-### Level 3 (Critical Systems)
-- All L1/L2 requirements plus:
-- Hardware security modules for keys
-- Threat modeling documentation
-- Advanced monitoring and alerting
-- Penetration testing validation
+### レベル3（クリティカルなシステム）
+- L1/L2の全要件に加えて:
+- 鍵のためのハードウェアセキュリティモジュール
+- 脅威モデリングの文書化
+- 高度な監視とアラート
+- ペネトレーションテストによる検証
 
-## Language-Specific Security Quirks
+## 言語別セキュリティの注意点
 
-> **Important:** The examples below are illustrative starting points, not exhaustive. When reviewing code, think like a senior security researcher: consider the language's memory model, type system, standard library pitfalls, ecosystem-specific attack vectors, and historical CVE patterns. Each language has deeper quirks beyond what's listed here.
+> **重要:** 以下の例は解説の出発点であり、包括的なリストではない。コードをレビューする際は、上級セキュリティ研究者のように考える: 言語のメモリモデル、型システム、標準ライブラリの落とし穴、エコシステム固有の攻撃ベクトル、過去のCVEパターンを考慮すること。各言語にはここに記載されている以上の深い注意点がある。
 
-Different languages have unique security pitfalls. Here are the top 20 languages with key security considerations. **Go deeper for the specific language you're working in:**
+様々な言語には固有のセキュリティの落とし穴がある。以下は主要な20言語と主要なセキュリティ上の考慮事項。**作業中の特定の言語についてはより深く調べること:**
 
 ---
 
 ### JavaScript / TypeScript
-**Main Risks:** Prototype pollution, XSS, eval injection
+**主なリスク:** プロトタイプ汚染、XSS、evalインジェクション
 ```javascript
-// UNSAFE: Prototype pollution
+// 危険: プロトタイプ汚染
 Object.assign(target, userInput)
-// SAFE: Use null prototype or validate keys
+// 安全: nullプロトタイプを使用するか、キーを検証する
 Object.assign(Object.create(null), validated)
 
-// UNSAFE: eval injection
+// 危険: evalインジェクション
 eval(userCode)
-// SAFE: Never use eval with user input
+// 安全: ユーザー入力でevalを絶対に使わない
 ```
-**Watch for:** `eval()`, `innerHTML`, `document.write()`, prototype chain manipulation, `__proto__`
+**注意点:** `eval()`、`innerHTML`、`document.write()`、プロトタイプチェーン操作、`__proto__`
 
 ---
 
 ### Python
-**Main Risks:** Pickle deserialization, format string injection, shell injection
+**主なリスク:** Pickleデシリアライゼーション、フォーマット文字列インジェクション、シェルインジェクション
 ```python
-# UNSAFE: Pickle RCE
+# 危険: Pickle RCE
 pickle.loads(user_data)
-# SAFE: Use JSON or validate source
+# 安全: JSONを使うかソースを検証する
 json.loads(user_data)
 
-# UNSAFE: Format string injection
+# 危険: フォーマット文字列インジェクション
 query = "SELECT * FROM users WHERE name = '%s'" % user_input
-# SAFE: Parameterized
+# 安全: パラメータ化
 cursor.execute("SELECT * FROM users WHERE name = %s", (user_input,))
 ```
-**Watch for:** `pickle`, `eval()`, `exec()`, `os.system()`, `subprocess` with `shell=True`
+**注意点:** `pickle`、`eval()`、`exec()`、`os.system()`、`shell=True`の`subprocess`
 
 ---
 
 ### Java
-**Main Risks:** Deserialization RCE, XXE, JNDI injection
+**主なリスク:** デシリアライゼーションRCE、XXE、JNDIインジェクション
 ```java
-// UNSAFE: Arbitrary deserialization
+// 危険: 任意のデシリアライゼーション
 ObjectInputStream ois = new ObjectInputStream(userStream);
 Object obj = ois.readObject();
 
-// SAFE: Use allowlist or JSON
+// 安全: アローリストまたはJSONを使用
 ObjectMapper mapper = new ObjectMapper();
 mapper.readValue(json, SafeClass.class);
 ```
-**Watch for:** `ObjectInputStream`, `Runtime.exec()`, XML parsers without XXE protection, JNDI lookups
+**注意点:** `ObjectInputStream`、`Runtime.exec()`、XXE保護なしのXMLパーサー、JNDIルックアップ
 
 ---
 
 ### C#
-**Main Risks:** Deserialization, SQL injection, path traversal
+**主なリスク:** デシリアライゼーション、SQLインジェクション、パストラバーサル
 ```csharp
-// UNSAFE: BinaryFormatter RCE
+// 危険: BinaryFormatter RCE
 BinaryFormatter bf = new BinaryFormatter();
 object obj = bf.Deserialize(stream);
 
-// SAFE: Use System.Text.Json
+// 安全: System.Text.Jsonを使用
 var obj = JsonSerializer.Deserialize<SafeType>(json);
 ```
-**Watch for:** `BinaryFormatter`, `JavaScriptSerializer`, `TypeNameHandling.All`, raw SQL strings
+**注意点:** `BinaryFormatter`、`JavaScriptSerializer`、`TypeNameHandling.All`、生SQLの文字列
 
 ---
 
 ### PHP
-**Main Risks:** Type juggling, file inclusion, object injection
+**主なリスク:** 型ジャグリング、ファイルインクルージョン、オブジェクトインジェクション
 ```php
-// UNSAFE: Type juggling in auth
+// 危険: 型ジャグリングによる認証バイパス
 if ($password == $stored_hash) { ... }
-// SAFE: Use strict comparison
+// 安全: 厳密な比較を使用
 if (hash_equals($stored_hash, $password)) { ... }
 
-// UNSAFE: File inclusion
+// 危険: ファイルインクルージョン
 include($_GET['page'] . '.php');
-// SAFE: Allowlist pages
+// 安全: アローリストでページを管理
 $allowed = ['home', 'about']; include(in_array($page, $allowed) ? "$page.php" : 'home.php');
 ```
-**Watch for:** `==` vs `===`, `include/require`, `unserialize()`, `preg_replace` with `/e`, `extract()`
+**注意点:** `==` vs `===`、`include/require`、`unserialize()`、`/e`付きの`preg_replace`、`extract()`
 
 ---
 
 ### Go
-**Main Risks:** Race conditions, template injection, slice bounds
+**主なリスク:** 競合状態、テンプレートインジェクション、スライス境界
 ```go
-// UNSAFE: Race condition
+// 危険: 競合状態
 go func() { counter++ }()
-// SAFE: Use sync primitives
+// 安全: sync プリミティブを使用
 atomic.AddInt64(&counter, 1)
 
-// UNSAFE: Template injection
+// 危険: テンプレートインジェクション
 template.HTML(userInput)
-// SAFE: Let template escape
+// 安全: テンプレートにエスケープさせる
 {{.UserInput}}
 ```
-**Watch for:** Goroutine data races, `template.HTML()`, `unsafe` package, unchecked slice access
+**注意点:** ゴルーチンのデータ競合、`template.HTML()`、`unsafe`パッケージ、未チェックのスライスアクセス
 
 ---
 
 ### Ruby
-**Main Risks:** Mass assignment, YAML deserialization, regex DoS
+**主なリスク:** マスアサインメント、YAMLデシリアライゼーション、正規表現DoS
 ```ruby
-# UNSAFE: Mass assignment
+# 危険: マスアサインメント
 User.new(params[:user])
-# SAFE: Strong parameters
+# 安全: ストロングパラメータ
 User.new(params.require(:user).permit(:name, :email))
 
-# UNSAFE: YAML RCE
+# 危険: YAML RCE
 YAML.load(user_input)
-# SAFE: Use safe_load
+# 安全: safe_loadを使用
 YAML.safe_load(user_input)
 ```
-**Watch for:** YAML.load, Marshal.load, eval, send with user input, .permit!
+**注意点:** YAML.load、Marshal.load、eval、ユーザー入力を使ったsend、.permit!
 
 ---
 
 ### Rust
-**Main Risks:** Unsafe blocks, FFI boundary issues, integer overflow in release
+**主なリスク:** unsafeブロック、FFI境界の問題、リリース時の整数オーバーフロー
 ```rust
-// CAUTION: Unsafe bypasses safety
+// 注意: unsafeは安全性をバイパスする
 unsafe { ptr::read(user_ptr) }
 
-// CAUTION: Release integer overflow
+// 注意: リリースビルドの整数オーバーフロー
 let x: u8 = 255;
-let y = x + 1; // Wraps to 0 in release!
-// SAFE: Use checked arithmetic
+let y = x + 1; // リリースビルドでは0にラップされる！
+// 安全: チェックされた算術演算を使用
 let y = x.checked_add(1).unwrap_or(255);
 ```
-**Watch for:** `unsafe` blocks, FFI calls, integer overflow in release builds, `.unwrap()` on untrusted input
+**注意点:** `unsafe`ブロック、FFI呼び出し、リリースビルドの整数オーバーフロー、信頼されない入力への`.unwrap()`
 
 ---
 
 ### Swift
-**Main Risks:** Force unwrapping crashes, Objective-C interop
+**主なリスク:** 強制アンラップによるクラッシュ、Objective-Cの相互運用
 ```swift
-// UNSAFE: Force unwrap on untrusted data
+// 危険: 信頼されないデータへの強制アンラップ
 let value = jsonDict["key"]!
-// SAFE: Safe unwrapping
+// 安全: 安全なアンラップ
 guard let value = jsonDict["key"] else { return }
 
-// UNSAFE: Format string
+// 危険: フォーマット文字列
 String(format: userInput, args)
-// SAFE: Don't use user input as format
+// 安全: ユーザー入力をフォーマットとして使わない
 ```
-**Watch for:** force unwrap (!), try!, ObjC bridging, NSSecureCoding misuse
+**注意点:** 強制アンラップ(!)、try!、ObjCブリッジング、NSSecureCodingの誤用
 
 ---
 
 ### Kotlin
-**Main Risks:** Null safety bypass, Java interop, serialization
+**主なリスク:** null安全性のバイパス、Java相互運用、シリアライゼーション
 ```kotlin
-// UNSAFE: Platform type from Java
-val len = javaString.length // NPE if null
-// SAFE: Explicit null check
+// 危険: JavaからのプラットフォームタイプによるNPE
+val len = javaString.length // nullの場合にNPE
+// 安全: 明示的なnullチェック
 val len = javaString?.length ?: 0
 
-// UNSAFE: Reflection
+// 危険: リフレクション
 clazz.getDeclaredMethod(userInput)
-// SAFE: Allowlist methods
+// 安全: メソッドのアローリスト
 ```
-**Watch for:** Java interop nulls (! operator), reflection, serialization, platform types
+**注意点:** Java相互運用のnull(!演算子)、リフレクション、シリアライゼーション、プラットフォームタイプ
 
 ---
 
 ### C / C++
-**Main Risks:** Buffer overflow, use-after-free, format string
+**主なリスク:** バッファオーバーフロー、use-after-free、フォーマット文字列
 ```c
-// UNSAFE: Buffer overflow
+// 危険: バッファオーバーフロー
 char buf[10]; strcpy(buf, userInput);
-// SAFE: Bounds checking
+// 安全: 境界チェック
 strncpy(buf, userInput, sizeof(buf) - 1);
 
-// UNSAFE: Format string
+// 危険: フォーマット文字列
 printf(userInput);
-// SAFE: Always use format specifier
+// 安全: 常にフォーマット指定子を使用
 printf("%s", userInput);
 ```
-**Watch for:** `strcpy`, `sprintf`, `gets`, pointer arithmetic, manual memory management, integer overflow
+**注意点:** `strcpy`、`sprintf`、`gets`、ポインタ演算、手動メモリ管理、整数オーバーフロー
 
 ---
 
 ### Scala
-**Main Risks:** XML external entities, serialization, pattern matching exhaustiveness
+**主なリスク:** XML外部エンティティ、シリアライゼーション、パターンマッチングの網羅性
 ```scala
-// UNSAFE: XXE
+// 危険: XXE
 val xml = XML.loadString(userInput)
-// SAFE: Disable external entities
+// 安全: 外部エンティティを無効化
 val factory = SAXParserFactory.newInstance()
 factory.setFeature("http://xml.org/sax/features/external-general-entities", false)
 ```
-**Watch for:** Java interop issues, XML parsing, `Serializable`, exhaustive pattern matching
+**注意点:** Java相互運用の問題、XMLパース、`Serializable`、網羅的なパターンマッチング
 
 ---
 
 ### R
-**Main Risks:** Code injection, file path manipulation
+**主なリスク:** コードインジェクション、ファイルパス操作
 ```r
-# UNSAFE: eval injection
+# 危険: evalインジェクション
 eval(parse(text = user_input))
-# SAFE: Never parse user input as code
+# 安全: ユーザー入力をコードとして絶対にパースしない
 
-# UNSAFE: Path traversal
+# 危険: パストラバーサル
 read.csv(paste0("data/", user_file))
-# SAFE: Validate filename
+# 安全: ファイル名を検証
 if (grepl("^[a-zA-Z0-9]+\\.csv$", user_file)) read.csv(...)
 ```
-**Watch for:** `eval()`, `parse()`, `source()`, `system()`, file path manipulation
+**注意点:** `eval()`、`parse()`、`source()`、`system()`、ファイルパス操作
 
 ---
 
 ### Perl
-**Main Risks:** Regex injection, open() injection, taint mode bypass
+**主なリスク:** 正規表現インジェクション、open()インジェクション、テイントモードのバイパス
 ```perl
-# UNSAFE: Regex DoS
+# 危険: 正規表現DoS
 $input =~ /$user_pattern/;
-# SAFE: Use quotemeta
+# 安全: quotemetaを使用
 $input =~ /\Q$user_pattern\E/;
 
-# UNSAFE: open() command injection
+# 危険: open()コマンドインジェクション
 open(FILE, $user_file);
-# SAFE: Three-argument open
+# 安全: 3引数のopen
 open(my $fh, '<', $user_file);
 ```
-**Watch for:** Two-arg `open()`, regex from user input, backticks, `eval`, disabled taint mode
+**注意点:** 2引数の`open()`、ユーザー入力からの正規表現、バッククォート、`eval`、テイントモード無効化
 
 ---
 
 ### Shell (Bash)
-**Main Risks:** Command injection, word splitting, globbing
+**主なリスク:** コマンドインジェクション、ワード分割、グロビング
 ```bash
-# UNSAFE: Unquoted variables
+# 危険: 引用符なしの変数
 rm $user_file
-# SAFE: Always quote
+# 安全: 常に引用符を使用
 rm "$user_file"
 
-# UNSAFE: eval
+# 危険: eval
 eval "$user_command"
-# SAFE: Never eval user input
+# 安全: ユーザー入力でevalを絶対に使わない
 ```
-**Watch for:** Unquoted variables, `eval`, backticks, `$(...)` with user input, missing `set -euo pipefail`
+**注意点:** 引用符なしの変数、`eval`、バッククォート、ユーザー入力での`$(...)`、`set -euo pipefail`の欠如
 
 ---
 
 ### Lua
-**Main Risks:** Sandbox escape, loadstring injection
+**主なリスク:** サンドボックスエスケープ、loadstringインジェクション
 ```lua
--- UNSAFE: Code injection
+-- 危険: コードインジェクション
 loadstring(user_code)()
--- SAFE: Use sandboxed environment with restricted functions
+-- 安全: 制限された関数を持つサンドボックス環境を使用
 ```
-**Watch for:** `loadstring`, `loadfile`, `dofile`, `os.execute`, `io` library, debug library
+**注意点:** `loadstring`、`loadfile`、`dofile`、`os.execute`、`io`ライブラリ、debugライブラリ
 
 ---
 
 ### Elixir
-**Main Risks:** Atom exhaustion, code injection, ETS access
+**主なリスク:** アトム枯渇、コードインジェクション、ETSアクセス
 ```elixir
-# UNSAFE: Atom exhaustion DoS
+# 危険: アトム枯渇DoS
 String.to_atom(user_input)
-# SAFE: Use existing atoms only
+# 安全: 既存のアトムのみを使用
 String.to_existing_atom(user_input)
 
-# UNSAFE: Code injection
+# 危険: コードインジェクション
 Code.eval_string(user_input)
-# SAFE: Never eval user input
+# 安全: ユーザー入力でevalを絶対に使わない
 ```
-**Watch for:** `String.to_atom`, `Code.eval_string`, `:erlang.binary_to_term`, ETS public tables
+**注意点:** `String.to_atom`、`Code.eval_string`、`:erlang.binary_to_term`、ETPパブリックテーブル
 
 ---
 
 ### Dart / Flutter
-**Main Risks:** Platform channel injection, insecure storage
+**主なリスク:** プラットフォームチャネルインジェクション、安全でないストレージ
 ```dart
-// UNSAFE: Storing secrets in SharedPreferences
+// 危険: SharedPreferencesへのシークレット保存
 prefs.setString('auth_token', token);
-// SAFE: Use flutter_secure_storage
+// 安全: flutter_secure_storageを使用
 secureStorage.write(key: 'auth_token', value: token);
 ```
-**Watch for:** Platform channel data, `dart:mirrors`, `Function.apply`, insecure local storage
+**注意点:** プラットフォームチャネルデータ、`dart:mirrors`、`Function.apply`、安全でないローカルストレージ
 
 ---
 
 ### PowerShell
-**Main Risks:** Command injection, execution policy bypass
+**主なリスク:** コマンドインジェクション、実行ポリシーバイパス
 ```powershell
-# UNSAFE: Injection
+# 危険: インジェクション
 Invoke-Expression $userInput
-# SAFE: Avoid Invoke-Expression with user data
+# 安全: ユーザーデータでInvoke-Expressionを避ける
 
-# UNSAFE: Unvalidated path
+# 危険: 未検証のパス
 Get-Content $userPath
-# SAFE: Validate path is within allowed directory
+# 安全: パスが許可されたディレクトリ内であることを検証
 ```
-**Watch for:** `Invoke-Expression`, `& $userVar`, `Start-Process` with user args, `-ExecutionPolicy Bypass`
+**注意点:** `Invoke-Expression`、`& $userVar`、ユーザー引数を使った`Start-Process`、`-ExecutionPolicy Bypass`
 
 ---
 
-### SQL (All Dialects)
-**Main Risks:** Injection, privilege escalation, data exfiltration
+### SQL（全方言）
+**主なリスク:** インジェクション、特権エスカレーション、データ漏洩
 ```sql
--- UNSAFE: String concatenation
+-- 危険: 文字列連結
 "SELECT * FROM users WHERE id = " + userId
 
--- SAFE: Parameterized query (language-specific)
--- Use prepared statements in ALL cases
+-- 安全: パラメータ化クエリ（言語固有）
+-- 全ケースでプリペアドステートメントを使用
 ```
-**Watch for:** Dynamic SQL, `EXECUTE IMMEDIATE`, stored procedures with dynamic queries, privilege grants
+**注意点:** 動的SQL、`EXECUTE IMMEDIATE`、動的クエリを使ったストアドプロシージャ、権限の付与
 
 ---
 
-## Deep Security Analysis Mindset
+## 深いセキュリティ分析のマインドセット
 
-When reviewing any language, think like a senior security researcher:
+任意の言語をレビューする際は、上級セキュリティ研究者のように考える:
 
-1. **Memory Model:** How does the language handle memory? Managed vs manual? GC pauses exploitable?
-2. **Type System:** Weak typing = type confusion attacks. Look for coercion exploits.
-3. **Serialization:** Every language has its pickle/Marshal equivalent. All are dangerous.
-4. **Concurrency:** Race conditions, TOCTOU, atomicity failures specific to the threading model.
-5. **FFI Boundaries:** Native interop is where type safety breaks down.
-6. **Standard Library:** Historic CVEs in std libs (Python urllib, Java XML, Ruby OpenSSL).
-7. **Package Ecosystem:** Typosquatting, dependency confusion, malicious packages.
-8. **Build System:** Makefile/gradle/npm script injection during builds.
-9. **Runtime Behavior:** Debug vs release differences (Rust overflow, C++ assertions).
-10. **Error Handling:** How does the language fail? Silently? With stack traces? Fail-open?
+1. **メモリモデル:** 言語はどのようにメモリを扱うか？ 管理されているか手動か？ GCの一時停止は悪用可能か？
+2. **型システム:** 弱い型付け = 型混乱攻撃。強制の悪用を探す。
+3. **シリアライゼーション:** 全言語にはPickle/Marshal相当のものがある。すべて危険。
+4. **並行性:** スレッドモデル固有の競合状態、TOCTOU、アトミシティの失敗。
+5. **FFI境界:** ネイティブ相互運用は型安全性が崩れる場所。
+6. **標準ライブラリ:** 標準ライブラリの過去のCVE（Python urllib、Java XML、Ruby OpenSSL）。
+7. **パッケージエコシステム:** タイポスクワッティング、依存関係の混乱、悪意のあるパッケージ。
+8. **ビルドシステム:** ビルド中のMakefile/gradle/npmスクリプトインジェクション。
+9. **ランタイムの動作:** デバッグとリリースの違い（Rustのオーバーフロー、C++のアサーション）。
+10. **エラーハンドリング:** 言語はどのように失敗するか？ サイレントに？ スタックトレースで？ フェイルオープンで？
 
-**For any language not listed:** Research its specific CWE patterns, CVE history, and known footguns. The examples above are entry points, not complete coverage.
+**リストにない言語の場合:** その言語固有のCWEパターン、CVE履歴、既知の落とし穴を調査する。上記の例は入口点であり、完全なカバレッジではない。
 
-## When to Apply This Skill
+## このスキルをいつ適用するか
 
-Use this skill when:
-- Writing authentication or authorization code
-- Handling user input or external data
-- Implementing cryptography or password storage
-- Reviewing code for security vulnerabilities
-- Designing API endpoints
-- Building AI agent systems
-- Configuring application security settings
-- Handling errors and exceptions
-- Working with third-party dependencies
-- **Working in any language** - apply the deep analysis mindset above
+以下の場合にこのスキルを使用する:
+- 認証または認可コードを書く
+- ユーザー入力または外部データを処理する
+- 暗号化またはパスワード保存を実装する
+- コードのセキュリティ脆弱性をレビューする
+- APIエンドポイントを設計する
+- AIエージェントシステムを構築する
+- アプリケーションのセキュリティ設定を構成する
+- エラーと例外を処理する
+- サードパーティの依存関係を扱う
+- **任意の言語で作業する** - 上記の深い分析マインドセットを適用する

@@ -1,135 +1,135 @@
 ---
 name: command-development
-description: This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define command arguments", "use command frontmatter", "organize commands", "create command with file references", "interactive command", "use AskUserQuestion in command", or needs guidance on slash command structure, YAML frontmatter fields, dynamic arguments, bash execution in commands, user interaction patterns, or command development best practices for Claude Code.
+description: このスキルは、ユーザーが「スラッシュコマンドを作成する」「コマンドを追加する」「カスタムコマンドを書く」「コマンド引数を定義する」「コマンドのフロントマターを使う」「コマンドを整理する」「ファイル参照付きコマンドを作成する」「インタラクティブコマンド」「コマンドでAskUserQuestionを使う」と尋ねる場合、またはClaude Codeのスラッシュコマンド構造、YAMLフロントマターフィールド、動的引数、コマンドでのbash実行、ユーザーインタラクションパターン、コマンド開発のベストプラクティスに関するガイダンスが必要な場合に使用すること。
 version: 0.2.0
 ---
 
-# Command Development for Claude Code
+# Claude Codeのコマンド開発
 
-## Overview
+## 概要
 
-Slash commands are frequently-used prompts defined as Markdown files that Claude executes during interactive sessions. Understanding command structure, frontmatter options, and dynamic features enables creating powerful, reusable workflows.
+スラッシュコマンドは、インタラクティブセッション中にClaudeが実行するMarkdownファイルとして定義された頻繁に使用されるプロンプトです。コマンド構造、フロントマターオプション、動的機能を理解することで、強力で再利用可能なワークフローを作成できます。
 
-**Key concepts:**
-- Markdown file format for commands
-- YAML frontmatter for configuration
-- Dynamic arguments and file references
-- Bash execution for context
-- Command organization and namespacing
+**主要概念:**
+- コマンド用のMarkdownファイル形式
+- 設定用のYAMLフロントマター
+- 動的引数とファイル参照
+- コンテキストのためのBash実行
+- コマンドの整理と名前空間
 
-## Command Basics
+## コマンドの基礎
 
-### What is a Slash Command?
+### スラッシュコマンドとは？
 
-A slash command is a Markdown file containing a prompt that Claude executes when invoked. Commands provide:
-- **Reusability**: Define once, use repeatedly
-- **Consistency**: Standardize common workflows
-- **Sharing**: Distribute across team or projects
-- **Efficiency**: Quick access to complex prompts
+スラッシュコマンドは、起動時にClaudeが実行するプロンプトを含むMarkdownファイルです。コマンドは以下を提供します:
+- **再利用性**: 一度定義して繰り返し使用
+- **一貫性**: 共通ワークフローの標準化
+- **共有**: チームやプロジェクト全体への配布
+- **効率性**: 複雑なプロンプトへの素早いアクセス
 
-### Critical: Commands are Instructions FOR Claude
+### 重要: コマンドはClaudeへの指示
 
-**Commands are written for agent consumption, not human consumption.**
+**コマンドはエージェントが消費するために書かれており、人間が消費するためではない。**
 
-When a user invokes `/command-name`, the command content becomes Claude's instructions. Write commands as directives TO Claude about what to do, not as messages TO the user.
+ユーザーが`/command-name`を起動すると、コマンドの内容がClaudeの指示になる。コマンドはClaudeに何をすべきかの指示として書く。ユーザーへのメッセージとして書かない。
 
-**Correct approach (instructions for Claude):**
+**正しいアプローチ（Claudeへの指示）:**
 ```markdown
-Review this code for security vulnerabilities including:
-- SQL injection
-- XSS attacks
-- Authentication issues
+以下を含むセキュリティ脆弱性についてこのコードをレビューする:
+- SQLインジェクション
+- XSS攻撃
+- 認証の問題
 
-Provide specific line numbers and severity ratings.
+具体的な行番号と重大度評価を提供する。
 ```
 
-**Incorrect approach (messages to user):**
+**間違ったアプローチ（ユーザーへのメッセージ）:**
 ```markdown
-This command will review your code for security issues.
-You'll receive a report with vulnerability details.
+このコマンドはセキュリティの問題についてコードをレビューします。
+脆弱性の詳細を含むレポートを受け取ります。
 ```
 
-The first example tells Claude what to do. The second tells the user what will happen but doesn't instruct Claude. Always use the first approach.
+最初の例はClaudeに何をすべきかを伝えている。2番目はユーザーに何が起こるかを伝えるがClaudeに指示していない。常に最初のアプローチを使用すること。
 
-### Command Locations
+### コマンドの場所
 
-**Project commands** (shared with team):
-- Location: `.claude/commands/`
-- Scope: Available in specific project
-- Label: Shown as "(project)" in `/help`
-- Use for: Team workflows, project-specific tasks
+**プロジェクトコマンド**（チームと共有）:
+- 場所: `.claude/commands/`
+- スコープ: 特定のプロジェクトで利用可能
+- ラベル: `/help`で「(project)」と表示
+- 用途: チームワークフロー、プロジェクト固有のタスク
 
-**Personal commands** (available everywhere):
-- Location: `~/.claude/commands/`
-- Scope: Available in all projects
-- Label: Shown as "(user)" in `/help`
-- Use for: Personal workflows, cross-project utilities
+**個人コマンド**（どこでも利用可能）:
+- 場所: `~/.claude/commands/`
+- スコープ: 全プロジェクトで利用可能
+- ラベル: `/help`で「(user)」と表示
+- 用途: 個人ワークフロー、クロスプロジェクトのユーティリティ
 
-**Plugin commands** (bundled with plugins):
-- Location: `plugin-name/commands/`
-- Scope: Available when plugin installed
-- Label: Shown as "(plugin-name)" in `/help`
-- Use for: Plugin-specific functionality
+**プラグインコマンド**（プラグインにバンドル）:
+- 場所: `plugin-name/commands/`
+- スコープ: プラグインインストール時に利用可能
+- ラベル: `/help`で「(plugin-name)」と表示
+- 用途: プラグイン固有の機能
 
-## File Format
+## ファイル形式
 
-### Basic Structure
+### 基本構造
 
-Commands are Markdown files with `.md` extension:
+コマンドは`.md`拡張子を持つMarkdownファイルです:
 
 ```
 .claude/commands/
-├── review.md           # /review command
-├── test.md             # /test command
-└── deploy.md           # /deploy command
+├── review.md           # /review コマンド
+├── test.md             # /test コマンド
+└── deploy.md           # /deploy コマンド
 ```
 
-**Simple command:**
+**シンプルなコマンド:**
 ```markdown
-Review this code for security vulnerabilities including:
-- SQL injection
-- XSS attacks
-- Authentication bypass
-- Insecure data handling
+以下を含むセキュリティ脆弱性についてこのコードをレビューする:
+- SQLインジェクション
+- XSS攻撃
+- 認証バイパス
+- 安全でないデータ処理
 ```
 
-No frontmatter needed for basic commands.
+基本的なコマンドにはフロントマターは不要。
 
-### With YAML Frontmatter
+### YAMLフロントマターあり
 
-Add configuration using YAML frontmatter:
+YAMLフロントマターを使用して設定を追加する:
 
 ```markdown
 ---
-description: Review code for security issues
+description: コードのセキュリティ問題をレビュー
 allowed-tools: Read, Grep, Bash(git:*)
 model: sonnet
 ---
 
-Review this code for security vulnerabilities...
+このコードのセキュリティ脆弱性をレビューする...
 ```
 
-## YAML Frontmatter Fields
+## YAMLフロントマターフィールド
 
 ### description
 
-**Purpose:** Brief description shown in `/help`
-**Type:** String
-**Default:** First line of command prompt
+**目的:** `/help`に表示される簡単な説明
+**型:** 文字列
+**デフォルト:** コマンドプロンプトの最初の行
 
 ```yaml
 ---
-description: Review pull request for code quality
+description: コードレビューのPRを確認
 ---
 ```
 
-**Best practice:** Clear, actionable description (under 60 characters)
+**ベストプラクティス:** 明確で実用的な説明（60文字以下）
 
 ### allowed-tools
 
-**Purpose:** Specify which tools command can use
-**Type:** String or Array
-**Default:** Inherits from conversation
+**目的:** コマンドが使用できるツールを指定
+**型:** 文字列または配列
+**デフォルト:** 会話から継承
 
 ```yaml
 ---
@@ -137,18 +137,18 @@ allowed-tools: Read, Write, Edit, Bash(git:*)
 ---
 ```
 
-**Patterns:**
-- `Read, Write, Edit` - Specific tools
-- `Bash(git:*)` - Bash with git commands only
-- `*` - All tools (rarely needed)
+**パターン:**
+- `Read, Write, Edit` - 特定のツール
+- `Bash(git:*)` - gitコマンドのみのBash
+- `*` - 全ツール（まれに必要）
 
-**Use when:** Command requires specific tool access
+**使用時:** コマンドに特定のツールアクセスが必要な場合
 
 ### model
 
-**Purpose:** Specify model for command execution
-**Type:** String (sonnet, opus, haiku)
-**Default:** Inherits from conversation
+**目的:** コマンド実行のモデルを指定
+**型:** 文字列（sonnet、opus、haiku）
+**デフォルト:** 会話から継承
 
 ```yaml
 ---
@@ -156,16 +156,16 @@ model: haiku
 ---
 ```
 
-**Use cases:**
-- `haiku` - Fast, simple commands
-- `sonnet` - Standard workflows
-- `opus` - Complex analysis
+**ユースケース:**
+- `haiku` - 高速、シンプルなコマンド
+- `sonnet` - 標準ワークフロー
+- `opus` - 複雑な分析
 
 ### argument-hint
 
-**Purpose:** Document expected arguments for autocomplete
-**Type:** String
-**Default:** None
+**目的:** オートコンプリート用の期待される引数を文書化
+**型:** 文字列
+**デフォルト:** なし
 
 ```yaml
 ---
@@ -173,16 +173,16 @@ argument-hint: [pr-number] [priority] [assignee]
 ---
 ```
 
-**Benefits:**
-- Helps users understand command arguments
-- Improves command discovery
-- Documents command interface
+**メリット:**
+- ユーザーがコマンド引数を理解するのに役立つ
+- コマンドの発見性を向上させる
+- コマンドインターフェースを文書化する
 
 ### disable-model-invocation
 
-**Purpose:** Prevent SlashCommand tool from programmatically calling command
-**Type:** Boolean
-**Default:** false
+**目的:** SlashCommandツールがコマンドをプログラムで呼び出すことを防ぐ
+**型:** ブール値
+**デフォルト:** false
 
 ```yaml
 ---
@@ -190,146 +190,140 @@ disable-model-invocation: true
 ---
 ```
 
-**Use when:** Command should only be manually invoked
+**使用時:** コマンドが手動でのみ起動されるべき場合
 
-## Dynamic Arguments
+## 動的引数
 
-### Using $ARGUMENTS
+### $ARGUMENTSの使用
 
-Capture all arguments as single string:
+全引数を単一文字列として取得:
 
 ```markdown
 ---
-description: Fix issue by number
+description: 番号で問題を修正
 argument-hint: [issue-number]
 ---
 
-Fix issue #$ARGUMENTS following our coding standards and best practices.
+コーディング標準とベストプラクティスに従って問題 #$ARGUMENTS を修正する。
 ```
 
-**Usage:**
+**使用例:**
 ```
 > /fix-issue 123
 > /fix-issue 456
 ```
 
-**Expands to:**
-```
-Fix issue #123 following our coding standards...
-Fix issue #456 following our coding standards...
-```
+### 位置引数の使用
 
-### Using Positional Arguments
-
-Capture individual arguments with `$1`, `$2`, `$3`, etc.:
+`$1`、`$2`、`$3`などで個々の引数を取得:
 
 ```markdown
 ---
-description: Review PR with priority and assignee
+description: 優先度と担当者でPRをレビュー
 argument-hint: [pr-number] [priority] [assignee]
 ---
 
-Review pull request #$1 with priority level $2.
-After review, assign to $3 for follow-up.
+優先度レベル $2 でプルリクエスト #$1 をレビューする。
+レビュー後、フォローアップのために $3 に割り当てる。
 ```
 
-**Usage:**
+**使用例:**
 ```
 > /review-pr 123 high alice
 ```
 
-**Expands to:**
+**展開後:**
 ```
-Review pull request #123 with priority level high.
-After review, assign to alice for follow-up.
+優先度レベル high でプルリクエスト #123 をレビューする。
+レビュー後、フォローアップのために alice に割り当てる。
 ```
 
-### Combining Arguments
+### 引数の組み合わせ
 
-Mix positional and remaining arguments:
+位置引数と残りの引数を混ぜる:
 
 ```markdown
-Deploy $1 to $2 environment with options: $3
+$1 を $2 環境にオプション付きでデプロイする: $3
 ```
 
-**Usage:**
+**使用例:**
 ```
 > /deploy api staging --force --skip-tests
 ```
 
-**Expands to:**
+**展開後:**
 ```
-Deploy api to staging environment with options: --force --skip-tests
+api を staging 環境にオプション付きでデプロイする: --force --skip-tests
 ```
 
-## File References
+## ファイル参照
 
-### Using @ Syntax
+### @構文の使用
 
-Include file contents in command:
+コマンドにファイルの内容を含める:
 
 ```markdown
 ---
-description: Review specific file
+description: 特定のファイルをレビュー
 argument-hint: [file-path]
 ---
 
-Review @$1 for:
-- Code quality
-- Best practices
-- Potential bugs
+@$1 を以下の観点でレビューする:
+- コード品質
+- ベストプラクティス
+- 潜在的なバグ
 ```
 
-**Usage:**
+**使用例:**
 ```
 > /review-file src/api/users.ts
 ```
 
-**Effect:** Claude reads `src/api/users.ts` before processing command
+**効果:** コマンドを処理する前にClaudeが`src/api/users.ts`を読む
 
-### Multiple File References
+### 複数のファイル参照
 
-Reference multiple files:
-
-```markdown
-Compare @src/old-version.js with @src/new-version.js
-
-Identify:
-- Breaking changes
-- New features
-- Bug fixes
-```
-
-### Static File References
-
-Reference known files without arguments:
+複数のファイルを参照する:
 
 ```markdown
-Review @package.json and @tsconfig.json for consistency
+@src/old-version.js と @src/new-version.js を比較する
 
-Ensure:
-- TypeScript version matches
-- Dependencies are aligned
-- Build configuration is correct
+識別する:
+- 破壊的変更
+- 新機能
+- バグ修正
 ```
 
-## Bash Execution in Commands
+### 静的ファイル参照
 
-Commands can execute bash commands inline to dynamically gather context before Claude processes the command. This is useful for including repository state, environment information, or project-specific context.
+引数なしで既知のファイルを参照する:
 
-**When to use:**
-- Include dynamic context (git status, environment vars, etc.)
-- Gather project/repository state
-- Build context-aware workflows
+```markdown
+@package.json と @tsconfig.json の一貫性をレビューする
 
-**Implementation details:**
-For complete syntax, examples, and best practices, see `references/plugin-features-reference.md` section on bash execution. The reference includes the exact syntax and multiple working examples to avoid execution issues
+確認する:
+- TypeScriptのバージョンが一致しているか
+- 依存関係が整合しているか
+- ビルド設定が正しいか
+```
 
-## Command Organization
+## コマンドでのBash実行
 
-### Flat Structure
+コマンドはインラインでbashコマンドを実行して、Claudeがコマンドを処理する前に動的にコンテキストを収集できます。これはリポジトリの状態、環境情報、またはプロジェクト固有のコンテキストを含めるのに役立ちます。
 
-Simple organization for small command sets:
+**使用時:**
+- 動的なコンテキストを含める（git状態、環境変数など）
+- プロジェクト/リポジトリの状態を収集する
+- コンテキスト対応のワークフローを構築する
+
+**実装の詳細:**
+完全な構文、例、ベストプラクティスについては、`references/plugin-features-reference.md`のbash実行セクションを参照。
+
+## コマンドの整理
+
+### フラット構造
+
+小さなコマンドセット用の単純な整理:
 
 ```
 .claude/commands/
@@ -340,11 +334,11 @@ Simple organization for small command sets:
 └── docs.md
 ```
 
-**Use when:** 5-15 commands, no clear categories
+**使用時:** 5〜15のコマンド、明確なカテゴリなし
 
-### Namespaced Structure
+### 名前空間構造
 
-Organize commands in subdirectories:
+サブディレクトリでコマンドを整理する:
 
 ```
 .claude/commands/
@@ -360,220 +354,209 @@ Organize commands in subdirectories:
     └── publish.md      # /publish (project:docs)
 ```
 
-**Benefits:**
-- Logical grouping by category
-- Namespace shown in `/help`
-- Easier to find related commands
+**メリット:**
+- カテゴリ別の論理的なグループ
+- `/help`に名前空間が表示
+- 関連コマンドを見つけやすい
 
-**Use when:** 15+ commands, clear categories
+**使用時:** 15以上のコマンド、明確なカテゴリあり
 
-## Best Practices
+## ベストプラクティス
 
-### Command Design
+### コマンド設計
 
-1. **Single responsibility:** One command, one task
-2. **Clear descriptions:** Self-explanatory in `/help`
-3. **Explicit dependencies:** Use `allowed-tools` when needed
-4. **Document arguments:** Always provide `argument-hint`
-5. **Consistent naming:** Use verb-noun pattern (review-pr, fix-issue)
+1. **単一責任:** 1つのコマンド、1つのタスク
+2. **明確な説明:** `/help`で自己説明的
+3. **明示的な依存関係:** 必要な時は`allowed-tools`を使用
+4. **引数を文書化:** 常に`argument-hint`を提供
+5. **一貫した命名:** 動詞-名詞パターンを使用（review-pr、fix-issue）
 
-### Argument Handling
+### 引数処理
 
-1. **Validate arguments:** Check for required arguments in prompt
-2. **Provide defaults:** Suggest defaults when arguments missing
-3. **Document format:** Explain expected argument format
-4. **Handle edge cases:** Consider missing or invalid arguments
+1. **引数を検証する:** プロンプトで必須引数を確認する
+2. **デフォルトを提供する:** 引数がない場合のデフォルトを提案
+3. **フォーマットを文書化:** 期待される引数フォーマットを説明
+4. **エッジケースを処理:** 欠落または無効な引数を考慮
 
-```markdown
----
-argument-hint: [pr-number]
----
+### ファイル参照
 
-$IF($1,
-  Review PR #$1,
-  Please provide a PR number. Usage: /review-pr [number]
-)
-```
+1. **明示的なパス:** 明確なファイルパスを使用
+2. **存在を確認:** 欠落ファイルを丁寧に処理
+3. **相対パス:** プロジェクト相対パスを使用
+4. **Globサポート:** パターンにGlobツールの使用を検討
 
-### File References
+### Bashコマンド
 
-1. **Explicit paths:** Use clear file paths
-2. **Check existence:** Handle missing files gracefully
-3. **Relative paths:** Use project-relative paths
-4. **Glob support:** Consider using Glob tool for patterns
+1. **スコープを制限:** `Bash(*)`ではなく`Bash(git:*)`を使用
+2. **安全なコマンド:** 破壊的な操作を避ける
+3. **エラーを処理:** コマンド失敗を考慮
+4. **高速に保つ:** 長時間実行コマンドは起動を遅くする
 
-### Bash Commands
+### ドキュメント
 
-1. **Limit scope:** Use `Bash(git:*)` not `Bash(*)`
-2. **Safe commands:** Avoid destructive operations
-3. **Handle errors:** Consider command failures
-4. **Keep fast:** Long-running commands slow invocation
-
-### Documentation
-
-1. **Add comments:** Explain complex logic
-2. **Provide examples:** Show usage in comments
-3. **List requirements:** Document dependencies
-4. **Version commands:** Note breaking changes
+1. **コメントを追加:** 複雑なロジックを説明
+2. **例を提供:** コメントに使用例を示す
+3. **要件を一覧表示:** 依存関係を文書化
+4. **コマンドをバージョン管理:** 破壊的変更を記録
 
 ```markdown
 ---
-description: Deploy application to environment
+description: アプリケーションを環境にデプロイ
 argument-hint: [environment] [version]
 ---
 
 <!--
-Usage: /deploy [staging|production] [version]
-Requires: AWS credentials configured
-Example: /deploy staging v1.2.3
+使用法: /deploy [staging|production] [version]
+必要条件: AWSの認証情報が設定されていること
+例: /deploy staging v1.2.3
 -->
 
-Deploy application to $1 environment using version $2...
+バージョン $2 を使用してアプリケーションを $1 環境にデプロイする...
 ```
 
-## Common Patterns
+## 一般的なパターン
 
-### Review Pattern
+### レビューパターン
 
 ```markdown
 ---
-description: Review code changes
+description: コード変更をレビュー
 allowed-tools: Read, Bash(git:*)
 ---
 
-Files changed: !`git diff --name-only`
+変更されたファイル: !`git diff --name-only`
 
-Review each file for:
-1. Code quality and style
-2. Potential bugs or issues
-3. Test coverage
-4. Documentation needs
+各ファイルを以下の観点でレビューする:
+1. コード品質とスタイル
+2. 潜在的なバグや問題
+3. テストカバレッジ
+4. ドキュメントの必要性
 
-Provide specific feedback for each file.
+各ファイルに対して具体的なフィードバックを提供する。
 ```
 
-### Testing Pattern
+### テストパターン
 
 ```markdown
 ---
-description: Run tests for specific file
+description: 特定のファイルのテストを実行
 argument-hint: [test-file]
 allowed-tools: Bash(npm:*)
 ---
 
-Run tests: !`npm test $1`
+テストを実行: !`npm test $1`
 
-Analyze results and suggest fixes for failures.
+結果を分析し、失敗の修正を提案する。
 ```
 
-### Documentation Pattern
+### ドキュメントパターン
 
 ```markdown
 ---
-description: Generate documentation for file
+description: ファイルのドキュメントを生成
 argument-hint: [source-file]
 ---
 
-Generate comprehensive documentation for @$1 including:
-- Function/class descriptions
-- Parameter documentation
-- Return value descriptions
-- Usage examples
-- Edge cases and errors
+@$1 の包括的なドキュメントを生成する（以下を含む）:
+- 関数/クラスの説明
+- パラメータのドキュメント
+- 戻り値の説明
+- 使用例
+- エッジケースとエラー
 ```
 
-### Workflow Pattern
+### ワークフローパターン
 
 ```markdown
 ---
-description: Complete PR workflow
+description: 完全なPRワークフロー
 argument-hint: [pr-number]
 allowed-tools: Bash(gh:*), Read
 ---
 
-PR #$1 Workflow:
+PR #$1 ワークフロー:
 
-1. Fetch PR: !`gh pr view $1`
-2. Review changes
-3. Run checks
-4. Approve or request changes
+1. PRを取得: !`gh pr view $1`
+2. 変更をレビュー
+3. チェックを実行
+4. 承認または変更リクエスト
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
-**Command not appearing:**
-- Check file is in correct directory
-- Verify `.md` extension present
-- Ensure valid Markdown format
-- Restart Claude Code
+**コマンドが表示されない:**
+- ファイルが正しいディレクトリにあるか確認
+- `.md`拡張子があるか確認
+- 有効なMarkdown形式を確認
+- Claude Codeを再起動
 
-**Arguments not working:**
-- Verify `$1`, `$2` syntax correct
-- Check `argument-hint` matches usage
-- Ensure no extra spaces
+**引数が機能しない:**
+- `$1`、`$2`の構文が正しいか確認
+- `argument-hint`が使用法と一致しているか確認
+- 余分なスペースがないか確認
 
-**Bash execution failing:**
-- Check `allowed-tools` includes Bash
-- Verify command syntax in backticks
-- Test command in terminal first
-- Check for required permissions
+**Bash実行が失敗する:**
+- `allowed-tools`にBashが含まれているか確認
+- バッククォート内のコマンド構文を確認
+- ターミナルでコマンドを最初にテスト
+- 必要な権限を確認
 
-**File references not working:**
-- Verify `@` syntax correct
-- Check file path is valid
-- Ensure Read tool allowed
-- Use absolute or project-relative paths
+**ファイル参照が機能しない:**
+- `@`構文が正しいか確認
+- ファイルパスが有効か確認
+- Readツールが許可されているか確認
+- 絶対パスまたはプロジェクト相対パスを使用
 
-## Plugin-Specific Features
+## プラグイン固有の機能
 
-### CLAUDE_PLUGIN_ROOT Variable
+### CLAUDE_PLUGIN_ROOT変数
 
-Plugin commands have access to `${CLAUDE_PLUGIN_ROOT}`, an environment variable that resolves to the plugin's absolute path.
+プラグインコマンドは`${CLAUDE_PLUGIN_ROOT}`にアクセスでき、プラグインの絶対パスに解決される環境変数。
 
-**Purpose:**
-- Reference plugin files portably
-- Execute plugin scripts
-- Load plugin configuration
-- Access plugin templates
+**目的:**
+- プラグインファイルをポータブルに参照
+- プラグインスクリプトを実行
+- プラグイン設定をロード
+- プラグインテンプレートにアクセス
 
-**Basic usage:**
+**基本的な使用法:**
 
 ```markdown
 ---
-description: Analyze using plugin script
+description: プラグインスクリプトを使用して分析
 allowed-tools: Bash(node:*)
 ---
 
-Run analysis: !`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js $1`
+分析を実行: !`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js $1`
 
-Review results and report findings.
+結果をレビューして発見事項を報告する。
 ```
 
-**Common patterns:**
+**一般的なパターン:**
 
 ```markdown
-# Execute plugin script
+# プラグインスクリプトを実行
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/script.sh`
 
-# Load plugin configuration
+# プラグイン設定をロード
 @${CLAUDE_PLUGIN_ROOT}/config/settings.json
 
-# Use plugin template
+# プラグインテンプレートを使用
 @${CLAUDE_PLUGIN_ROOT}/templates/report.md
 
-# Access plugin resources
+# プラグインリソースにアクセス
 @${CLAUDE_PLUGIN_ROOT}/docs/reference.md
 ```
 
-**Why use it:**
-- Works across all installations
-- Portable between systems
-- No hardcoded paths needed
-- Essential for multi-file plugins
+**使用する理由:**
+- 全インストールで機能する
+- システム間でポータブル
+- ハードコードされたパス不要
+- マルチファイルプラグインに必須
 
-### Plugin Command Organization
+### プラグインコマンドの整理
 
-Plugin commands discovered automatically from `commands/` directory:
+プラグインコマンドは`commands/`ディレクトリから自動的に検出される:
 
 ```
 plugin-name/
@@ -585,250 +568,119 @@ plugin-name/
 └── plugin.json
 ```
 
-**Namespace benefits:**
-- Logical command grouping
-- Shown in `/help` output
-- Avoid name conflicts
-- Organize related commands
+## プラグインコンポーネントとの統合
 
-**Naming conventions:**
-- Use descriptive action names
-- Avoid generic names (test, run)
-- Consider plugin-specific prefix
-- Use hyphens for multi-word names
+### エージェント統合
 
-### Plugin Command Patterns
-
-**Configuration-based pattern:**
+複雑なタスクのためにプラグインエージェントを起動する:
 
 ```markdown
 ---
-description: Deploy using plugin configuration
-argument-hint: [environment]
-allowed-tools: Read, Bash(*)
----
-
-Load configuration: @${CLAUDE_PLUGIN_ROOT}/config/$1-deploy.json
-
-Deploy to $1 using configuration settings.
-Monitor deployment and report status.
-```
-
-**Template-based pattern:**
-
-```markdown
----
-description: Generate docs from template
-argument-hint: [component]
----
-
-Template: @${CLAUDE_PLUGIN_ROOT}/templates/docs.md
-
-Generate documentation for $1 following template structure.
-```
-
-**Multi-script pattern:**
-
-```markdown
----
-description: Complete build workflow
-allowed-tools: Bash(*)
----
-
-Build: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh`
-Test: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/test.sh`
-Package: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/package.sh`
-
-Review outputs and report workflow status.
-```
-
-**See `references/plugin-features-reference.md` for detailed patterns.**
-
-## Integration with Plugin Components
-
-Commands can integrate with other plugin components for powerful workflows.
-
-### Agent Integration
-
-Launch plugin agents for complex tasks:
-
-```markdown
----
-description: Deep code review
+description: 詳細なコードレビュー
 argument-hint: [file-path]
 ---
 
-Initiate comprehensive review of @$1 using the code-reviewer agent.
+code-reviewerエージェントを使用して @$1 の包括的なレビューを開始する。
 
-The agent will analyze:
-- Code structure
-- Security issues
-- Performance
-- Best practices
+エージェントは以下を分析する:
+- コード構造
+- セキュリティの問題
+- パフォーマンス
+- ベストプラクティス
 
-Agent uses plugin resources:
+エージェントはプラグインリソースを使用する:
 - ${CLAUDE_PLUGIN_ROOT}/config/rules.json
 - ${CLAUDE_PLUGIN_ROOT}/checklists/review.md
 ```
 
-**Key points:**
-- Agent must exist in `plugin/agents/` directory
-- Claude uses Task tool to launch agent
-- Document agent capabilities
-- Reference plugin resources agent uses
+### スキル統合
 
-### Skill Integration
-
-Leverage plugin skills for specialized knowledge:
+特殊な知識のためにプラグインスキルを活用する:
 
 ```markdown
 ---
-description: Document API with standards
+description: 標準でAPIをドキュメント化
 argument-hint: [api-file]
 ---
 
-Document API in @$1 following plugin standards.
+プラグイン標準に従って @$1 のAPIをドキュメント化する。
 
-Use the api-docs-standards skill to ensure:
-- Complete endpoint documentation
-- Consistent formatting
-- Example quality
-- Error documentation
+api-docs-standardsスキルを使用して以下を確認する:
+- 完全なエンドポイントドキュメント
+- 一貫したフォーマット
+- サンプルの品質
+- エラードキュメント
 
-Generate production-ready API docs.
+本番対応のAPIドキュメントを生成する。
 ```
 
-**Key points:**
-- Skill must exist in `plugin/skills/` directory
-- Mention skill name to trigger invocation
-- Document skill purpose
-- Explain what skill provides
+### マルチコンポーネントワークフロー
 
-### Hook Coordination
-
-Design commands that work with plugin hooks:
-- Commands can prepare state for hooks to process
-- Hooks execute automatically on tool events
-- Commands should document expected hook behavior
-- Guide Claude on interpreting hook output
-
-See `references/plugin-features-reference.md` for examples of commands that coordinate with hooks
-
-### Multi-Component Workflows
-
-Combine agents, skills, and scripts:
+エージェント、スキル、スクリプトを組み合わせる:
 
 ```markdown
 ---
-description: Comprehensive review workflow
+description: 包括的なレビューワークフロー
 argument-hint: [file]
 allowed-tools: Bash(node:*), Read
 ---
 
-Target: @$1
+対象: @$1
 
-Phase 1 - Static Analysis:
+フェーズ1 - 静的分析:
 !`node ${CLAUDE_PLUGIN_ROOT}/scripts/lint.js $1`
 
-Phase 2 - Deep Review:
-Launch code-reviewer agent for detailed analysis.
+フェーズ2 - 詳細レビュー:
+詳細な分析のためにcode-reviewerエージェントを起動する。
 
-Phase 3 - Standards Check:
-Use coding-standards skill for validation.
+フェーズ3 - 標準チェック:
+検証のためにcoding-standardsスキルを使用する。
 
-Phase 4 - Report:
-Template: @${CLAUDE_PLUGIN_ROOT}/templates/review.md
+フェーズ4 - レポート:
+テンプレート: @${CLAUDE_PLUGIN_ROOT}/templates/review.md
 
-Compile findings into report following template.
+テンプレートに従って発見事項をレポートにまとめる。
 ```
 
-**When to use:**
-- Complex multi-step workflows
-- Leverage multiple plugin capabilities
-- Require specialized analysis
-- Need structured outputs
+## バリデーションパターン
 
-## Validation Patterns
-
-Commands should validate inputs and resources before processing.
-
-### Argument Validation
+### 引数バリデーション
 
 ```markdown
 ---
-description: Deploy with validation
+description: 検証付きでデプロイ
 argument-hint: [environment]
 ---
 
-Validate environment: !`echo "$1" | grep -E "^(dev|staging|prod)$" || echo "INVALID"`
+環境を検証: !`echo "$1" | grep -E "^(dev|staging|prod)$" || echo "INVALID"`
 
-If $1 is valid environment:
-  Deploy to $1
-Otherwise:
-  Explain valid environments: dev, staging, prod
-  Show usage: /deploy [environment]
+$1 が有効な環境の場合:
+  $1 にデプロイ
+そうでない場合:
+  有効な環境を説明: dev、staging、prod
+  使用法を表示: /deploy [environment]
 ```
 
-### File Existence Checks
+### ファイル存在チェック
 
 ```markdown
 ---
-description: Process configuration
+description: 設定を処理
 argument-hint: [config-file]
 ---
 
-Check file exists: !`test -f $1 && echo "EXISTS" || echo "MISSING"`
+ファイルの存在を確認: !`test -f $1 && echo "EXISTS" || echo "MISSING"`
 
-If file exists:
-  Process configuration: @$1
-Otherwise:
-  Explain where to place config file
-  Show expected format
-  Provide example configuration
+ファイルが存在する場合:
+  設定を処理: @$1
+そうでない場合:
+  設定ファイルの配置場所を説明
+  期待されるフォーマットを表示
+  設定例を提供
 ```
 
-### Plugin Resource Validation
-
-```markdown
----
-description: Run plugin analyzer
-allowed-tools: Bash(test:*)
 ---
 
-Validate plugin setup:
-- Script: !`test -x ${CLAUDE_PLUGIN_ROOT}/bin/analyze && echo "✓" || echo "✗"`
-- Config: !`test -f ${CLAUDE_PLUGIN_ROOT}/config.json && echo "✓" || echo "✗"`
-
-If all checks pass, run analysis.
-Otherwise, report missing components.
-```
-
-### Error Handling
-
-```markdown
----
-description: Build with error handling
-allowed-tools: Bash(*)
----
-
-Execute build: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh 2>&1 || echo "BUILD_FAILED"`
-
-If build succeeded:
-  Report success and output location
-If build failed:
-  Analyze error output
-  Suggest likely causes
-  Provide troubleshooting steps
-```
-
-**Best practices:**
-- Validate early in command
-- Provide helpful error messages
-- Suggest corrective actions
-- Handle edge cases gracefully
-
----
-
-For detailed frontmatter field specifications, see `references/frontmatter-reference.md`.
-For plugin-specific features and patterns, see `references/plugin-features-reference.md`.
-For command pattern examples, see `examples/` directory.
+詳細なフロントマターフィールドの仕様については`references/frontmatter-reference.md`を参照。
+プラグイン固有の機能とパターンについては`references/plugin-features-reference.md`を参照。
+コマンドパターンの例については`examples/`ディレクトリを参照。

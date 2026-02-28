@@ -1,56 +1,56 @@
 ---
 name: simplify
-description: Simplify and refactor code while preserving functionality and library constraints.
+description: 機能とライブラリの制約を維持しながらコードを簡素化・リファクタリングする。
 disable-model-invocation: true
 ---
 
-# Simplify Code
+# コードを簡素化
 
-Simplify and refactor $ARGUMENTS.
+$ARGUMENTS を簡素化・リファクタリングする。
 
-## Simplification Principles
+## 簡素化の原則
 
-1. **Single Responsibility** - 1 function = 1 thing
-2. **Short Functions** - Target under 20 lines
-3. **Shallow Nesting** - Early return, depth ≤ 2
-4. **Clear Naming** - Clear enough to not need comments
-5. **Type Hints Required** - On all functions
+1. **単一責任** - 1つの関数 = 1つのこと
+2. **短い関数** - 20行未満を目標とする
+3. **浅いネスト** - アーリーリターン、深さ ≤ 2
+4. **明確な命名** - コメントが不要なほど明確に
+5. **型ヒント必須** - 全関数に付与する
 
-## Steps
+## ステップ
 
-### 1. Analyze Target Code
+### 1. 対象コードを分析する
 
-- Read the file(s) to understand current structure
-- Identify complexity hotspots (deep nesting, long functions)
-- List functions/classes to simplify
+- ファイルを読み込み、現在の構造を理解する
+- 複雑性のホットスポットを特定する（深いネスト、長い関数）
+- 簡素化すべき関数/クラスをリストアップする
 
-### 2. Check Library Constraints
+### 2. ライブラリの制約を確認する
 
-- Identify libraries used in target code
-- Check constraints in `.claude/docs/libraries/`
-- Web search for unclear library behaviors
+- 対象コードで使用されているライブラリを特定する
+- `.claude/docs/libraries/` で制約を確認する
+- 不明なライブラリの挙動はウェブ検索で調べる
 
-### 3. Plan Refactoring
+### 3. リファクタリングを計画する
 
-For each complexity issue:
-- What change to make
-- Why it improves readability
-- Verify it doesn't break library usage
+各複雑性の問題について:
+- 行うべき変更内容
+- 可読性が向上する理由
+- ライブラリの使用方法を壊さないことを確認
 
-### 4. Execute Refactoring
+### 4. リファクタリングを実行する
 
-Apply changes following these patterns:
+以下のパターンに従って変更を適用する:
 
-**Early Return:**
+**アーリーリターン:**
 ```python
-# Before
+# 変更前
 def process(value):
     if value is not None:
         if value > 0:
             return do_something(value)
     return None
 
-# After
+# 変更後
 def process(value):
     if value is None:
         return None
@@ -59,29 +59,29 @@ def process(value):
     return do_something(value)
 ```
 
-**Extract Function:**
+**関数の抽出:**
 ```python
-# Before
+# 変更前
 def main():
-    # 50 lines of mixed concerns
+    # 50行の混在した処理
     ...
 
-# After
+# 変更後
 def main():
     data = load_data()
     result = process_data(data)
     save_result(result)
 ```
 
-### 5. Verify with Tests
+### 5. テストで検証する
 
 ```bash
 uv run pytest -v
 ```
 
-## Notes
+## 注記
 
-- Always preserve library features/constraints
-- Web search for unclear points
-- Don't change behavior (refactoring only)
-- Run tests after each significant change
+- 常にライブラリの機能/制約を維持する
+- 不明な点はウェブ検索する
+- 動作を変更しない（リファクタリングのみ）
+- 重要な変更後は毎回テストを実行する

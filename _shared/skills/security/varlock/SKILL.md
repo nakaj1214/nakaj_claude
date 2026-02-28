@@ -1,131 +1,131 @@
 ---
 name: varlock
-description: Secure environment variable management with Varlock. Use when handling secrets, API keys, credentials, or any sensitive configuration. Ensures secrets are never exposed in terminals, logs, traces, or Claude's context. Trigger phrases include "environment variables", "secrets", ".env", "API key", "credentials", "sensitive", "Varlock".
+description: Varlockを使った環境変数の安全な管理。シークレット、APIキー、認証情報、センシティブな設定を扱う際に使用する。シークレットがターミナル、ログ、トレース、Claudeのコンテキストに露出しないことを保証する。「環境変数」「シークレット」「.env」「APIキー」「認証情報」「センシティブ」「Varlock」などのフレーズで起動する。
 ---
 
-# Varlock Security Skill
+# Varlockセキュリティスキル
 
-Secure-by-default environment variable management for Claude Code sessions.
+Claudeコードセッションのためのセキュアバイデフォルト環境変数管理。
 
-> **Repository**: https://github.com/dmno-dev/varlock
-> **Documentation**: https://varlock.dev
+> **リポジトリ**: https://github.com/dmno-dev/varlock
+> **ドキュメント**: https://varlock.dev
 
-## Core Principle: Secrets Never Exposed
+## 基本原則: シークレットは絶対に露出させない
 
-When working with Claude, secrets must NEVER appear in:
-- Terminal output
-- Claude's input/output context
-- Log files or traces
-- Git commits or diffs
-- Error messages
+Claudeと作業する際、シークレットは以下のいずれにも現れてはならない:
+- ターミナル出力
+- Claudeの入出力コンテキスト
+- ログファイルやトレース
+- Gitコミットやdiff
+- エラーメッセージ
 
-This skill ensures all sensitive data is properly protected.
+このスキルはすべてのセンシティブデータを適切に保護する。
 
 ---
 
-## CRITICAL: Security Rules for Claude
+## 重要: Claudeのセキュリティルール
 
-### Rule 1: Never Echo Secrets
+### ルール1: シークレットをechoしない
 
 ```bash
-# ❌ NEVER DO THIS - exposes secret to Claude's context
+# ❌ 絶対にしてはいけない - Claudeのコンテキストにシークレットが露出する
 echo $CLERK_SECRET_KEY
 cat .env | grep SECRET
 printenv | grep API
 
-# ✅ DO THIS - validates without exposing
-varlock load --quiet && echo "✓ Secrets validated"
+# ✅ これをする - 露出せずに検証する
+varlock load --quiet && echo "✓ シークレット検証済み"
 ```
 
-### Rule 2: Never Read .env Directly
+### ルール2: .envを直接読まない
 
 ```bash
-# ❌ NEVER DO THIS - exposes all secrets
+# ❌ 絶対にしてはいけない - 全シークレットが露出する
 cat .env
 less .env
 Read tool on .env file
 
-# ✅ DO THIS - read schema (safe) not values
+# ✅ これをする - 値ではなくスキーマを読む（安全）
 cat .env.schema
-varlock load  # Shows masked values
+varlock load  # マスクされた値を表示
 ```
 
-### Rule 3: Use Varlock for Validation
+### ルール3: 検証にVarlockを使う
 
 ```bash
-# ❌ NEVER DO THIS - exposes secret in error
+# ❌ 絶対にしてはいけない - エラーでシークレットが露出する
 test -n "$API_KEY" && echo "Key: $API_KEY"
 
-# ✅ DO THIS - Varlock validates and masks
+# ✅ これをする - Varlockが検証してマスクする
 varlock load
-# Output shows: API_KEY 🔐sensitive └ ▒▒▒▒▒
+# 出力: API_KEY 🔐sensitive └ ▒▒▒▒▒
 ```
 
-### Rule 4: Never Include Secrets in Commands
+### ルール4: コマンドにシークレットを含めない
 
 ```bash
-# ❌ NEVER DO THIS - secret in command history
+# ❌ 絶対にしてはいけない - コマンド履歴にシークレットが残る
 curl -H "Authorization: Bearer sk_live_xxx" https://api.example.com
 
-# ✅ DO THIS - use environment variable
+# ✅ これをする - 環境変数を使う
 curl -H "Authorization: Bearer $API_KEY" https://api.example.com
-# Or better: varlock run -- curl ...
+# より良い方法: varlock run -- curl ...
 ```
 
 ---
 
-## Quick Start
+## クイックスタート
 
-### Installation
+### インストール
 
 ```bash
-# Install Varlock CLI
+# Varlock CLIをインストール
 curl -sSfL https://varlock.dev/install.sh | sh -s -- --force-no-brew
 
-# Add to PATH (add to ~/.zshrc or ~/.bashrc)
+# PATHに追加（~/.zshrcまたは~/.bashrcに追加）
 export PATH="$HOME/.varlock/bin:$PATH"
 
-# Verify
+# 確認
 varlock --version
 ```
 
-### Initialize Project
+### プロジェクトの初期化
 
 ```bash
-# Create .env.schema from existing .env
+# 既存の.envから.env.schemaを作成
 varlock init
 
-# Or create manually
+# または手動で作成
 touch .env.schema
 ```
 
 ---
 
-## Schema File: .env.schema
+## スキーマファイル: .env.schema
 
-The schema defines types, validation, and sensitivity for each variable.
+スキーマは各変数の型、バリデーション、センシティビティを定義する。
 
-### Basic Structure
+### 基本構造
 
 ```bash
-# Global defaults
+# グローバルデフォルト
 # @defaultSensitive=true @defaultRequired=infer
 
-# Application
+# アプリケーション
 # @type=enum(development,staging,production) @sensitive=false
 NODE_ENV=development
 
 # @type=port @sensitive=false
 PORT=3000
 
-# Database - SENSITIVE
+# データベース - センシティブ
 # @type=url @required
 DATABASE_URL=
 
 # @type=string @required @sensitive
 DATABASE_PASSWORD=
 
-# API Keys - SENSITIVE
+# APIキー - センシティブ
 # @type=string(startsWith=sk_) @required @sensitive
 STRIPE_SECRET_KEY=
 
@@ -133,173 +133,173 @@ STRIPE_SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 ```
 
-### Security Annotations
+### セキュリティアノテーション
 
-| Annotation | Effect | Use For |
+| アノテーション | 効果 | 用途 |
 |------------|--------|---------|
-| `@sensitive` | Redacted in all output | API keys, passwords, tokens |
-| `@sensitive=false` | Shown in logs | Public keys, non-secret config |
-| `@defaultSensitive=true` | All vars sensitive by default | High-security projects |
+| `@sensitive` | 全出力でマスク | APIキー、パスワード、トークン |
+| `@sensitive=false` | ログに表示 | 公開鍵、シークレットでない設定 |
+| `@defaultSensitive=true` | 全変数をデフォルトでセンシティブに | セキュリティ重視プロジェクト |
 
-### Type Annotations
+### 型アノテーション
 
-| Type | Validates | Example |
+| 型 | バリデーション | 例 |
 |------|-----------|---------|
-| `string` | Any string | `@type=string` |
-| `string(startsWith=X)` | Prefix validation | `@type=string(startsWith=sk_)` |
-| `string(contains=X)` | Substring validation | `@type=string(contains=+clerk_test)` |
-| `url` | Valid URL | `@type=url` |
+| `string` | 任意文字列 | `@type=string` |
+| `string(startsWith=X)` | プレフィックス検証 | `@type=string(startsWith=sk_)` |
+| `string(contains=X)` | 部分文字列検証 | `@type=string(contains=+clerk_test)` |
+| `url` | 有効なURL | `@type=url` |
 | `port` | 1-65535 | `@type=port` |
 | `boolean` | true/false | `@type=boolean` |
-| `enum(a,b,c)` | One of values | `@type=enum(dev,prod)` |
+| `enum(a,b,c)` | 指定値のいずれか | `@type=enum(dev,prod)` |
 
 ---
 
-## Safe Commands for Claude
+## Claudeが安全に使えるコマンド
 
-### Validating Environment
+### 環境の検証
 
 ```bash
-# Check all variables (safe - masks sensitive values)
+# 全変数を確認（安全 - センシティブな値はマスクされる）
 varlock load
 
-# Quiet mode (no output on success)
+# クワイエットモード（成功時は出力なし）
 varlock load --quiet
 
-# Check specific environment
+# 特定の環境を確認
 varlock load --env=production
 ```
 
-### Running Commands with Secrets
+### シークレットを使ったコマンドの実行
 
 ```bash
-# Inject validated env into command
+# 検証済み環境をコマンドに注入
 varlock run -- npm start
 varlock run -- node script.js
 varlock run -- pytest
 
-# Secrets are available to the command but never printed
+# シークレットはコマンドから利用できるが、表示はされない
 ```
 
-### Checking Schema (Safe)
+### スキーマの確認（安全）
 
 ```bash
-# Schema is safe to read - contains no values
+# スキーマは安全に読める - 値を含まない
 cat .env.schema
 
-# List expected variables
+# 期待される変数を一覧表示
 grep "^[A-Z]" .env.schema
 ```
 
 ---
 
-## Common Patterns
+## 一般的なパターン
 
-### Pattern 1: Validate Before Operations
+### パターン1: 操作前に検証する
 
 ```bash
-# Always validate environment first
+# 常に最初に環境を検証する
 varlock load --quiet || {
-  echo "❌ Environment validation failed"
+  echo "❌ 環境検証失敗"
   exit 1
 }
 
-# Then proceed with operation
+# その後、操作を進める
 npm run build
 ```
 
-### Pattern 2: Safe Secret Rotation
+### パターン2: 安全なシークレットローテーション
 
 ```bash
-# 1. Update secret in external source (1Password, AWS, etc.)
-# 2. Update .env file manually (don't use Claude for this)
-# 3. Validate new value works
+# 1. 外部ソース（1Password、AWSなど）でシークレットを更新
+# 2. .envファイルを手動で更新（Claudeには頼まない）
+# 3. 新しい値が機能するか検証
 varlock load
 
-# 4. If using GitHub Secrets, sync (values not shown)
+# 4. GitHub Secretsを使っている場合は同期（値は表示されない）
 ./scripts/update-github-secrets.sh
 ```
 
-### Pattern 3: CI/CD Integration
+### パターン3: CI/CD統合
 
 ```yaml
-# GitHub Actions - secrets from GitHub Secrets
-- name: Validate environment
+# GitHub Actions - GitHub Secretsからのシークレット
+- name: 環境を検証
   env:
     DATABASE_URL: ${{ secrets.DATABASE_URL }}
     API_KEY: ${{ secrets.API_KEY }}
   run: varlock load --quiet
 ```
 
-### Pattern 4: Docker Integration
+### パターン4: Docker統合
 
 ```dockerfile
-# Install Varlock in container
+# コンテナにVarlockをインストール
 RUN curl -sSfL https://varlock.dev/install.sh | sh -s -- --force-no-brew \
     && ln -s /root/.varlock/bin/varlock /usr/local/bin/varlock
 
-# Validate at container start
+# コンテナ起動時に検証
 CMD ["varlock", "run", "--", "npm", "start"]
 ```
 
 ---
 
-## Handling Secret-Related Tasks
+## シークレット関連タスクの対応
 
-### When User Asks to "Check if API key is set"
+### ユーザーが「APIキーが設定されているか確認して」と求めた場合
 
 ```bash
-# ✅ Safe approach
+# ✅ 安全なアプローチ
 varlock load 2>&1 | grep "API_KEY"
-# Shows: ✅ API_KEY 🔐sensitive └ ▒▒▒▒▒
+# 表示: ✅ API_KEY 🔐sensitive └ ▒▒▒▒▒
 
-# ❌ Never do
+# ❌ 絶対にしない
 echo $API_KEY
 ```
 
-### When User Asks to "Debug authentication"
+### ユーザーが「認証のデバッグをして」と求めた場合
 
 ```bash
-# ✅ Safe approach - check presence and format
-varlock load  # Validates types and required fields
+# ✅ 安全なアプローチ - 存在と形式を確認
+varlock load  # 型と必須フィールドを検証
 
-# Check if key has correct prefix (without showing value)
+# 値を表示せずにキーの正しいプレフィックスを確認
 varlock load 2>&1 | grep -E "(CLERK|AUTH)"
 
-# ❌ Never do
+# ❌ 絶対にしない
 printenv | grep KEY
 ```
 
-### When User Asks to "Update a secret"
+### ユーザーが「シークレットを更新して」と求めた場合
 
 ```
-Claude should respond:
-"I cannot directly modify secrets for security reasons. Please:
-1. Update the value in your .env file manually
-2. Or update in your secrets manager (1Password, AWS, etc.)
-3. Then run `varlock load` to validate
+Claudeはこう応答すべき:
+「セキュリティ上の理由から、シークレットを直接変更することはできません。以下の手順をお願いします:
+1. .envファイルの値を手動で更新する
+2. またはシークレットマネージャー（1Password、AWSなど）で更新する
+3. その後、`varlock load`を実行して検証する
 
-I can help you update the .env.schema if you need to add new variables."
+新しい変数を追加する必要がある場合は、.env.schemaの更新をお手伝いできます。」
 ```
 
-### When User Asks to "Show me the .env file"
+### ユーザーが「.envファイルを見せて」と求めた場合
 
 ```
-Claude should respond:
-"I won't read .env files directly as they contain secrets. Instead:
-- Run `varlock load` to see masked values
-- Run `cat .env.schema` to see the schema (safe)
-- I can help you modify .env.schema if needed"
+Claudeはこう応答すべき:
+「シークレットを含むため、.envファイルを直接読むことはしません。代わりに:
+- `varlock load`を実行してマスクされた値を確認
+- `cat .env.schema`を実行してスキーマを確認（安全）
+- 必要であれば.env.schemaの変更をお手伝いできます」
 ```
 
 ---
 
-## External Secret Sources
+## 外部シークレットソース
 
-### 1Password Integration
+### 1Password統合
 
 ```bash
-# In .env.schema
+# .env.schemaで
 # @type=string @sensitive
 API_KEY=exec('op read "op://vault/item/field"')
 ```
@@ -307,66 +307,66 @@ API_KEY=exec('op read "op://vault/item/field"')
 ### AWS Secrets Manager
 
 ```bash
-# In .env.schema
+# .env.schemaで
 # @type=string @sensitive
 DB_PASSWORD=exec('aws secretsmanager get-secret-value --secret-id prod/db')
 ```
 
-### Environment-Specific Values
+### 環境別の値
 
 ```bash
-# In .env.schema
+# .env.schemaで
 # @type=url
 API_URL=env('API_URL_${NODE_ENV}', 'http://localhost:3000')
 ```
 
 ---
 
-## Troubleshooting
+## トラブルシューティング
 
 ### "varlock: command not found"
 
 ```bash
-# Check installation
+# インストールを確認
 ls ~/.varlock/bin/varlock
 
-# Add to PATH
+# PATHに追加
 export PATH="$HOME/.varlock/bin:$PATH"
 
-# Or use full path
+# またはフルパスを使用
 ~/.varlock/bin/varlock load
 ```
 
 ### "Schema validation failed"
 
 ```bash
-# Check which variables are missing/invalid
-varlock load  # Shows detailed errors
+# どの変数が欠落/無効かを確認
+varlock load  # 詳細なエラーを表示
 
-# Common fixes:
-# - Add missing required variables to .env
-# - Fix type mismatches (port must be number)
-# - Check string prefixes match schema
+# よくある修正:
+# - 必須変数を.envに追加する
+# - 型の不一致を修正する（portは数値である必要がある）
+# - スキーマのプレフィックスが一致しているか確認する
 ```
 
 ### "Sensitive value exposed in logs"
 
 ```bash
-# 1. Rotate the exposed secret immediately
-# 2. Check .env.schema has @sensitive annotation
-# 3. Ensure using varlock commands, not echo/cat
+# 1. 露出したシークレットをすぐにローテーションする
+# 2. .env.schemaに@sensitiveアノテーションがあるか確認する
+# 3. echo/catではなくvarlockコマンドを使っているか確認する
 
-# Add missing sensitivity:
-# Before: API_KEY=
-# After:  # @type=string @sensitive
+# センシティビティを追加:
+# 変更前: API_KEY=
+# 変更後:  # @type=string @sensitive
 #         API_KEY=
 ```
 
 ---
 
-## npm Scripts
+## npmスクリプト
 
-Add these to your package.json:
+package.jsonに以下を追加:
 
 ```json
 {
@@ -381,53 +381,53 @@ Add these to your package.json:
 
 ---
 
-## Security Checklist for New Projects
+## 新規プロジェクトのセキュリティチェックリスト
 
-- [ ] Install Varlock CLI
-- [ ] Create `.env.schema` with all variables defined
-- [ ] Mark all secrets with `@sensitive` annotation
-- [ ] Add `@defaultSensitive=true` to schema header
-- [ ] Add `.env` to `.gitignore`
-- [ ] Commit `.env.schema` to version control
-- [ ] Add `npm run env:validate` to CI/CD
-- [ ] Document secret rotation procedure
-- [ ] Never use `cat .env` or `echo $SECRET` in Claude sessions
+- [ ] Varlock CLIをインストール
+- [ ] すべての変数を定義した`.env.schema`を作成
+- [ ] すべてのシークレットに`@sensitive`アノテーションを付ける
+- [ ] スキーマヘッダーに`@defaultSensitive=true`を追加
+- [ ] `.env`を`.gitignore`に追加
+- [ ] `.env.schema`をバージョン管理にコミット
+- [ ] CI/CDに`npm run env:validate`を追加
+- [ ] シークレットローテーション手順を文書化
+- [ ] Claudeセッションでは`cat .env`や`echo $SECRET`を絶対に使わない
 
 ---
 
-## Quick Reference Card
+## クイックリファレンスカード
 
-| Task | Safe Command |
+| タスク | 安全なコマンド |
 |------|-------------|
-| Validate all env vars | `varlock load` |
-| Quiet validation | `varlock load --quiet` |
-| Run with env | `varlock run -- <cmd>` |
-| View schema | `cat .env.schema` |
-| Check specific var | `varlock load \| grep VAR_NAME` |
+| 全環境変数を検証 | `varlock load` |
+| クワイエット検証 | `varlock load --quiet` |
+| 環境付きで実行 | `varlock run -- <cmd>` |
+| スキーマを表示 | `cat .env.schema` |
+| 特定の変数を確認 | `varlock load \| grep VAR_NAME` |
 
-| Never Do | Why |
+| してはいけないこと | 理由 |
 |----------|-----|
-| `cat .env` | Exposes all secrets |
-| `echo $SECRET` | Exposes to Claude context |
-| `printenv \| grep` | Exposes matching secrets |
-| Read .env with tools | Secrets in Claude's context |
-| Hardcode in commands | In shell history |
+| `cat .env` | 全シークレットが露出する |
+| `echo $SECRET` | Claudeのコンテキストに露出する |
+| `printenv \| grep` | 一致するシークレットが露出する |
+| ツールで.envを読む | Claudeのコンテキストにシークレットが入る |
+| コマンドにハードコード | シェル履歴に残る |
 
 ---
 
-## Integration with Other Skills
+## 他のスキルとの連携
 
-### Clerk Skill
-- Test user passwords are `@sensitive`
-- Test emails are `@sensitive=false` (contain +clerk_test, not secret)
-- See: `~/.claude/skills/clerk/SKILL.md`
+### Clerkスキル
+- テストユーザーのパスワードは`@sensitive`
+- テストメールは`@sensitive=false`（+clerk_testを含むが、シークレットではない）
+- 参照: `~/.claude/skills/clerk/SKILL.md`
 
-### Docker Skill
-- Mount `.env` file, never copy secrets to image
-- Use `varlock run` as entrypoint
-- See: `~/.claude/skills/docker/SKILL.md`
+### Dockerスキル
+- `.env`ファイルをマウントし、シークレットをイメージにコピーしない
+- `varlock run`をエントリポイントとして使用
+- 参照: `~/.claude/skills/docker/SKILL.md`
 
 ---
 
-*Last updated: December 22, 2025*
-*Secure-by-default environment management for Claude Code*
+*最終更新: 2025年12月22日*
+*Claudeコードのためのセキュアバイデフォルト環境管理*

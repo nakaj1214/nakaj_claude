@@ -1,100 +1,100 @@
 ---
 name: research-lib
-description: Research a library and create comprehensive documentation in .claude/docs/libraries/.
+description: ライブラリを調査して .claude/docs/libraries/ に包括的なドキュメントを作成する。
 disable-model-invocation: true
 ---
 
-# Research Library
+# ライブラリ調査
 
-Research $ARGUMENTS and create documentation in `.claude/docs/libraries/`.
+$ARGUMENTS を調査して `.claude/docs/libraries/` にドキュメントを作成する。
 
-## Research Items
+## 調査項目
 
-### Always Verify via Web Search
+### ウェブ検索で必ず確認すること
 
-- Official documentation
+- 公式ドキュメント
 - GitHub README
-- PyPI / npm page
-- Latest release notes
+- PyPI / npmページ
+- 最新リリースノート
 
-### Content to Document
+### ドキュメント化する内容
 
-1. **Basic Information**
-   - Official name, version, license
-   - Official URL
-   - Installation command
+1. **基本情報**
+   - 正式名称、バージョン、ライセンス
+   - 公式URL
+   - インストールコマンド
 
-2. **Core Features**
-   - Main features
-   - Basic usage (code examples)
+2. **主要機能**
+   - メイン機能
+   - 基本的な使い方（コード例）
 
-3. **Constraints & Notes**
-   - Known limitations
-   - Conflicts with other libraries
-   - Performance characteristics
-   - Async/sync considerations
+3. **制約・注意事項**
+   - 既知の制限
+   - 他のライブラリとの競合
+   - パフォーマンス特性
+   - 非同期/同期の考慮点
 
-4. **Usage Patterns in This Project**
-   - Recommended usage
-   - Patterns to avoid
+4. **このプロジェクトでの使用パターン**
+   - 推奨する使い方
+   - 避けるべきパターン
 
-5. **Troubleshooting**
-   - Common errors and solutions
+5. **トラブルシューティング**
+   - よくあるエラーと解決策
 
-## Output Location
+## 出力先
 
 `.claude/docs/libraries/$ARGUMENTS.md`
 
-## Documentation Template
+## ドキュメントテンプレート
 
 ```markdown
-# {Library Name}
+# {ライブラリ名}
 
-## Overview
+## 概要
 
-- **Version**: {version}
-- **License**: {license}
-- **Official URL**: {url}
-- **Installation**: `{install command}`
+- **バージョン**: {version}
+- **ライセンス**: {license}
+- **公式URL**: {url}
+- **インストール**: `{インストールコマンド}`
 
-## Core Features
+## 主要機能
 
-{Description of main features}
+{メイン機能の説明}
 
-## Basic Usage
-
-```python
-{Code example}
-```
-
-## Constraints & Notes
-
-- {Limitation 1}
-- {Limitation 2}
-
-## Recommended Patterns
-
-### Do
+## 基本的な使い方
 
 ```python
-{Good pattern}
+{コード例}
 ```
 
-### Don't
+## 制約・注意事項
+
+- {制限1}
+- {制限2}
+
+## 推奨パターン
+
+### 良い例
 
 ```python
-{Anti-pattern}
+{良いパターン}
 ```
 
-## Troubleshooting
+### 避けるべき例
 
-### {Error message}
+```python
+{アンチパターン}
+```
 
-**Cause**: {cause}
-**Solution**: {solution}
+## トラブルシューティング
 
-## References
+### {エラーメッセージ}
 
-- [Official Docs]({url})
+**原因**: {原因}
+**解決策**: {解決策}
+
+## 参照
+
+- [公式ドキュメント]({url})
 - [GitHub]({url})
 ```

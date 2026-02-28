@@ -1,63 +1,63 @@
 ---
 name: update-design
-description: Explicitly update DESIGN.md with decisions from the current conversation. Use when you want to force a design document update.
+description: 現在の会話から得られた決定事項でDESIGN.mdを明示的に更新する。設計ドキュメントの更新を強制したい場合に使用する。
 disable-model-invocation: true
 ---
 
-# Update Design Document
+# 設計ドキュメントを更新する
 
-Record/update project design and implementation decisions in `.claude/docs/DESIGN.md` based on conversation content.
+会話の内容に基づいて、プロジェクトの設計・実装上の決定事項を `.claude/docs/DESIGN.md` に記録/更新する。
 
-> **Note**: This skill explicitly invokes the same workflow as the `design-tracker` skill.
-> Use this when you want to force a design document update.
+> **注意**: このスキルは `design-tracker` スキルと同じワークフローを明示的に実行する。
+> 設計ドキュメントの更新を強制したい場合に使用する。
 
-## Workflow
+## ワークフロー
 
-1. Read existing `.claude/docs/DESIGN.md`
-2. Extract decisions/information from the conversation
-3. Update the appropriate section
-4. Add entry to Changelog with today's date
+1. 既存の `.claude/docs/DESIGN.md` を読み込む
+2. 会話から決定事項/情報を抽出する
+3. 適切なセクションを更新する
+4. 今日の日付でChangelogにエントリを追加する
 
-## Section Mapping
+## セクションマッピング
 
-| Topic | Section |
-|-------|---------|
-| Goals, purpose | Overview |
-| Structure, components | Architecture |
-| Design patterns | Implementation Plan > Patterns |
-| Library choices | Implementation Plan > Libraries |
-| Decision rationale | Implementation Plan > Key Decisions |
-| Future work | TODO |
-| Unresolved issues | Open Questions |
+| トピック | セクション |
+|---------|-----------|
+| 目標、目的 | Overview |
+| 構造、コンポーネント | Architecture |
+| 設計パターン | Implementation Plan > Patterns |
+| ライブラリの選択 | Implementation Plan > Libraries |
+| 決定の根拠 | Implementation Plan > Key Decisions |
+| 将来の作業 | TODO |
+| 未解決の問題 | Open Questions |
 
-## Update Format
+## 更新フォーマット
 
-When updating, add to the appropriate section:
+更新時は適切なセクションに追加する:
 
 ```markdown
 ### Key Decisions
 
-#### {Decision Title} ({Date})
+#### {決定タイトル} ({日付})
 
-**Context**: {Why this decision was needed}
-**Decision**: {What was decided}
-**Rationale**: {Why this option was chosen}
+**Context**: {この決定が必要だった理由}
+**Decision**: {何が決まったか}
+**Rationale**: {このオプションが選ばれた理由}
 ```
 
-## Changelog Entry
+## Changelogエントリ
 
-Always add to Changelog:
+常にChangelogに追加する:
 
 ```markdown
 ## Changelog
 
-### {Date}
-- {Brief description of what was recorded}
+### {日付}
+- {記録された内容の簡単な説明}
 ```
 
-## Language
+## 言語
 
-- Document content: English (technical), Japanese OK for descriptions
-- User communication: Japanese
+- ドキュメントの内容: 英語（技術的内容）、日本語の説明も可
+- ユーザーとのコミュニケーション: 日本語
 
-If $ARGUMENTS provided, focus on recording that content.
+$ARGUMENTS が指定された場合は、その内容の記録に集中する。

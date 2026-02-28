@@ -1,18 +1,18 @@
 ---
 name: writing-hookify-rules
-description: This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify rule", or needs guidance on hookify rule syntax and patterns.
+description: ユーザーが「hookifyルールを作成したい」「フックルールを書きたい」「hookifyを設定したい」「hookifyルールを追加したい」と言った場合、またはhookifyルールの構文とパターンについてガイダンスが必要な場合に使用するスキル。
 version: 0.1.0
 ---
 
-# Writing Hookify Rules
+# Hookifyルールの書き方
 
-## Overview
+## 概要
 
-Hookify rules are markdown files with YAML frontmatter that define patterns to watch for and messages to show when those patterns match. Rules are stored in `.claude/hookify.{rule-name}.local.md` files.
+Hookifyルールは、監視するパターンと、そのパターンがマッチした際に表示するメッセージを定義するYAMLフロントマター付きのMarkdownファイルである。ルールは `.claude/hookify.{rule-name}.local.md` ファイルに保存される。
 
-## Rule File Format
+## ルールファイルフォーマット
 
-### Basic Structure
+### 基本構造
 
 ```markdown
 ---
@@ -22,48 +22,48 @@ event: bash|file|stop|prompt|all
 pattern: regex-pattern-here
 ---
 
-Message to show Claude when this rule triggers.
-Can include markdown formatting, warnings, suggestions, etc.
+このルールがトリガーされた際にClaudeに表示するメッセージ。
+Markdownのフォーマット、警告、提案などを含めることができる。
 ```
 
-### Frontmatter Fields
+### フロントマターフィールド
 
-**name** (required): Unique identifier for the rule
-- Use kebab-case: `warn-dangerous-rm`, `block-console-log`
-- Be descriptive and action-oriented
-- Start with verb: warn, prevent, block, require, check
+**name**（必須）: ルールの一意識別子
+- kebab-caseを使用: `warn-dangerous-rm`、`block-console-log`
+- 説明的でアクション指向にする
+- 動詞で始める: warn、prevent、block、require、check
 
-**enabled** (required): Boolean to activate/deactivate
-- `true`: Rule is active
-- `false`: Rule is disabled (won't trigger)
-- Can toggle without deleting rule
+**enabled**（必須）: 有効/無効を切り替えるBoolean
+- `true`: ルールが有効
+- `false`: ルールが無効（トリガーしない）
+- ルールを削除せずに切り替え可能
 
-**event** (required): Which hook event to trigger on
-- `bash`: Bash tool commands
-- `file`: Edit, Write, MultiEdit tools
-- `stop`: When agent wants to stop
-- `prompt`: When user submits a prompt
-- `all`: All events
+**event**（必須）: トリガーするフックイベント
+- `bash`: Bashツールコマンド
+- `file`: Edit、Write、MultiEditツール
+- `stop`: エージェントが停止しようとする時
+- `prompt`: ユーザーがプロンプトを送信する時
+- `all`: 全イベント
 
-**action** (optional): What to do when rule matches
-- `warn`: Show message but allow operation (default)
-- `block`: Prevent operation (PreToolUse) or stop session (Stop events)
-- If omitted, defaults to `warn`
+**action**（オプション）: ルールがマッチした際の動作
+- `warn`: メッセージを表示するが操作を許可する（デフォルト）
+- `block`: 操作を防ぐ（PreToolUse）またはセッションを停止（Stopイベント）
+- 省略した場合は `warn` がデフォルト
 
-**pattern** (simple format): Regex pattern to match
-- Used for simple single-condition rules
-- Matches against command (bash) or new_text (file)
-- Python regex syntax
+**pattern**（シンプルフォーマット）: マッチさせるRegexパターン
+- シンプルな単一条件ルールに使用
+- コマンド（bash）またはnew_text（file）に対してマッチ
+- PythonのRegex構文
 
-**Example:**
+**例:**
 ```yaml
 event: bash
 pattern: rm\s+-rf
 ```
 
-### Advanced Format (Multiple Conditions)
+### 高度なフォーマット（複数条件）
 
-For complex rules with multiple conditions:
+複数条件の複雑なルールの場合:
 
 ```markdown
 ---
@@ -79,56 +79,56 @@ conditions:
     pattern: API_KEY
 ---
 
-You're adding an API key to a .env file. Ensure this file is in .gitignore!
+.envファイルにAPIキーを追加しようとしています。このファイルが.gitignoreにあることを確認してください！
 ```
 
-**Condition fields:**
-- `field`: Which field to check
-  - For bash: `command`
-  - For file: `file_path`, `new_text`, `old_text`, `content`
-- `operator`: How to match
-  - `regex_match`: Regex pattern matching
-  - `contains`: Substring check
-  - `equals`: Exact match
-  - `not_contains`: Substring must NOT be present
-  - `starts_with`: Prefix check
-  - `ends_with`: Suffix check
-- `pattern`: Pattern or string to match
+**条件フィールド:**
+- `field`: チェックするフィールド
+  - bashの場合: `command`
+  - fileの場合: `file_path`、`new_text`、`old_text`、`content`
+- `operator`: マッチ方法
+  - `regex_match`: Regexパターンマッチング
+  - `contains`: 部分文字列チェック
+  - `equals`: 完全一致
+  - `not_contains`: 部分文字列が存在しないこと
+  - `starts_with`: プレフィックスチェック
+  - `ends_with`: サフィックスチェック
+- `pattern`: マッチさせるパターンまたは文字列
 
-**All conditions must match for rule to trigger.**
+**全条件がマッチした場合にルールがトリガーされる。**
 
-## Message Body
+## メッセージ本文
 
-The markdown content after frontmatter is shown to Claude when the rule triggers.
+フロントマター後のMarkdownコンテンツが、ルールがトリガーされた際にClaudeに表示される。
 
-**Good messages:**
-- Explain what was detected
-- Explain why it's problematic
-- Suggest alternatives or best practices
-- Use formatting for clarity (bold, lists, etc.)
+**良いメッセージ:**
+- 何が検出されたかを説明する
+- なぜ問題なのかを説明する
+- 代替手段やベストプラクティスを提案する
+- 明確さのためフォーマットを使用する（太字、リストなど）
 
-**Example:**
+**例:**
 ```markdown
-⚠️ **Console.log detected!**
+⚠️ **Console.logが検出されました！**
 
-You're adding console.log to production code.
+本番コードにconsole.logを追加しようとしています。
 
-**Why this matters:**
-- Debug logs shouldn't ship to production
-- Console.log can expose sensitive data
-- Impacts browser performance
+**なぜ問題なのか:**
+- デバッグログは本番環境に含めるべきでない
+- Console.logは機密データを露出させる可能性がある
+- ブラウザのパフォーマンスに影響する
 
-**Alternatives:**
-- Use a proper logging library
-- Remove before committing
-- Use conditional debug builds
+**代替手段:**
+- 適切なロギングライブラリを使用する
+- コミット前に削除する
+- 条件付きデバッグビルドを使用する
 ```
 
-## Event Type Guide
+## イベントタイプガイド
 
-### bash Events
+### bashイベント
 
-Match Bash command patterns:
+Bashコマンドパターンをマッチさせる:
 
 ```markdown
 ---
@@ -136,17 +136,17 @@ event: bash
 pattern: sudo\s+|rm\s+-rf|chmod\s+777
 ---
 
-Dangerous command detected!
+危険なコマンドが検出されました！
 ```
 
-**Common patterns:**
-- Dangerous commands: `rm\s+-rf`, `dd\s+if=`, `mkfs`
-- Privilege escalation: `sudo\s+`, `su\s+`
-- Permission issues: `chmod\s+777`, `chown\s+root`
+**よくあるパターン:**
+- 危険なコマンド: `rm\s+-rf`、`dd\s+if=`、`mkfs`
+- 権限昇格: `sudo\s+`、`su\s+`
+- 権限の問題: `chmod\s+777`、`chown\s+root`
 
-### file Events
+### fileイベント
 
-Match Edit/Write/MultiEdit operations:
+Edit/Write/MultiEdit操作をマッチさせる:
 
 ```markdown
 ---
@@ -154,10 +154,10 @@ event: file
 pattern: console\.log\(|eval\(|innerHTML\s*=
 ---
 
-Potentially problematic code pattern detected!
+問題のある可能性があるコードパターンが検出されました！
 ```
 
-**Match on different fields:**
+**異なるフィールドでマッチさせる:**
 ```markdown
 ---
 event: file
@@ -170,18 +170,18 @@ conditions:
     pattern: console\.log\(
 ---
 
-Console.log in TypeScript file!
+TypeScriptファイルにConsole.logがあります！
 ```
 
-**Common patterns:**
-- Debug code: `console\.log\(`, `debugger`, `print\(`
-- Security risks: `eval\(`, `innerHTML\s*=`, `dangerouslySetInnerHTML`
-- Sensitive files: `\.env$`, `credentials`, `\.pem$`
-- Generated files: `node_modules/`, `dist/`, `build/`
+**よくあるパターン:**
+- デバッグコード: `console\.log\(`、`debugger`、`print\(`
+- セキュリティリスク: `eval\(`、`innerHTML\s*=`、`dangerouslySetInnerHTML`
+- 機密ファイル: `\.env$`、`credentials`、`\.pem$`
+- 生成ファイル: `node_modules/`、`dist/`、`build/`
 
-### stop Events
+### stopイベント
 
-Match when agent wants to stop (completion checks):
+エージェントが停止しようとする際にマッチさせる（完了チェック）:
 
 ```markdown
 ---
@@ -189,20 +189,20 @@ event: stop
 pattern: .*
 ---
 
-Before stopping, verify:
-- [ ] Tests were run
-- [ ] Build succeeded
-- [ ] Documentation updated
+停止前に確認する:
+- [ ] テストを実行した
+- [ ] ビルドが成功した
+- [ ] ドキュメントを更新した
 ```
 
-**Use for:**
-- Reminders about required steps
-- Completion checklists
-- Process enforcement
+**使用目的:**
+- 必要なステップのリマインダー
+- 完了チェックリスト
+- プロセスの強制
 
-### prompt Events
+### promptイベント
 
-Match user prompt content (advanced):
+ユーザープロンプトの内容をマッチさせる（高度）:
 
 ```markdown
 ---
@@ -213,122 +213,122 @@ conditions:
     pattern: deploy to production
 ---
 
-Production deployment checklist:
-- [ ] Tests passing?
-- [ ] Reviewed by team?
-- [ ] Monitoring ready?
+本番デプロイチェックリスト:
+- [ ] テストは通過しているか？
+- [ ] チームのレビューを受けたか？
+- [ ] モニタリングは準備できているか？
 ```
 
-## Pattern Writing Tips
+## パターン記述のコツ
 
-### Regex Basics
+### Regex基礎
 
-**Literal characters:** Most characters match themselves
-- `rm` matches "rm"
-- `console.log` matches "console.log"
+**リテラル文字:** ほとんどの文字はそのままマッチする
+- `rm` は "rm" にマッチ
+- `console.log` は "console.log" にマッチ
 
-**Special characters need escaping:**
-- `.` (any char) → `\.` (literal dot)
-- `(` `)` → `\(` `\)` (literal parens)
-- `[` `]` → `\[` `\]` (literal brackets)
+**特殊文字はエスケープが必要:**
+- `.`（任意文字）→ `\.`（リテラルのドット）
+- `(` `)` → `\(` `\)`（リテラルの括弧）
+- `[` `]` → `\[` `\]`（リテラルのブラケット）
 
-**Common metacharacters:**
-- `\s` - whitespace (space, tab, newline)
-- `\d` - digit (0-9)
-- `\w` - word character (a-z, A-Z, 0-9, _)
-- `.` - any character
-- `+` - one or more
-- `*` - zero or more
-- `?` - zero or one
+**よく使うメタ文字:**
+- `\s` - 空白（スペース、タブ、改行）
+- `\d` - 数字（0-9）
+- `\w` - 単語文字（a-z、A-Z、0-9、_）
+- `.` - 任意の文字
+- `+` - 1回以上
+- `*` - 0回以上
+- `?` - 0回または1回
 - `|` - OR
 
-**Examples:**
+**例:**
 ```
-rm\s+-rf         Matches: rm -rf, rm  -rf
-console\.log\(   Matches: console.log(
-(eval|exec)\(    Matches: eval( or exec(
-chmod\s+777      Matches: chmod 777, chmod  777
-API_KEY\s*=      Matches: API_KEY=, API_KEY =
+rm\s+-rf         マッチ: rm -rf, rm  -rf
+console\.log\(   マッチ: console.log(
+(eval|exec)\(    マッチ: eval( または exec(
+chmod\s+777      マッチ: chmod 777, chmod  777
+API_KEY\s*=      マッチ: API_KEY=, API_KEY =
 ```
 
-### Testing Patterns
+### パターンのテスト
 
-Test regex patterns before using:
+使用前にRegexパターンをテストする:
 
 ```bash
 python3 -c "import re; print(re.search(r'your_pattern', 'test text'))"
 ```
 
-Or use online regex testers (regex101.com with Python flavor).
+またはオンラインのRegexテスター（regex101.com、Pythonフレーバー）を使用する。
 
-### Common Pitfalls
+### よくある落とし穴
 
-**Too broad:**
+**広すぎる:**
 ```yaml
-pattern: log    # Matches "log", "login", "dialog", "catalog"
+pattern: log    # "log"、"login"、"dialog"、"catalog"にマッチ
 ```
-Better: `console\.log\(|logger\.`
+改善: `console\.log\(|logger\.`
 
-**Too specific:**
+**狭すぎる:**
 ```yaml
-pattern: rm -rf /tmp  # Only matches exact path
+pattern: rm -rf /tmp  # 正確なパスにのみマッチ
 ```
-Better: `rm\s+-rf`
+改善: `rm\s+-rf`
 
-**Escaping issues:**
-- YAML quoted strings: `"pattern"` requires double backslashes `\\s`
-- YAML unquoted: `pattern: \s` works as-is
-- **Recommendation**: Use unquoted patterns in YAML
+**エスケープの問題:**
+- YAMLの引用符付き文字列: `"pattern"` はダブルバックスラッシュ `\\s` が必要
+- YAMLの引用符なし: `pattern: \s` はそのまま動作
+- **推奨**: YAMLでは引用符なしのパターンを使用する
 
-## File Organization
+## ファイルの整理
 
-**Location:** All rules in `.claude/` directory
-**Naming:** `.claude/hookify.{descriptive-name}.local.md`
-**Gitignore:** Add `.claude/*.local.md` to `.gitignore`
+**場所:** 全ルールは `.claude/` ディレクトリに
+**命名:** `.claude/hookify.{説明的な名前}.local.md`
+**Gitignore:** `.gitignore` に `.claude/*.local.md` を追加
 
-**Good names:**
+**良い名前:**
 - `hookify.dangerous-rm.local.md`
 - `hookify.console-log.local.md`
 - `hookify.require-tests.local.md`
 - `hookify.sensitive-files.local.md`
 
-**Bad names:**
-- `hookify.rule1.local.md` (not descriptive)
-- `hookify.md` (missing .local)
-- `danger.local.md` (missing hookify prefix)
+**悪い名前:**
+- `hookify.rule1.local.md`（説明的でない）
+- `hookify.md`（.localがない）
+- `danger.local.md`（hookifyプレフィックスがない）
 
-## Workflow
+## ワークフロー
 
-### Creating a Rule
+### ルールの作成
 
-1. Identify unwanted behavior
-2. Determine which tool is involved (Bash, Edit, etc.)
-3. Choose event type (bash, file, stop, etc.)
-4. Write regex pattern
-5. Create `.claude/hookify.{name}.local.md` file in project root
-6. Test immediately - rules are read dynamically on next tool use
+1. 望ましくない動作を特定する
+2. 関係するツールを特定する（Bash、Editなど）
+3. イベントタイプを選択する（bash、file、stopなど）
+4. Regexパターンを書く
+5. プロジェクトルートに `.claude/hookify.{name}.local.md` ファイルを作成する
+6. すぐにテストする - ルールは次のツール使用時に動的に読み込まれる
 
-### Refining a Rule
+### ルールの改善
 
-1. Edit the `.local.md` file
-2. Adjust pattern or message
-3. Test immediately - changes take effect on next tool use
+1. `.local.md` ファイルを編集する
+2. パターンまたはメッセージを調整する
+3. すぐにテストする - 変更は次のツール使用時に有効になる
 
-### Disabling a Rule
+### ルールの無効化
 
-**Temporary:** Set `enabled: false` in frontmatter
-**Permanent:** Delete the `.local.md` file
+**一時的に:** フロントマターで `enabled: false` を設定する
+**永続的に:** `.local.md` ファイルを削除する
 
-## Examples
+## 例
 
-See `${CLAUDE_PLUGIN_ROOT}/examples/` for complete examples:
-- `dangerous-rm.local.md` - Block dangerous rm commands
-- `console-log-warning.local.md` - Warn about console.log
-- `sensitive-files-warning.local.md` - Warn about editing .env files
+完全な例は `${CLAUDE_PLUGIN_ROOT}/examples/` を参照:
+- `dangerous-rm.local.md` - 危険なrmコマンドをブロック
+- `console-log-warning.local.md` - console.logについて警告
+- `sensitive-files-warning.local.md` - .envファイル編集について警告
 
-## Quick Reference
+## クイックリファレンス
 
-**Minimum viable rule:**
+**最小限のルール:**
 ```markdown
 ---
 name: my-rule
@@ -337,10 +337,10 @@ event: bash
 pattern: dangerous_command
 ---
 
-Warning message here
+警告メッセージをここに
 ```
 
-**Rule with conditions:**
+**条件付きルール:**
 ```markdown
 ---
 name: my-rule
@@ -355,20 +355,20 @@ conditions:
     pattern: any
 ---
 
-Warning message
+警告メッセージ
 ```
 
-**Event types:**
-- `bash` - Bash commands
-- `file` - File edits
-- `stop` - Completion checks
-- `prompt` - User input
-- `all` - All events
+**イベントタイプ:**
+- `bash` - Bashコマンド
+- `file` - ファイル編集
+- `stop` - 完了チェック
+- `prompt` - ユーザー入力
+- `all` - 全イベント
 
-**Field options:**
+**フィールドオプション:**
 - Bash: `command`
-- File: `file_path`, `new_text`, `old_text`, `content`
+- File: `file_path`、`new_text`、`old_text`、`content`
 - Prompt: `user_prompt`
 
-**Operators:**
-- `regex_match`, `contains`, `equals`, `not_contains`, `starts_with`, `ends_with`
+**オペレーター:**
+- `regex_match`、`contains`、`equals`、`not_contains`、`starts_with`、`ends_with`

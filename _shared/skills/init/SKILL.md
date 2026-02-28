@@ -1,91 +1,91 @@
 ---
 name: init
-description: Analyze project structure and update AGENTS.md with detected tech stack, commands, and configurations.
+description: プロジェクト構造を分析し、検出した技術スタック・コマンド・設定でAGENTS.mdを更新する。
 disable-model-invocation: true
 ---
 
-# Initialize Project Configuration
+# プロジェクト設定を初期化する
 
-Analyze this project and update **only the project-specific sections** of AGENTS.md.
+このプロジェクトを分析して、AGENTS.md の**プロジェクト固有のセクションのみ**を更新する。
 
-## Important
+## 重要
 
-- Do **NOT** modify the "Extensions" section and below in existing AGENTS.md
-- Only update the top project-specific sections
+- 既存のAGENTS.mdの「Extensions」セクション以降は**変更しない**
+- 先頭のプロジェクト固有セクションのみ更新する
 
-## Steps
+## ステップ
 
-### 1. Project Analysis
+### 1. プロジェクトを分析する
 
-Find these files to identify the tech stack:
+技術スタックを特定するために以下のファイルを探す:
 
-- `package.json` → Node.js/TypeScript project
-- `pyproject.toml` / `setup.py` / `requirements.txt` → Python project
-- `Cargo.toml` → Rust project
-- `go.mod` → Go project
-- `Makefile` / `Dockerfile` → Build/deploy config
-- `.github/workflows/` → CI/CD config
+- `package.json` → Node.js/TypeScriptプロジェクト
+- `pyproject.toml` / `setup.py` / `requirements.txt` → Pythonプロジェクト
+- `Cargo.toml` → Rustプロジェクト
+- `go.mod` → Goプロジェクト
+- `Makefile` / `Dockerfile` → ビルド/デプロイ設定
+- `.github/workflows/` → CI/CD設定
 
-Also detect:
+また以下も検出する:
 
-- npm scripts / poe tasks / make targets → Common commands
-- Major libraries/frameworks
+- npmスクリプト / poeタスク / makeターゲット → よく使うコマンド
+- 主要ライブラリ/フレームワーク
 
-### 2. Ask User
+### 2. ユーザーに質問する
 
-Use AskUserQuestion tool to ask:
+AskUserQuestionツールを使って以下を質問する:
 
-1. **Project overview**: What does this project do? (1-2 sentences)
-2. **Code language**: English or Japanese for comments/variable names?
-3. **Additional rules**: Any other coding conventions to follow?
+1. **プロジェクト概要**: このプロジェクトは何をするか？（1〜2文で）
+2. **コード言語**: コメント/変数名は英語か日本語か？
+3. **追加ルール**: 他に従うべきコーディング規約はあるか？
 
-### 3. Partial Update of AGENTS.md
+### 3. AGENTS.mdを部分的に更新する
 
-Use Edit tool to update only the top section (up to first `---`) with this format:
+Editツールを使って先頭セクション（最初の `---` まで）のみを以下の形式で更新する:
 
 ```markdown
 # Project Overview
 
-{User's answer}
+{ユーザーの回答}
 
 ## Language Settings
 
 - **Thinking/Reasoning**: English
-- **Code**: {Based on analysis - English or Japanese}
+- **Code**: {分析に基づく - 英語または日本語}
 - **User Communication**: Japanese
 
 ## Tech Stack
 
-- **Language**: {Detected language}
-- **Package Manager**: {Detected tools}
-- **Dev Tools**: {Detected tools}
-- **Main Libraries**: {Detected libraries}
+- **Language**: {検出した言語}
+- **Package Manager**: {検出したツール}
+- **Dev Tools**: {検出したツール}
+- **Main Libraries**: {検出したライブラリ}
 ```
 
-### 4. Update Common Commands
+### 4. よく使うコマンドを更新する
 
-Update the `## Common Commands` section with detected commands:
+`## Common Commands` セクションを検出したコマンドで更新する:
 
 ```markdown
 ## Common Commands
 
 ```bash
-# Detected commands (example)
-{npm run dev / poe test / make build etc.}
+# 検出したコマンド（例）
+{npm run dev / poe test / make build など}
 ```
 ```
 
-### 5. Check Unnecessary Rules
+### 5. 不要なルールを確認する
 
-Check rules in `.claude/rules/` and suggest removing unnecessary ones:
+`.claude/rules/` のルールを確認して、不要なものを提案する:
 
-- Non-Python project → `dev-environment.md` (uv/ruff/ty) may not be needed
-- No-test project → `testing.md` may not be needed
+- Pythonでないプロジェクト → `dev-environment.md`（uv/ruff/ty）が不要な可能性あり
+- テストなしプロジェクト → `testing.md` が不要な可能性あり
 
-### 6. Report Completion
+### 6. 完了を報告する
 
-Report to user (in Japanese):
+ユーザーに日本語で報告する:
 
-- Detected tech stack
-- Updated sections
-- Recommended rules to remove (if any)
+- 検出した技術スタック
+- 更新したセクション
+- 削除を推奨するルール（あれば）

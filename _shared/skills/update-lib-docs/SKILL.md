@@ -1,85 +1,85 @@
 ---
 name: update-lib-docs
-description: Update library documentation in .claude/docs/libraries/ with latest information from web search.
+description: .claude/docs/libraries/ のライブラリドキュメントをウェブ検索で最新情報に更新する。
 disable-model-invocation: true
 ---
 
-# Update Library Documentation
+# ライブラリドキュメントを更新する
 
-Update documentation in `.claude/docs/libraries/` with latest information.
+`.claude/docs/libraries/` のドキュメントを最新情報に更新する。
 
-## Steps
+## ステップ
 
-### 1. Check Existing Documents
+### 1. 既存ドキュメントを確認する
 
-List current library documentation:
+現在のライブラリドキュメントをリストアップする:
 
 ```bash
 ls .claude/docs/libraries/
 ```
 
-### 2. Web Search for Latest Info
+### 2. 最新情報をウェブ検索する
 
-For each documented library, search for:
+ドキュメント化されている各ライブラリについて検索する:
 
-- Latest version
-- Breaking changes
-- Deprecated features
-- New features
-- Security updates
+- 最新バージョン
+- 破壊的変更
+- 非推奨となった機能
+- 新機能
+- セキュリティアップデート
 
-### 3. Update Documents
+### 3. ドキュメントを更新する
 
-For each library with changes:
+変更があった各ライブラリについて:
 
-1. Update version information
-2. Add new features/constraints
-3. Mark deprecated APIs
-4. Update code examples if needed
-5. Record update date at the top
+1. バージョン情報を更新する
+2. 新機能/制約を追加する
+3. 非推奨APIをマークする
+4. 必要に応じてコード例を更新する
+5. ファイルの先頭に更新日を記録する
 
-### 4. Check Impact on Code
+### 4. コードへの影響を確認する
 
-After updating docs, verify:
+ドキュメント更新後に確認する:
 
-- Using any deprecated APIs?
-- Any breaking change impacts?
-- Need to update project dependencies?
+- 非推奨APIを使用していないか？
+- 破壊的変更の影響はないか？
+- プロジェクトの依存関係を更新する必要があるか？
 
-## Key Items to Check
+## 確認すべき主要項目
 
-| Category | What to Look For |
-|----------|------------------|
-| Security | CVEs, security patches |
-| Breaking | API changes, removed features |
-| Deprecated | APIs marked for removal |
-| Performance | Optimization improvements |
-| New Features | Useful additions |
+| カテゴリ | 確認内容 |
+|--------|---------|
+| セキュリティ | CVE、セキュリティパッチ |
+| 破壊的変更 | API変更、削除された機能 |
+| 非推奨 | 削除予定のAPI |
+| パフォーマンス | 最適化の改善 |
+| 新機能 | 有用な追加機能 |
 
-## Update Format
+## 更新フォーマット
 
-Add update notice at top of file:
+ファイルの先頭に更新通知を追加する:
 
 ```markdown
-# {Library Name}
+# {ライブラリ名}
 
-> **Last Updated**: {Date}
-> **Version Checked**: {version}
+> **最終更新**: {日付}
+> **確認バージョン**: {version}
 
-## Recent Changes
+## 最近の変更
 
-- {Change 1}
-- {Change 2}
+- {変更1}
+- {変更2}
 
 ---
 
-{Rest of documentation}
+{ドキュメントの残り部分}
 ```
 
-## Report
+## 報告
 
-After updating, report to user (in Japanese):
+更新後、ユーザーに日本語で報告する:
 
-- Which libraries were updated
-- Significant changes found
-- Any action items for the project
+- 更新したライブラリ
+- 発見した重要な変更点
+- プロジェクトに必要なアクション

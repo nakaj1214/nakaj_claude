@@ -1,200 +1,200 @@
 ---
 name: finishing-a-development-branch
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
+description: 実装が完了し、全テストが通過した後、作業を統合する方法を決定する必要がある場合に使用する。マージ・PR作成・クリーンアップなど、開発作業を構造化されたオプションで完了させるガイド。「開発ブランチを完了する」「ブランチをマージする」「PRを作成する」「ブランチを終了する」と言及する場合に使用する。
 ---
 
-# Finishing a Development Branch
+# 開発ブランチの完了
 
-## Overview
+## 概要
 
-Guide completion of development work by presenting clear options and handling chosen workflow.
+明確なオプションを提示し、選択されたワークフローを実行して開発作業を完了させる。
 
-**Core principle:** Verify tests → Present options → Execute choice → Clean up.
+**基本原則:** テスト確認 → オプション提示 → 選択実行 → クリーンアップ。
 
-**Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
+**開始時に宣言:** 「finishing-a-development-branchスキルを使って作業を完了します。」
 
-## The Process
+## プロセス
 
-### Step 1: Verify Tests
+### ステップ1: テスト確認
 
-**Before presenting options, verify tests pass:**
+**オプションを提示する前に、テストが通ることを確認する:**
 
 ```bash
-# Run project's test suite
+# プロジェクトのテストスイートを実行
 npm test / cargo test / pytest / go test ./...
 ```
 
-**If tests fail:**
+**テストが失敗した場合:**
 ```
-Tests failing (<N> failures). Must fix before completing:
+テスト失敗（<N>件）。完了前に修正が必要:
 
-[Show failures]
+[失敗内容を表示]
 
-Cannot proceed with merge/PR until tests pass.
+テストが通るまでマージ/PRに進めません。
 ```
 
-Stop. Don't proceed to Step 2.
+ここで停止。ステップ2へは進まない。
 
-**If tests pass:** Continue to Step 2.
+**テストが通った場合:** ステップ2へ進む。
 
-### Step 2: Determine Base Branch
+### ステップ2: ベースブランチを特定する
 
 ```bash
-# Try common base branches
+# よく使われるベースブランチを試す
 git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 ```
 
-Or ask: "This branch split from main - is that correct?"
+または確認: 「このブランチはmainから分岐しました - 正しいですか？」
 
-### Step 3: Present Options
+### ステップ3: オプションを提示する
 
-Present exactly these 4 options:
+以下の4つのオプションを正確に提示する:
 
 ```
-Implementation complete. What would you like to do?
+実装が完了しました。どうしますか？
 
-1. Merge back to <base-branch> locally
-2. Push and create a Pull Request
-3. Keep the branch as-is (I'll handle it later)
-4. Discard this work
+1. <ベースブランチ>にローカルでマージ
+2. プッシュしてPull Requestを作成
+3. ブランチをそのままにする（後で対処する）
+4. この作業を破棄する
 
-Which option?
+どれを選びますか？
 ```
 
-**Don't add explanation** - keep options concise.
+**説明は不要** - オプションは簡潔に保つ。
 
-### Step 4: Execute Choice
+### ステップ4: 選択を実行する
 
-#### Option 1: Merge Locally
+#### オプション1: ローカルでマージ
 
 ```bash
-# Switch to base branch
-git checkout <base-branch>
+# ベースブランチに切り替え
+git checkout <ベースブランチ>
 
-# Pull latest
+# 最新を取得
 git pull
 
-# Merge feature branch
-git merge <feature-branch>
+# フィーチャーブランチをマージ
+git merge <フィーチャーブランチ>
 
-# Verify tests on merged result
-<test command>
+# マージ結果でテストを確認
+<テストコマンド>
 
-# If tests pass
-git branch -d <feature-branch>
+# テストが通った場合
+git branch -d <フィーチャーブランチ>
 ```
 
-Then: Cleanup worktree (Step 5)
+次へ: ワークツリーのクリーンアップ（ステップ5）
 
-#### Option 2: Push and Create PR
+#### オプション2: プッシュしてPRを作成
 
 ```bash
-# Push branch
-git push -u origin <feature-branch>
+# ブランチをプッシュ
+git push -u origin <フィーチャーブランチ>
 
-# Create PR
-gh pr create --title "<title>" --body "$(cat <<'EOF'
+# PRを作成
+gh pr create --title "<タイトル>" --body "$(cat <<'EOF'
 ## Summary
-<2-3 bullets of what changed>
+<変更内容を2-3項目で>
 
 ## Test Plan
-- [ ] <verification steps>
+- [ ] <検証ステップ>
 EOF
 )"
 ```
 
-Then: Cleanup worktree (Step 5)
+次へ: ワークツリーのクリーンアップ（ステップ5）
 
-#### Option 3: Keep As-Is
+#### オプション3: そのままにする
 
-Report: "Keeping branch <name>. Worktree preserved at <path>."
+報告: 「ブランチ <名前> を保持します。ワークツリーは <パス> に保存されています。」
 
-**Don't cleanup worktree.**
+**ワークツリーをクリーンアップしない。**
 
-#### Option 4: Discard
+#### オプション4: 破棄する
 
-**Confirm first:**
+**まず確認を取る:**
 ```
-This will permanently delete:
-- Branch <name>
-- All commits: <commit-list>
-- Worktree at <path>
+以下が永続的に削除されます:
+- ブランチ <名前>
+- 全コミット: <コミット一覧>
+- <パス> のワークツリー
 
-Type 'discard' to confirm.
+確認するには 'discard' と入力してください。
 ```
 
-Wait for exact confirmation.
+正確な確認を待つ。
 
-If confirmed:
+確認された場合:
 ```bash
-git checkout <base-branch>
-git branch -D <feature-branch>
+git checkout <ベースブランチ>
+git branch -D <フィーチャーブランチ>
 ```
 
-Then: Cleanup worktree (Step 5)
+次へ: ワークツリーのクリーンアップ（ステップ5）
 
-### Step 5: Cleanup Worktree
+### ステップ5: ワークツリーのクリーンアップ
 
-**For Options 1, 2, 4:**
+**オプション1、2、4の場合:**
 
-Check if in worktree:
+ワークツリーにいるか確認:
 ```bash
 git worktree list | grep $(git branch --show-current)
 ```
 
-If yes:
+該当する場合:
 ```bash
-git worktree remove <worktree-path>
+git worktree remove <ワークツリーパス>
 ```
 
-**For Option 3:** Keep worktree.
+**オプション3の場合:** ワークツリーを保持。
 
-## Quick Reference
+## クイックリファレンス
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
+| オプション | マージ | プッシュ | ワークツリー保持 | ブランチ削除 |
 |--------|-------|------|---------------|----------------|
-| 1. Merge locally | ✓ | - | - | ✓ |
-| 2. Create PR | - | ✓ | ✓ | - |
-| 3. Keep as-is | - | - | ✓ | - |
-| 4. Discard | - | - | - | ✓ (force) |
+| 1. ローカルマージ | ✓ | - | - | ✓ |
+| 2. PR作成 | - | ✓ | ✓ | - |
+| 3. そのままにする | - | - | ✓ | - |
+| 4. 破棄 | - | - | - | ✓（強制） |
 
-## Common Mistakes
+## よくある間違い
 
-**Skipping test verification**
-- **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
+**テスト確認をスキップする**
+- **問題:** 壊れたコードをマージ、失敗するPRを作成
+- **修正:** 常にオプション提示前にテストを確認する
 
-**Open-ended questions**
-- **Problem:** "What should I do next?" → ambiguous
-- **Fix:** Present exactly 4 structured options
+**オープンエンドな質問をする**
+- **問題:** 「次は何をすればいいですか？」→ あいまい
+- **修正:** 4つの構造化されたオプションを正確に提示する
 
-**Automatic worktree cleanup**
-- **Problem:** Remove worktree when might need it (Option 2, 3)
-- **Fix:** Only cleanup for Options 1 and 4
+**ワークツリーの自動クリーンアップ**
+- **問題:** 必要かもしれないワークツリーを削除（オプション2、3）
+- **修正:** オプション1と4のみクリーンアップする
 
-**No confirmation for discard**
-- **Problem:** Accidentally delete work
-- **Fix:** Require typed "discard" confirmation
+**破棄の確認なし**
+- **問題:** 誤って作業を削除
+- **修正:** 「discard」と入力する確認を要求する
 
-## Red Flags
+## 禁止事項
 
-**Never:**
-- Proceed with failing tests
-- Merge without verifying tests on result
-- Delete work without confirmation
-- Force-push without explicit request
+**してはいけないこと:**
+- テストが失敗しているのに進める
+- マージ結果のテスト確認なしにマージする
+- 確認なしに作業を削除する
+- 明示的な要求なしにforce-pushする
 
-**Always:**
-- Verify tests before offering options
-- Present exactly 4 options
-- Get typed confirmation for Option 4
-- Clean up worktree for Options 1 & 4 only
+**常にすること:**
+- オプション提示前にテストを確認する
+- 正確に4つのオプションを提示する
+- オプション4には「discard」と入力する確認を得る
+- オプション1と4のみワークツリーをクリーンアップする
 
-## Integration
+## 連携スキル
 
-**Called by:**
-- **subagent-driven-development** (Step 7) - After all tasks complete
-- **executing-plans** (Step 5) - After all batches complete
+**呼び出し元:**
+- **subagent-driven-development**（ステップ7）- 全タスク完了後
+- **executing-plans**（ステップ5）- 全バッチ完了後
 
-**Pairs with:**
-- **using-git-worktrees** - Cleans up worktree created by that skill
+**連携スキル:**
+- **using-git-worktrees** - そのスキルで作成されたワークツリーのクリーンアップ
