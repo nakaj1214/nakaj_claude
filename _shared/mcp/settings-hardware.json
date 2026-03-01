@@ -1,0 +1,98 @@
+{
+  "_comment": "ハードウェア開発（Raspberry Pi / ESP32）向け MCP サーバー設定テンプレート",
+  "_usage": "必要なサーバーを .claude/mcp.json の mcpServers にコピーして使用",
+
+  "mcpServers": {
+
+    "filesystem": {
+      "_description": "プロジェクトファイルの読み書き（ソースコード・設定ファイル・ログ）",
+      "_required": true,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/path/to/your/project"
+      ]
+    },
+
+    "git": {
+      "_description": "Git 操作（コミット・差分確認・ブランチ管理）",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "."]
+    },
+
+    "sequential-thinking": {
+      "_description": "複雑な回路設計・デバッグ時の段階的思考整理",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+
+    "fetch": {
+      "_description": "データシート・技術ドキュメントのフェッチ（ESP32 / RPi ドキュメント等）",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+
+    "context7": {
+      "_description": "ライブラリ公式ドキュメントの自動参照（gpiozero, ESP-IDF, ArduinoJson 等）",
+      "_usage": "use context7 / use docs for <library> でライブラリドキュメントを取得",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+
+    "sqlite": {
+      "_description": "センサーログ・計測データの SQLite 管理",
+      "_enabled": false,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path",
+        "./data/sensor_log.db"
+      ]
+    },
+
+    "memory": {
+      "_description": "セッション間でのデバイス設定・ピン割り当てを記憶",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    }
+  },
+
+  "_raspberry_pi_tips": {
+    "ssh_development": "VSCode Remote SSH 拡張 → pi@raspberrypi.local で直接編集",
+    "useful_commands": {
+      "i2c_scan":      "sudo i2cdetect -y 1",
+      "spi_check":     "ls /dev/spidev*",
+      "gpio_read":     "raspi-gpio get <pin>",
+      "service_log":   "journalctl -u myapp -f --lines=50",
+      "enable_i2c":    "sudo raspi-config nonint do_i2c 0",
+      "enable_spi":    "sudo raspi-config nonint do_spi 0"
+    },
+    "groups": "sudo usermod -aG gpio,i2c,spi,dialout pi"
+  },
+
+  "_esp32_tips": {
+    "platformio_commands": {
+      "build":         "pio run",
+      "upload":        "pio run --target upload",
+      "monitor":       "pio device monitor",
+      "upload_monitor": "pio run --target upload && pio device monitor",
+      "clean":         "pio run --target clean",
+      "erase_flash":   "pio run --target erase"
+    },
+    "debug_notes": [
+      "CORE_DEBUG_LEVEL=3 でデバッグログ有効（platformio.ini の build_flags に追加）",
+      "ESP_LOGx(TAG, ...) で構造化ログ出力",
+      "ディープスリープ前は Serial.flush() でバッファを出力しきること",
+      "書き込みエラー時は BOOT ボタンを押しながら upload"
+    ],
+    "common_issues": {
+      "wifi": "ESP32 は 2.4GHz WiFi のみ対応（5GHz 不可）",
+      "adc": "ADC2 は WiFi 使用中に利用不可。ADC1 (GPIO 32-39) を使う",
+      "gpio": "GPIO 34-39 は入力専用ピン（OUTPUT 設定不可）",
+      "brownout": "電源電圧不足でリセットループ → 十分な電流供給を確認"
+    }
+  }
+}

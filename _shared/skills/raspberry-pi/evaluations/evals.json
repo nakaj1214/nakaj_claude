@@ -1,0 +1,33 @@
+{
+  "skill_name": "raspberry-pi",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Raspberry Pi でボタンを押したら LED が光るようにしたい",
+      "expected_behavior": "gpiozero の Button / LED を使ったコード例を提示し、BCM ピン番号の使用と GPIO.cleanup() の必要性を説明する",
+      "pass_criteria": "gpiozero または RPi.GPIO を使ったコードが提示され、ピン番号の定数化とクリーンアップ処理が含まれていること",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "I2C の温度センサーを読み取りたい",
+      "expected_behavior": "smbus2 を使った I2C 読み取りコードを提示し、事前に raspi-config で I2C を有効化し i2cdetect でアドレスを確認する手順を説明する",
+      "pass_criteria": "smbus2 の使用・I2C 有効化手順・i2cdetect コマンドのいずれかが含まれること",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "Pi のスクリプトを起動時に自動実行したい",
+      "expected_behavior": "systemd service ファイルの作成手順を提示し、daemon-reload・enable・start の手順を説明する。cron よりも systemd を推奨する",
+      "pass_criteria": "systemd service ファイルの内容と有効化コマンド（systemctl enable/start）が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "カメラモジュールで写真を撮りたい",
+      "expected_behavior": "picamera2 を使った撮影コードを提示し、安定待ちの time.sleep() が必要なことを説明する",
+      "pass_criteria": "picamera2 の configure・start・capture_file の流れが含まれること",
+      "assertions": []
+    }
+  ]
+}

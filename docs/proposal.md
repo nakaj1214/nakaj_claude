@@ -1,4 +1,7 @@
-# 改善提案
+laravelやpythonが動作するdockerプロジェクトで開発を進める想定で、_sharedに活用できるようなclaudeの設定集のgithub上にあるリポジトリを教えて、
+また_sharedに改善点があれば教えて
+
+<!-- # 改善提案
 
 _shared の改善アイデアや未対応タスクを管理するファイル。
 完了したものは「完了済み」セクションに移動する。
@@ -25,4 +28,4 @@ _shared の改善アイデアや未対応タスクを管理するファイル。
 | PreCompact フック実装 | 自動コンパクション前に HANDOVER + SKILL-SUGGESTIONS を並列生成 |
 | パターン学習 → スキル候補自動生成 | `pre-compact-handover.py` に分析機能を追加 |
 | _shared 再設計案 | `docs/shared-redesign.md` に詳細設計を記録 |
-| 重複ファイルの解消 | security・reviewer・TDD の重複を整理・統合 |
+| 重複ファイルの解消 | security・reviewer・TDD の重複を整理・統合 | -->

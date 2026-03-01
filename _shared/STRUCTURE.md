@@ -154,6 +154,7 @@ _shared/
 │   ├── settings-linux.json          # Linux サーバー向け MCP 設定
 │   ├── settings-python.json         # Python プロジェクト向け MCP 設定
 │   ├── settings-vba.json            # VBA プロジェクト向け MCP 設定
+│   ├── settings-hardware.json       # ハードウェア開発（Raspberry Pi / ESP32）向け MCP 設定
 │   └── settings-universal.json      # 言語横断の汎用 MCP 設定
 │
 │  # ===== resources/ =====
@@ -177,6 +178,16 @@ _shared/
 │   │   ├── coding-style.md      # Python コーディングスタイル
 │   │   ├── dev-environment.md   # Python 開発環境設定
 │   │   └── testing.md           # Python テストルール
+│   ├── php/                     # PHP 固有ルール
+│   │   └── coding-style.md      # PHP コーディングスタイル（PHP 8.x）
+│   ├── laravel/                 # Laravel 固有ルール
+│   │   └── conventions.md       # Laravel 命名規則・Eloquent・Controller 規約
+│   ├── javascript/              # JavaScript 固有ルール
+│   │   └── jquery-style.md      # jQuery コーディングスタイル
+│   └── hardware/                # ハードウェア開発ルール
+│       ├── embedded-c-style.md  # 組み込み C/C++ スタイル（型・volatile・割り込み）
+│       ├── raspberry-pi.md      # Raspberry Pi 開発規約（gpiozero・I2C/SPI・systemd）
+│       └── esp32.md             # ESP32 開発規約（PlatformIO・FreeRTOS・ディープスリープ）
 │
 │  # ===== skills/ =====
 │  # /スキル名 で呼び出せる作業手順書 (ワークフロー系・汎用)
@@ -244,7 +255,9 @@ _shared/
     ├── vba-patterns/                # VBA パターン集
     ├── wolfram-foundation-tool/     # Wolfram 基盤ツール
     ├── writing-plans/               # 実装計画ドキュメントの書き方
-    └── writing-skills/ → agents/writing-skills/ 参照
+    ├── writing-skills/ → agents/writing-skills/ 参照
+    ├── raspberry-pi/                # Raspberry Pi 開発ガイド（GPIO・センサー・カメラ・systemd）
+    └── esp32/                       # ESP32 開発ガイド（PlatformIO・WiFi・FreeRTOS・OTA）
 ```
 
 ---

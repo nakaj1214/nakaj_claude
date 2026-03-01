@@ -7,10 +7,10 @@
 # Claude はこのファイルを読むことで、全 SKILL.md を個別ロードせずに
 # どのスキルが存在するかを把握し、適切なスキルへルーティングできる。
 #
-# generated: 2026-03-01
+# generated: 2026-03-02
 
 version: "1.0"
-generated: "2026-03-01"
+generated: "2026-03-02"
 
 skills:
   - name: accessibility
@@ -113,6 +113,12 @@ skills:
       - "スキル記述"
       - "スキルの書き方"
 
+  - name: analyze-project
+    path: skills/analyze-project/SKILL.md
+    description: "Analyzes an existing codebase to extract coding conventions, naming rules, architecture patterns, and domain-specific workflows, then generates corresponding rules/ and skills/ files tailored to th..."
+    tags: []
+    triggers: []
+
   - name: brainstorming
     path: skills/brainstorming/SKILL.md
     description: "Facilitates Socratic brainstorming sessions to clarify requirements and refine design decisions. Use when requirements are ambiguous, when multiple approaches exist, when validating design, or when..."
@@ -206,6 +212,18 @@ skills:
       - "アーキテクチャ記録"
       - "DESIGN.md記録"
 
+  - name: docker-dev
+    path: skills/docker-dev/SKILL.md
+    description: "Guides Docker Compose-based development workflows for Laravel/PHP and Python projects. Use when running commands inside containers, debugging container issues, managing services, or when the user m..."
+    tags: []
+    triggers: []
+
+  - name: esp32
+    path: skills/esp32/SKILL.md
+    description: "Guides ESP32 firmware development using PlatformIO and the Arduino framework, covering WiFi/BLE connectivity, FreeRTOS tasks, deep sleep power management, NVS storage, OTA updates, LittleFS, and se..."
+    tags: []
+    triggers: []
+
   - name: executing-plans
     path: skills/executing-plans/SKILL.md
     description: "レビューチェックポイントを持つ別セッションで実行する書かれた実装計画がある際に使用"
@@ -276,6 +294,12 @@ skills:
       - "init"
       - "初期設定"
 
+  - name: jquery-interactions
+    path: skills/jquery-interactions/SKILL.md
+    description: "Implements jQuery-based user interactions including animations, AJAX calls, event handling, and form interactions for Laravel backends. Use when implementing button clicks, modal toggling, fade/sli..."
+    tags: []
+    triggers: []
+
   - name: mcp-builder
     path: skills/mcp-builder/SKILL.md
     description: "Guides creation of high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when creating an MCP server, implementing M..."
@@ -342,6 +366,12 @@ skills:
     triggers:
       - "スキル開発"
       - "SKILL.md作成"
+
+  - name: raspberry-pi
+    path: skills/raspberry-pi/SKILL.md
+    description: "Guides Raspberry Pi hardware development including GPIO control, I2C/SPI/UART communication, Python scripting with RPi.GPIO and gpiozero, camera module usage, systemd service setup, and SSH-based r..."
+    tags: []
+    triggers: []
 
   - name: research-lib
     path: skills/research-lib/SKILL.md
