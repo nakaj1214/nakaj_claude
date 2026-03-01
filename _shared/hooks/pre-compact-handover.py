@@ -11,34 +11,21 @@ Claude Code が会話を自動圧縮する直前に発火し:
 
 matcher: "auto" = 自動コンパクションのみ（手動 /compact は除外）
 
-Settings.json への登録例:
-  {
-    "hooks": {
-      "PreCompact": [
-        {
-          "matcher": "auto",
-          "hooks": [
-            {
-              "type": "command",
-              "command": "python C:/path/to/_shared/hooks/pre-compact-handover.py"
-            }
-          ]
-        }
-      ]
-    }
-  }
-
 Environment variables (optional):
   HANDOVER_MEMORY_DIR - 出力先ディレクトリ (default: .claude/docs/memory)
 """
 
 import json
 import os
-import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
+
+# lib/ を import パスに追加（実行ディレクトリに依存しない）
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib.transcript import read as read_transcript
+from lib.claude_p import run as claude_run
 
 MEMORY_DIR = os.environ.get("HANDOVER_MEMORY_DIR", ".claude/docs/memory")
 
@@ -124,76 +111,10 @@ Rules:
 """
 
 
-def read_transcript(transcript_path: str) -> str:
-    """トランスクリプトを読み込み、テキスト形式に変換する。"""
-    try:
-        with open(transcript_path, encoding="utf-8") as f:
-            data = json.load(f)
-
-        lines = []
-        for entry in data:
-            role = entry.get("role", "unknown")
-            content = entry.get("content", "")
-
-            if isinstance(content, list):
-                texts = []
-                for block in content:
-                    if not isinstance(block, dict):
-                        continue
-                    btype = block.get("type", "")
-                    if btype == "text":
-                        texts.append(block.get("text", ""))
-                    elif btype == "tool_use":
-                        name = block.get("name", "")
-                        inp = block.get("input", {})
-                        summary = ", ".join(
-                            f"{k}={str(v)[:80]}" for k, v in inp.items()
-                            if k in ("file_path", "command", "pattern", "path", "old_string")
-                        )
-                        texts.append(f"[Tool:{name} {summary}]")
-                    elif btype == "tool_result":
-                        rc = block.get("content", "")
-                        if isinstance(rc, list):
-                            for r in rc:
-                                if isinstance(r, dict) and r.get("type") == "text":
-                                    texts.append(f"[Result: {r.get('text', '')[:300]}]")
-                        else:
-                            texts.append(f"[Result: {str(rc)[:300]}]")
-                content = " ".join(texts)
-
-            lines.append(f"{role.upper()}: {content}")
-
-        return "\n\n".join(lines)
-
-    except Exception as e:
-        return f"(transcript read error: {e})"
-
-
-def _run_claude(prompt: str, timeout: int = 120) -> str:
-    """claude -p を呼び出して結果テキストを返す。"""
-    try:
-        result = subprocess.run(
-            ["claude", "-p", prompt],
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            encoding="utf-8",
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-        return f"(生成に失敗しました)\n```\n{result.stderr[:500]}\n```"
-    except subprocess.TimeoutExpired:
-        return "(生成がタイムアウトしました)"
-    except FileNotFoundError:
-        return "(claude CLI が見つかりません。PATH を確認してください)"
-    except Exception as e:
-        return f"(エラー: {e})"
-
-
 def generate_handover(transcript: str) -> str:
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
     prompt = HANDOVER_PROMPT.format(date=date)
-    content = _run_claude(f"{prompt}\n\n---\n\nTRANSCRIPT:\n\n{transcript}")
+    content = claude_run(f"{prompt}\n\n---\n\nTRANSCRIPT:\n\n{transcript}")
     if content.startswith("("):
         return f"# Handover — {date}\n\n{content}"
     return content
@@ -202,7 +123,7 @@ def generate_handover(transcript: str) -> str:
 def generate_suggestions(transcript: str) -> str:
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
     prompt = SUGGESTIONS_PROMPT.format(date=date)
-    content = _run_claude(f"{prompt}\n\n---\n\nTRANSCRIPT:\n\n{transcript}")
+    content = claude_run(f"{prompt}\n\n---\n\nTRANSCRIPT:\n\n{transcript}")
     if content.startswith("("):
         return f"# スキル候補レポート — {date}\n\n{content}"
     return content
@@ -233,9 +154,8 @@ def main() -> None:
     transcript = read_transcript(transcript_path)
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    # ハンドオーバーとスキル候補を並列生成
     tasks = {
-        "handover": (generate_handover, f"HANDOVER-{date_str}.md"),
+        "handover":    (generate_handover,    f"HANDOVER-{date_str}.md"),
         "suggestions": (generate_suggestions, f"SKILL-SUGGESTIONS-{date_str}.md"),
     }
 

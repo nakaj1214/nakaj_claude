@@ -101,18 +101,16 @@ _shared/
 │   └── review.md            # レビューモード用コンテキスト設定
 │
 │  # ===== docs/ =====
-│  # プロジェクト共通の設計・ライブラリドキュメント
+│  # プロジェクト共通の設計ドキュメント
 │
 ├── docs/
-│   ├── DESIGN.md            # システム設計ドキュメント
-│   └── libraries/
-│       └── _TEMPLATE.md     # ライブラリドキュメントのテンプレート
+│   └── DESIGN.md            # システム設計ドキュメント
 │
 │  # ===== hooks/ =====
 │  # Pre/Post ToolUse 等のイベントで自動実行されるフックスクリプト
 │
 ├── hooks/
-│   ├── approval_skip_patterns.txt   # 承認スキップ対象パターン一覧
+│   ├── pre-compact-handover.py      # PreCompact フック: 自動コンパクション前に HANDOVER + SKILL-SUGGESTIONS を生成
 │   ├── edit-approval.py             # ファイル編集時の承認フック
 │   ├── lint-on-save.py              # 保存時の自動 Lint フック
 │   ├── notify-slack.py              # Slack 通知フック
@@ -121,8 +119,25 @@ _shared/
 │   ├── slack_approval.py            # Slack 経由の承認フック
 │   ├── slack_socket_daemon.py       # Slack ソケット接続デーモン
 │   ├── stop-notify.py               # 停止通知フック
+│   ├── approval_skip_patterns.txt   # 承認スキップ対象パターン一覧
+│   ├── lib/                         # フック共通ライブラリ（複数フックで再利用）
+│   │   ├── transcript.py            # JSONL トランスクリプト読み込み・テキスト変換
+│   │   └── claude_p.py              # claude -p 呼び出しユーティリティ
 │   └── tests/
 │       └── test_slack_approval.py   # slack_approval.py のテスト
+│
+│  # ===== meta/ =====
+│  # _shared 自体の品質管理・自動生成スクリプト
+│
+├── meta/
+│   ├── generate-registry.py         # 全スキルの SKILL.md を読んで registry/skills.yaml を生成
+│   └── health-check.py              # スキル品質監査（evals 欠損・SKILL.md 肥大化・未登録・重複検出）
+│
+│  # ===== registry/ =====
+│  # スキルルーティングインデックス（meta/generate-registry.py で自動生成）
+│
+├── registry/
+│   └── skills.yaml                  # 全スキルの name / path / description / tags / triggers 一覧
 │
 │  # ===== mcp/ =====
 │  # MCP (Model Context Protocol) サーバー設定のテンプレート集
@@ -199,6 +214,7 @@ _shared/
     ├── git/                         # Git 操作
     │   ├── finishing-a-development-branch/ # 開発ブランチの完了処理
     │   └── git-worktrees/                  # Git Worktree の活用
+    ├── handover/                    # セッション引き継ぎドキュメントの手動生成
     ├── hookify/                     # フック設定の自動生成
     ├── init/                        # プロジェクト初期化
     ├── mcp-builder/                 # MCP サーバーの構築
@@ -237,16 +253,19 @@ _shared/
 
 | フォルダ / ファイル | 役割 |
 |---|---|
-| `CLAUDE.md` | Claude Code に読み込ませるメイン指示ファイル |
+| `CLAUDE.md`        | Claude Code に読み込ませるメイン指示ファイル |
+| `agents/`          | 専門作業を担う名前付きエージェント |
+| `commands/`        | スラッシュコマンドのショートカット定義 |
+| `contexts/`        | 作業モード別のコンテキスト切り替え設定 |
+| `docs/`            | 設計ドキュメント |
+| `hooks/`           | Pre/Post ToolUse 等で自動実行されるスクリプト |
+| `hooks/lib/`       | フック共通ライブラリ（transcript 解析・claude -p 呼び出し） |
+| `mcp/`             | 外部ツール連携 (DB・ブラウザ・ファイル等) の設定テンプレ |
+| `meta/`            | _shared 自体の品質管理・自動生成スクリプト |
+| `registry/`        | スキルルーティングインデックス（generate-registry.py が生成） |
+| `resources/`       | 外部参考資料・便利ツール集 |
+| `rules/`           | 常時適用されるルール (セキュリティ・コーディング規約等) |
+| `skills/`          | 作業手順のレシピ集 (呼び出して使う) |
+| `*.md` (ルート直下) | 人間向けのドキュメント・参考資料 |
 | `claude_settings.json` / `.claudeignore` | Claude Code の動作そのものを制御 |
 | `custom_instructions.md` | Claude の思考・振る舞いの方針を指示 |
-| `agents/` | 専門作業を担う名前付きエージェント |
-| `commands/` | スラッシュコマンドのショートカット定義 |
-| `contexts/` | 作業モード別のコンテキスト切り替え設定 |
-| `docs/` | 設計・ライブラリドキュメント |
-| `hooks/` | Pre/Post ToolUse 等で自動実行されるスクリプト |
-| `mcp/` | 外部ツール連携 (DB・ブラウザ・ファイル等) の設定テンプレ |
-| `resources/` | 外部参考資料・便利ツール集 |
-| `rules/` | 常時適用されるルール (セキュリティ・コーディング規約等) |
-| `skills/` | 作業手順のレシピ集 (呼び出して使う) |
-| `*.md` (ルート直下) | 人間向けのドキュメント・参考資料 |

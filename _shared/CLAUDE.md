@@ -1,3 +1,18 @@
+## ルールのインポート
+
+CLAUDE.md から `@パス` 構文で追加ファイルを参照できる。参照先はセッション開始時にインライン展開される。
+
+```
+# ルール参照例
+@_shared/rules/security-rules.md
+@_shared/rules/common/coding-style.md
+```
+
+パス指定ルール（ファイル種別ごとに適用）は `.claude/rules/` ディレクトリを使う。
+詳細: `_shared/rules/_PATH_RULES_GUIDE.md`
+
+---
+
 ## ワークフロー設計
 
 ### 1. Planモードを基本とする

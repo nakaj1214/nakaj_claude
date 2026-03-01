@@ -1,0 +1,483 @@
+# _shared スキルルーティングインデックス
+#
+# このファイルは meta/generate-registry.py で自動生成される。
+# スキルを追加・変更したら再生成すること:
+#   python _shared/meta/generate-registry.py
+#
+# Claude はこのファイルを読むことで、全 SKILL.md を個別ロードせずに
+# どのスキルが存在するかを把握し、適切なスキルへルーティングできる。
+#
+# generated: 2026-03-01
+
+version: "1.0"
+generated: "2026-03-01"
+
+skills:
+  - name: accessibility
+    path: skills/accessibility/SKILL.md
+    description: "Applies WCAG 2.1 guidelines to build accessible web applications. Use when creating UI components, reviewing code for a11y compliance, implementing forms or interactive elements, or validating acce..."
+    tags: [accessibility]
+    triggers:
+      - "アクセシビリティ"
+      - "WCAG"
+      - "a11y"
+      - "スクリーンリーダー"
+      - "aria"
+
+  - name: codeql
+    path: skills/advanced-security/codeql/SKILL.md
+    description: "Runs CodeQL static analysis for security vulnerability detection using interprocedural data flow and taint tracking. Applicable when finding vulnerabilities, running a security scan, performing a s..."
+    tags: []
+    triggers:
+      - "CodeQL"
+      - "静的解析"
+      - "セキュリティスキャン"
+
+  - name: insecure-defaults
+    path: skills/advanced-security/insecure-defaults/SKILL.md
+    description: "Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Use when auditing security, reviewing config management, or ..."
+    tags: []
+    triggers:
+      - "安全でないデフォルト"
+      - "セキュリティ設定"
+
+  - name: sarif-parsing
+    path: skills/advanced-security/sarif-parsing/SKILL.md
+    description: "Parse, analyze, and process SARIF (Static Analysis Results Interchange Format) files. Use when reading security scan results, aggregating findings from multiple tools, deduplicating alerts, extract..."
+    tags: []
+    triggers:
+      - "SARIF"
+      - "セキュリティレポート"
+
+  - name: semgrep
+    path: skills/advanced-security/semgrep/SKILL.md
+    description: "Run Semgrep static analysis scan on a codebase using parallel subagents. Automatically"
+    tags: []
+    triggers:
+      - "semgrep"
+      - "コード静的解析"
+
+  - name: dispatching-parallel-agents
+    path: skills/agents/dispatching-parallel-agents/SKILL.md
+    description: "共有状態や順序依存なしに作業できる2つ以上の独立したタスクに直面した場合に使用"
+    tags: [agents]
+    triggers:
+      - "並列エージェント"
+      - "エージェント分散"
+
+  - name: receiving-code-review
+    path: skills/agents/receiving-code-review/SKILL.md
+    description: "コードレビューのフィードバックを受け取る際に使用。提案を実装する前に、特に不明確または技術的に疑わしいフィードバックがある場合 - パフォーマティブな同意や盲目的な実装ではなく、技術的な厳密さと検証が必要"
+    tags: []
+    triggers:
+      - "コードレビュー受け取り"
+      - "レビュー対応"
+
+  - name: requesting-code-review
+    path: skills/agents/requesting-code-review/SKILL.md
+    description: "タスクを完了した際、主要な機能を実装した際、またはマージ前に作業が要件を満たしているか確認する際に使用"
+    tags: []
+    triggers:
+      - "コードレビュー依頼"
+      - "レビュー依頼"
+
+  - name: subagent-driven-development
+    path: skills/agents/subagent-driven-development/SKILL.md
+    description: "現在のセッションで独立したタスクを持つ実装計画を実行する際に使用"
+    tags: []
+    triggers:
+      - "サブエージェント開発"
+      - "エージェント駆動"
+
+  - name: using-superpowers
+    path: skills/agents/using-superpowers/SKILL.md
+    description: "会話を開始する際に使用 - スキルを見つけて使用する方法を確立し、明確化の質問を含むいかなる応答の前にもSkillツールの呼び出しを必要とする"
+    tags: []
+    triggers:
+      - "Claude超能力"
+      - "Claude拡張機能"
+
+  - name: verification-before-completion
+    path: skills/agents/verification-before-completion/SKILL.md
+    description: "作業が完了、修正済み、またはパス済みと主張しようとする際に使用。コミットやPR作成前に - 成功の主張をする前に検証コマンドを実行して出力を確認する必要がある。主張の前に常に証拠を"
+    tags: []
+    triggers:
+      - "完了前確認"
+      - "タスク検証"
+
+  - name: writing-skills
+    path: skills/agents/writing-skills/SKILL.md
+    description: "Use when creating new skills, editing existing skills, or verifying skills work before deployment"
+    tags: []
+    triggers:
+      - "スキル記述"
+      - "スキルの書き方"
+
+  - name: brainstorming
+    path: skills/brainstorming/SKILL.md
+    description: "Facilitates Socratic brainstorming sessions to clarify requirements and refine design decisions. Use when requirements are ambiguous, when multiple approaches exist, when validating design, or when..."
+    tags: [planning]
+    triggers:
+      - "ブレスト"
+      - "要件整理"
+      - "brainstorm"
+      - "アイデア出し"
+
+  - name: claude-automation-recommender
+    path: skills/claude-code-setup/SKILL.md
+    description: "コードベースを分析してClaude Codeのオートメーション（フック、サブエージェント、スキル、プラグイン、MCPサーバー）を推奨する。ユーザーがオートメーションの推奨を求めたり、Claude Codeのセットアップを最適化したい場合、Claude Codeワークフローの改善に言及した場合、プロジェクトに対してClaude Codeを初めてセットアップする方法を聞いた場合、またはどのCla..."
+    tags: []
+    triggers:
+      - "Claude Code設定"
+      - "自動化推薦"
+      - "フック推薦"
+
+  - name: claude-md-improver
+    path: skills/claude-md-management/SKILL.md
+    description: "Audits and improves CLAUDE.md files across a repository by scanning all instances, evaluating quality against a rubric, generating a quality report, and applying targeted updates. Use when asked to..."
+    tags: [config]
+    triggers:
+      - "CLAUDE.md"
+      - "claude.md改善"
+      - "claude.md更新"
+
+  - name: code-review
+    path: skills/code-review/SKILL.md
+    description: "Conducts comprehensive code reviews focusing on quality, security, performance, and best practices. Use when the user requests a code review, quality assessment, pre-merge validation, or PR evaluat..."
+    tags: []
+    triggers:
+      - "コードレビュー"
+      - "review"
+      - "レビュー"
+
+  - name: create-plan
+    path: skills/create-plan/SKILL.md
+    description: "Reads docs/implement/proposal.md and creates docs/implement/plan.md. Then runs a Codex review loop until APPROVED or max iterations reached."
+    tags: [planning]
+    triggers:
+      - "計画作成"
+      - "plan作成"
+      - "proposal"
+
+  - name: css-features
+    path: skills/css-features/SKILL.md
+    description: "Provides reference and patterns for modern CSS features (2024+) including native nesting, container queries, :has(), @layer cascade control, and modern color functions. Use when writing modern styl..."
+    tags: [css, frontend]
+    triggers:
+      - "CSSネスト"
+      - "コンテナクエリ"
+      - ":has()"
+      - "@layer"
+
+  - name: css-layout
+    path: skills/css-layout/SKILL.md
+    description: "Provides CSS layout patterns using Grid, Flexbox, and responsive design techniques. Use when building page layouts, creating responsive designs, positioning components, or implementing fluid typogr..."
+    tags: [css, frontend]
+    triggers:
+      - "CSSレイアウト"
+      - "Grid"
+      - "Flexbox"
+      - "レスポンシブ"
+
+  - name: css-modern
+    path: skills/css-modern/SKILL.md
+    description: "2024+向けのモダンCSS手法とベストプラクティス。詳細パターンは関連スキル参照。"
+    tags: [css, frontend]
+    triggers:
+      - "モダンCSS"
+      - "CSS 2024"
+
+  - name: css-organization
+    path: skills/css-organization/SKILL.md
+    description: "Provides best practices for organizing CSS code including file structure, BEM naming conventions, CSS custom properties, animations, and accessibility. Use when starting a new project, establishing..."
+    tags: [css, frontend]
+    triggers:
+      - "CSS設計"
+      - "BEM"
+      - "デザインシステム"
+      - "CSS変数"
+
+  - name: design-tracker
+    path: skills/design-tracker/SKILL.md
+    description: "頼まれなくても積極的にプロジェクトの設計決定を追跡・記録する。アーキテクチャの議論、実装上の決定、パターンの選択、ライブラリの選定、その他技術的な決定を検出した際に自動的に起動する。ユーザーが「記録して」「設計どうなってる」と言った場合にも使用する。ユーザーに頼まれるのを待たず、重要な決定をすぐに記録すること。"
+    tags: []
+    triggers:
+      - "設計記録"
+      - "アーキテクチャ記録"
+      - "DESIGN.md記録"
+
+  - name: executing-plans
+    path: skills/executing-plans/SKILL.md
+    description: "レビューチェックポイントを持つ別セッションで実行する書かれた実装計画がある際に使用"
+    tags: [planning]
+    triggers:
+      - "計画実行"
+      - "計画に従って"
+
+  - name: frontend-design
+    path: skills/frontend-design/SKILL.md
+    description: "高い設計品質を持つ独自性のあるプロダクショングレードのフロントエンドインターフェースを作成する。ユーザーがWebコンポーネント、ページ、アプリケーションの構築を依頼した際に使用する。汎用的なAI的美学を避けたクリエイティブで洗練されたコードを生成する。"
+    tags: [frontend, ui]
+    triggers:
+      - "フロントエンド設計"
+      - "UIデザイン"
+      - "コンポーネント設計"
+
+  - name: frontend-ui-ux
+    path: skills/frontend-ui-ux/SKILL.md
+    description: "Provides modern UI/UX design principles for frontend development including mobile-first design, visual hierarchy, design systems, micro-interactions, layout patterns, typography, and performance co..."
+    tags: [frontend, ui]
+    triggers:
+      - "UI/UX"
+      - "モバイルファースト"
+      - "ビジュアル階層"
+
+  - name: finishing-a-development-branch
+    path: skills/git/finishing-a-development-branch/SKILL.md
+    description: "実装が完了し、全テストが通過した後、作業を統合する方法を決定する必要がある場合に使用する。マージ・PR作成・クリーンアップなど、開発作業を構造化されたオプションで完了させるガイド。「開発ブランチを完了する」「ブランチをマージする」「PRを作成する」「ブランチを終了する」と言及する場合に使用する。"
+    tags: []
+    triggers:
+      - "開発ブランチ完了"
+      - "ブランチ終了"
+
+  - name: git-worktrees
+    path: skills/git/git-worktrees/SKILL.md
+    description: "Git Worktrees - 複数ブランチを別ディレクトリで同時に作業し、コンテキスト切替を最小化するための仕組み。"
+    tags: []
+    triggers:
+      - "gitワークツリー"
+      - "worktree"
+      - "並列git"
+
+  - name: handover
+    path: skills/handover/SKILL.md
+    description: "セッションの引き継ぎドキュメント (HANDOVER.md) を生成する。コンテキストが圧迫されたとき、長時間の作業セッションを終了するとき、または次の Claude セッションへ作業を引き継ぐときに使用する。 Use when context is getting large, when ending a long work session, or when handing off to ..."
+    tags: [session, memory]
+    triggers:
+      - "引き継ぎ"
+      - "handover"
+      - "セッション終了"
+
+  - name: writing-hookify-rules
+    path: skills/hookify/SKILL.md
+    description: "ユーザーが「hookifyルールを作成したい」「フックルールを書きたい」「hookifyを設定したい」「hookifyルールを追加したい」と言った場合、またはhookifyルールの構文とパターンについてガイダンスが必要な場合に使用するスキル。"
+    tags: [hooks]
+    triggers:
+      - "hookify"
+      - "フックルール"
+      - "hookify作成"
+
+  - name: init
+    path: skills/init/SKILL.md
+    description: "プロジェクト構造を分析し、検出した技術スタック・コマンド・設定でAGENTS.mdを更新する。"
+    tags: [setup]
+    triggers:
+      - "プロジェクト初期化"
+      - "init"
+      - "初期設定"
+
+  - name: mcp-builder
+    path: skills/mcp-builder/SKILL.md
+    description: "Guides creation of high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when creating an MCP server, implementing M..."
+    tags: [mcp]
+    triggers:
+      - "MCP"
+      - "MCPサーバー"
+      - "Model Context Protocol"
+
+  - name: pwf
+    path: skills/planning-with-files/SKILL.md
+    description: "Manages plans and context using three persistent Markdown files (task_plan/findings/progress) to maintain continuity across sessions. Use when a long-running task risks hitting session limits, work..."
+    tags: []
+    triggers:
+      - "長期タスク"
+      - "計画ファイル"
+      - "セッション間継続"
+
+  - name: agent-development
+    path: skills/plugin-dev/agent-development/SKILL.md
+    description: "このスキルは、ユーザーが「エージェントを作成する」「エージェントを追加する」「サブエージェントを書く」「エージェントのフロントマター」「descriptionの使い方」「エージェントの例」「エージェントのツール」「エージェントの色」「自律エージェント」と尋ねる場合、またはClaude Codeプラグインのエージェント構造、システムプロンプト、トリガー条件、エージェント開発のベストプラクティス..."
+    tags: []
+    triggers:
+      - "エージェント開発"
+      - "agent.md作成"
+
+  - name: command-development
+    path: skills/plugin-dev/command-development/SKILL.md
+    description: "このスキルは、ユーザーが「スラッシュコマンドを作成する」「コマンドを追加する」「カスタムコマンドを書く」「コマンド引数を定義する」「コマンドのフロントマターを使う」「コマンドを整理する」「ファイル参照付きコマンドを作成する」「インタラクティブコマンド」「コマンドでAskUserQuestionを使う」と尋ねる場合、またはClaude Codeのスラッシュコマンド構造、YAMLフロントマターフ..."
+    tags: []
+    triggers:
+      - "コマンド開発"
+      - "スラッシュコマンド作成"
+
+  - name: hook-development
+    path: skills/plugin-dev/hook-development/SKILL.md
+    description: "このスキルは、ユーザーが「フックを作成する」「PreToolUse/PostToolUse/Stopフックを追加する」「ツール使用を検証する」「プロンプトベースのフックを実装する」「${CLAUDE_PLUGIN_ROOT}を使う」「イベント駆動の自動化を設定する」「危険なコマンドをブロックする」と尋ねる場合、またはフックイベント（PreToolUse、PostToolUse、Stop、Su..."
+    tags: []
+    triggers:
+      - "フック開発"
+      - "hook作成"
+      - "hooks.py"
+
+  - name: mcp-integration
+    path: skills/plugin-dev/mcp-integration/SKILL.md
+    description: "このスキルは、ユーザーが「MCPサーバーを追加する」「MCPを統合する」「プラグインにMCPを設定する」「.mcp.jsonを使う」「Model Context Protocolを設定する」「外部サービスを接続する」と尋ねる場合、「${CLAUDE_PLUGIN_ROOT}とMCP」について言及する場合、またはMCPサーバータイプ（SSE、stdio、HTTP、WebSocket）について議..."
+    tags: [mcp]
+    triggers:
+      - "MCP統合"
+      - "MCPクライアント"
+
+  - name: plugin-structure
+    path: skills/plugin-dev/plugin-structure/SKILL.md
+    description: "このスキルは、ユーザーが「プラグインを作成する」「プラグインをスキャフォールドする」「プラグイン構造を理解する」「プラグインコンポーネントを整理する」「plugin.jsonを設定する」「${CLAUDE_PLUGIN_ROOT}を使う」「コマンド/エージェント/スキル/フックを追加する」「自動検出を設定する」と尋ねる場合、またはClaude Codeプラグインのディレクトリレイアウト、マニ..."
+    tags: []
+    triggers:
+      - "プラグイン構造"
+      - "ディレクトリ構成"
+
+  - name: skill-development
+    path: skills/plugin-dev/skill-development/SKILL.md
+    description: "このスキルは、ユーザーが「スキルを作成する」「プラグインにスキルを追加する」「新しいスキルを書く」「スキルのdescriptionを改善する」「スキルコンテンツを整理する」と尋ねる場合、またはClaude Codeプラグインのスキル構造、プログレッシブディスクロージャー、スキル開発のベストプラクティスに関するガイダンスが必要な場合に使用すること。"
+    tags: []
+    triggers:
+      - "スキル開発"
+      - "SKILL.md作成"
+
+  - name: research-lib
+    path: skills/research-lib/SKILL.md
+    description: "ライブラリを調査して .claude/docs/libraries/ に包括的なドキュメントを作成する。"
+    tags: []
+    triggers:
+      - "ライブラリ調査"
+      - "パッケージ調査"
+
+  - name: owasp-security
+    path: skills/security/owasp-security/SKILL.md
+    description: "コードのセキュリティ脆弱性レビュー、認証・認可の実装、ユーザー入力の処理、またはWebアプリケーションセキュリティについて議論する際に使用する。OWASP Top 10:2025、ASVS 5.0、およびエージェントAIセキュリティ（2026）をカバー。"
+    tags: [security]
+    triggers:
+      - "OWASP"
+      - "セキュリティ脆弱性"
+      - "Web脆弱性"
+
+  - name: varlock
+    path: skills/security/varlock/SKILL.md
+    description: "Varlockを使った環境変数の安全な管理。シークレット、APIキー、認証情報、センシティブな設定を扱う際に使用する。シークレットがターミナル、ログ、トレース、Claudeのコンテキストに露出しないことを保証する。「環境変数」「シークレット」「.env」「APIキー」「認証情報」「センシティブ」「Varlock」などのフレーズで起動する。"
+    tags: []
+    triggers:
+      - "varlock"
+      - "変数ロック"
+      - "環境変数セキュリティ"
+
+  - name: simplify
+    path: skills/simplify/SKILL.md
+    description: "機能とライブラリの制約を維持しながらコードを簡素化・リファクタリングする。"
+    tags: []
+    triggers:
+      - "リファクタ"
+      - "シンプル化"
+      - "コード整理"
+
+  - name: skill-creator
+    path: skills/skill-creator/SKILL.md
+    description: "新しいスキルの作成、既存スキルの修正・改善、スキルのパフォーマンス測定を行う。ユーザーがスキルをゼロから作りたい場合、既存のスキルを更新・最適化したい場合、スキルをテストするためのevalを実行したい場合、分散分析付きのスキルパフォーマンスベンチマークを行いたい場合、またはトリガー精度を向上させるためにスキルのdescriptionを最適化したい場合に使用する。"
+    tags: [meta]
+    triggers:
+      - "スキル作成"
+      - "新スキル"
+      - "skill作成"
+
+  - name: debug
+    path: skills/systematic-debugging/SKILL.md
+    description: "Provides a 4-stage evidence-based debugging process (symptom collection → hypothesis generation → verification → fix) to reliably resolve bugs without guessing. Use when the cause of a bug is unkno..."
+    tags: [debugging]
+    triggers:
+      - "デバッグ"
+      - "バグ修正"
+      - "エラー調査"
+
+  - name: tdd-workflow
+    path: skills/tdd-workflow/SKILL.md
+    description: "Implements the Red-Green-Refactor TDD workflow for test-first development. Use when TDD is explicitly requested, when implementing critical business logic, when requirements are clear, or when refa..."
+    tags: [testing]
+    triggers:
+      - "TDD"
+      - "テスト駆動開発"
+      - "Red-Green-Refactor"
+
+  - name: test-driven-development
+    path: skills/test-driven-development/SKILL.md
+    description: "機能やバグ修正を実装する際に、実装コードを書く前に使用する"
+    tags: [testing]
+    triggers:
+      - "テスト哲学"
+      - "テスト原則"
+      - "テスト設計"
+
+  - name: update-design
+    path: skills/update-design/SKILL.md
+    description: "現在の会話から得られた決定事項でDESIGN.mdを明示的に更新する。設計ドキュメントの更新を強制したい場合に使用する。"
+    tags: []
+    triggers:
+      - "DESIGN.md更新"
+      - "設計ドキュメント更新"
+
+  - name: update-lib-docs
+    path: skills/update-lib-docs/SKILL.md
+    description: ".claude/docs/libraries/ のライブラリドキュメントをウェブ検索で最新情報に更新する。"
+    tags: []
+    triggers:
+      - "ライブラリドキュメント更新"
+      - "docs/libraries更新"
+
+  - name: vba-core
+    path: skills/vba-core/SKILL.md
+    description: "Provides core VBA best practices for Microsoft Office applications including code organization, error handling patterns, variable declarations, and memory management. Use when starting a new VBA pr..."
+    tags: [vba, office]
+    triggers:
+      - "VBA基礎"
+      - "VBAエラー処理"
+      - "VBAベストプラクティス"
+
+  - name: vba-development
+    path: skills/vba-development/SKILL.md
+    description: "Excel/WordなどOfficeアプリ向けVBA開発ワークフロー。詳細は関連スキル参照。"
+    tags: [vba, office]
+    triggers:
+      - "VBA開発"
+      - "VBAワークフロー"
+
+  - name: vba-excel
+    path: skills/vba-excel/SKILL.md
+    description: "Provides Excel-specific VBA patterns including worksheet/workbook events, UserForm best practices, security patterns, and migration guidance to modern platforms. Use when handling worksheet change ..."
+    tags: [vba, office]
+    triggers:
+      - "Excel VBA"
+      - "VBAシート操作"
+
+  - name: vba-patterns
+    path: skills/vba-patterns/SKILL.md
+    description: "Provides reusable VBA utility patterns for common tasks including last row/column detection, efficient range loops with arrays, file operations, Dictionary/Collection usage, and performance optimiz..."
+    tags: [vba, office]
+    triggers:
+      - "VBAパターン"
+      - "VBA最終行"
+      - "VBAユーティリティ"
+
+  - name: wolfram-foundation-tool
+    path: skills/wolfram-foundation-tool/SKILL.md
+    description: "Wolfram Language / Wolfram Alpha を LLM の基盤ツール (Foundation Tool) として活用するスキル。LLM が苦手な正確な計算・科学的事実・数学的証明・データ分析が必要なときに使用する。MCP Service・Agent One API・CAG Component APIs の3つのアクセス方法を提供。「この計算を確実に」「科学的に正確な値が..."
+    tags: [math]
+    triggers:
+      - "Wolfram"
+      - "Wolfram Alpha"
+      - "数学的証明"
+
+  - name: writing-plans
+    path: skills/writing-plans/SKILL.md
+    description: "Creates implementation plans by breaking large tasks into concrete 2-5 minute steps with clear completion criteria and checkpoints. Use when starting a new feature, planning a refactor, making chan..."
+    tags: [planning]
+    triggers:
+      - "実装計画"
+      - "計画書作成"
+      - "タスク分割"

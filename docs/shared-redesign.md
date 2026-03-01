@@ -64,7 +64,9 @@ _shared/
 
 ## 実装タスク（優先順）
 
-### 1. `registry/skills.yaml` — 最優先
+> **ステータス凡例**: ✅ 完了 / 🔲 未着手
+
+### ✅ 1. `registry/skills.yaml` — 最優先
 
 全スキルの name / triggers / path / tags を一元管理するインデックス。
 Claude がこれを読めば SKILL.md を全件ロードせずにルーティングできる。
@@ -98,7 +100,7 @@ skills:
 
 ---
 
-### 2. `hooks/lib/` — 第2優先
+### ✅ 2. `hooks/lib/` — 第2優先
 
 `pre-compact.py` の transcript 解析と claude -p 呼び出しを独立モジュール化。
 新しいフックを追加するたびに車輪の再発明をしなくて済む。
@@ -122,7 +124,7 @@ def run(prompt: str, timeout: int = 120) -> str: ...
 
 ---
 
-### 3. `meta/health-check.py` — 第3優先
+### ✅ 3. `meta/health-check.py` — 第3優先
 
 定期実行（または `/health-check` スキルとして手動実行）で以下を検出:
 
@@ -135,7 +137,7 @@ def run(prompt: str, timeout: int = 120) -> str: ...
 
 ---
 
-### 4. `evals.json` 必須化 — 第4優先
+### ✅ 4. `evals.json` 必須化 — 第4優先
 
 `skill-creator` が新スキル作成時に必ず `evals.json` のひな形も生成するよう更新。
 
@@ -154,13 +156,16 @@ def run(prompt: str, timeout: int = 120) -> str: ...
 
 ---
 
-### 5. 廃止・統合 — 最後
+### 🔲 5. 廃止・統合 — 最後（調査済み・未実施）
 
-| 対象 | 処置 |
-|-----|------|
-| `contexts/` | 内容を `skills/` または `core/` に移動後削除 |
-| `commands/` | `skills/` に統合（コマンドもスキルの一形態） |
-| `docs/libraries/` | `resources/` に移動 |
+調査結果: `commands/` はスラッシュコマンド定義、`contexts/` はコンテキスト注入ファイルで、
+`skills/` とは役割が異なるため、単純な統合は行わない方針に変更。
+
+| 対象 | 内容 | 判断 |
+|-----|------|------|
+| `contexts/` (3ファイル) | dev.md / research.md / review.md | 要調査：skills に統合 or 現状維持 |
+| `commands/` (25ファイル) | スラッシュコマンド定義 | 現状維持（skills とは別の役割） |
+| `docs/libraries/` | _TEMPLATE.md のみ | `meta/` に移動候補 |
 
 ---
 

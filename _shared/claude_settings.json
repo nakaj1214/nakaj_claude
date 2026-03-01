@@ -1,61 +1,52 @@
 {
-  "version": "1.0.0",
-  "description": "Recommended Claude Code settings for optimal development experience",
+  "_comment": "Claude Code settings template. Copy relevant fields to .claude/settings.json (team) or .claude/settings.local.json (personal). See: https://code.claude.com/docs/en/settings",
 
-  "general": {
-    "autoSave": true,
-    "confirmBeforeExecute": false,
-    "enableContextOptimization": true,
-    "maxContextSize": 200000
+  "model": "claude-sonnet-4-6",
+
+  "language": "japanese",
+
+  "respectGitignore": true,
+
+  "autoMemoryEnabled": true,
+
+  "showTurnDuration": false,
+
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(npm run lint)",
+      "Bash(npm run test *)",
+      "Bash(python *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./credentials/**)",
+      "Bash(curl *)",
+      "Bash(wget *)"
+    ]
   },
 
-  "codeGeneration": {
-    "preferExistingPatterns": true,
-    "avoidOverEngineering": true,
-    "securityFirst": true,
-    "minimalistApproach": true,
-    "testDrivenDevelopment": false
+  "env": {
+    "_comment": "Project-specific environment variables injected into every session"
   },
 
-  "communication": {
-    "conciseResponses": true,
-    "noEmojis": true,
-    "professionalTone": true,
-    "noTimeEstimates": true,
-    "provideCodeReferences": true
-  },
-
-  "toolUsage": {
-    "preferSpecializedTools": true,
-    "parallelToolCalls": true,
-    "useTodoForComplexTasks": true,
-    "useExploreAgentForCodeExploration": true
-  },
-
-  "fileOperations": {
-    "alwaysReadBeforeEdit": true,
-    "preferEditOverWrite": true,
-    "avoidUnnecessaryFiles": true,
-    "useMarkdownLinks": true
-  },
-
-  "git": {
-    "neverSkipHooks": true,
-    "neverForcePush": true,
-    "stageSpecificFiles": true,
-    "descriptiveCommitMessages": true,
-    "coAuthorCredit": true
-  },
-
-  "planning": {
-    "useEnterPlanModeForComplexTasks": true,
-    "breakDownLargeTasks": true,
-    "clarifyBeforeImplementing": true
-  },
-
-  "performance": {
-    "useTaskToolForOpenEndedSearch": true,
-    "minimizeRedundantReads": true,
-    "cacheSearchResults": true
+  "_settings_reference": {
+    "model": "Override default model. e.g. claude-opus-4-6 / claude-sonnet-4-6 / claude-haiku-4-5-20251001",
+    "language": "Response language. e.g. japanese / english / spanish",
+    "respectGitignore": "Respect .gitignore in file picker (default: true)",
+    "autoMemoryEnabled": "Let Claude accumulate learnings automatically across sessions (default: true)",
+    "showTurnDuration": "Show response duration in UI",
+    "alwaysThinkingEnabled": "Enable extended thinking by default",
+    "autoUpdatesChannel": "stable | latest",
+    "cleanupPeriodDays": "Session cleanup period in days (default: 30)",
+    "permissions.allow": "Patterns that bypass permission prompts. e.g. Bash(npm run test *) / Read(~/.zshrc)",
+    "permissions.deny": "Always-blocked patterns. e.g. Read(./.env) / Bash(rm -rf *)",
+    "env": "Environment variables injected into every Claude Code session",
+    "hooks": "PreToolUse / PostToolUse / PreCompact / Stop hooks. See: https://code.claude.com/docs/en/hooks"
   }
 }
