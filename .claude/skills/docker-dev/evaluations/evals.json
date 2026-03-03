@@ -1,0 +1,26 @@
+{
+  "skill_name": "docker-dev",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Laravelのマイグレーションを実行して",
+      "expected_behavior": "docker compose exec app php artisan migrate を提案し、コンテナ内で実行することを説明する",
+      "pass_criteria": "ホスト側で直接 php artisan migrate を実行するのではなく docker compose exec 経由であること",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "コンテナが起動しなくてエラーが出てる",
+      "expected_behavior": "docker compose logs でエラーログを確認する手順を案内し、よくある原因（DB 未起動・設定ミス等）を提示する",
+      "pass_criteria": "logs コマンドの提示と、トラブルシューティング手順が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "Pythonのdependencies（requirements.txt）をインストールしたい",
+      "expected_behavior": "docker compose exec python pip install -r requirements.txt を提案する",
+      "pass_criteria": "コンテナ内での pip install であること、仮想環境が不要な理由の補足があるとなお良い",
+      "assertions": []
+    }
+  ]
+}

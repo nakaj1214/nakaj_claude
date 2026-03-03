@@ -1,0 +1,26 @@
+{
+  "skill_name": "analyze-project",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "このプロジェクトのコーディングルールを学習してrulesファイルを作って",
+      "expected_behavior": "プロジェクトパスを確認し、既存の規約ファイル（.editorconfig, eslintrc等）を優先的に読んだ上でソースコードをサンプリングし、命名規則・スタイル・アーキテクチャを分析して rules/<言語>/conventions.md を生成する",
+      "pass_criteria": "機密ファイル（.env等）を読まず、ソースコードのサンプリングに基づいた rules ファイルが生成されること。生成ファイルに自動生成注釈が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "会社のプロジェクトから命名規則と使い方のスキルを抽出して",
+      "expected_behavior": "ディレクトリ構造・コード・Makefile/README を解析し、命名規則を rules に、繰り返し手順を skills に分けて生成する。確信度が低い項目はユーザーに確認する",
+      "pass_criteria": "rules と skills の両方について生成判断の根拠が説明され、確認が必要な項目がユーザーに提示されること",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "プロジェクト解析後、_shared に入れるべきか .claude に入れるべきか判断して",
+      "expected_behavior": "汎用的なルール（言語・フレームワーク共通）は _shared/rules/ へ、プロジェクト固有の手順・ドメイン知識は .claude/rules/ または .claude/skills/ に配置することを説明・提案する",
+      "pass_criteria": "出力先の振り分け基準（汎用 vs プロジェクト固有）が説明されること",
+      "assertions": []
+    }
+  ]
+}

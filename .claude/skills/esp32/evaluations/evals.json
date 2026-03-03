@@ -1,0 +1,40 @@
+{
+  "skill_name": "esp32",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "ESP32 で WiFi に接続したい",
+      "expected_behavior": "WiFi.begin() を使った接続コードを提示し、タイムアウト処理と接続確認 (WiFi.status() == WL_CONNECTED) を含める。2.4GHz のみ対応である点も説明する",
+      "pass_criteria": "WiFi.begin・接続確認ループ・タイムアウト処理の3点が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "ESP32 をバッテリー駆動で 60 秒ごとにデータを送信したい",
+      "expected_behavior": "ディープスリープ（esp_deep_sleep_start）+ タイマーウェイクアップのパターンを提示する。setup() でデータ送信 → goDeepSleep() の流れを説明する",
+      "pass_criteria": "esp_sleep_enable_timer_wakeup と esp_deep_sleep_start が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "PlatformIO で ESP32 のプロジェクトを始めたい",
+      "expected_behavior": "platformio.ini の基本設定（platform, board, framework, monitor_speed）を提示し、pio run / pio device monitor などの主要コマンドを説明する",
+      "pass_criteria": "platformio.ini の設定例と PlatformIO CLI コマンドが含まれること",
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "ESP32 で OTA アップデートを実装したい",
+      "expected_behavior": "ArduinoOTA ライブラリを使った実装例を提示し、setup() での初期化と loop() での handle() 呼び出しが必須であることを説明する",
+      "pass_criteria": "ArduinoOTA.begin() と loop() 内の ArduinoOTA.handle() が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "prompt": "ESP32 で複数の処理を並行して動かしたい",
+      "expected_behavior": "FreeRTOS の xTaskCreatePinnedToCore を使ったタスク分割パターンを提示し、loop() を空にして vTaskDelay(portMAX_DELAY) を使う形を説明する",
+      "pass_criteria": "xTaskCreatePinnedToCore の使用例とキュー（QueueHandle_t）またはセマフォが含まれること",
+      "assertions": []
+    }
+  ]
+}

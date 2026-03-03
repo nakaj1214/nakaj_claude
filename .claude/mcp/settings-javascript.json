@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "JavaScript / Node.js 開発向け MCP設定",
+  "_usage": "このファイルの mcpServers 部分を ~/.claude/settings.json にマージ",
+
+  "mcpServers": {
+    "_comment_essential": "=== 必須: JavaScript開発基本MCP ===",
+
+    "filesystem": {
+      "_description": "JSプロジェクトへのファイルアクセス",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/path/to/js/project"
+      ]
+    },
+
+    "git": {
+      "_description": "Gitリポジトリ操作",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+
+    "memory": {
+      "_description": "コンポーネント構造・モジュール情報の記憶",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+
+    "fetch": {
+      "_description": "APIテスト・外部データ取得",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+
+    "_comment_browser": "=== ブラウザ自動化・テスト ===",
+
+    "puppeteer": {
+      "_description": "ブラウザ自動化（スクレイピング、スクリーンショット）",
+      "_enabled": true,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+
+    "playwright": {
+      "_description": "E2Eテスト（Puppeteerより高機能）",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-playwright"]
+    },
+
+    "_comment_database": "=== データベース連携 ===",
+
+    "sqlite": {
+      "_description": "SQLite（開発用ローカルDB）",
+      "_enabled": false,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path",
+        "C:/path/to/database.db"
+      ]
+    },
+
+    "postgres": {
+      "_description": "PostgreSQL接続",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:password@localhost:5432/js_db"
+      }
+    },
+
+    "_comment_advanced": "=== 高度なツール ===",
+
+    "sequential-thinking": {
+      "_description": "複雑なReact/Vueコンポーネント設計",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+
+    "_comment_services": "=== 外部サービス連携（オプション） ===",
+
+    "github": {
+      "_description": "GitHub Issue/PR管理",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_your_token_here"
+      }
+    },
+
+    "slack": {
+      "_description": "Slack通知・チーム連携",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-slack-bot-token"
+      }
+    }
+  },
+
+  "_javascript_tips": {
+    "npm_commands": "npm/yarn/pnpmコマンドはClaude Codeの直接Bash実行を使用",
+    "react_dev": "memory MCPでコンポーネント階層を記憶させると効率的",
+    "api_testing": "fetch MCPでREST/GraphQL APIをテスト可能",
+    "e2e_testing": "puppeteer/playwright MCPでブラウザテスト自動化",
+    "bundler": "Vite/Webpackの設定確認にはfilesystem MCPが有効"
+  }
+}

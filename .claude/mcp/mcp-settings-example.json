@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "Claude Code / Claude Desktop MCP設定例",
+  "_usage": "このファイルの内容を ~/.claude/settings.json または %APPDATA%/Claude/claude_desktop_config.json にコピー",
+
+  "mcpServers": {
+    "_comment_essential": "=== 必須: 開発に便利な基本MCPサーバー ===",
+
+    "filesystem": {
+      "_description": "ファイルシステムへの安全なアクセス",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Users/nakashima/Desktop/claude"
+      ]
+    },
+
+    "git": {
+      "_description": "Gitリポジトリの操作（履歴、diff、ブランチ情報）",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+
+    "memory": {
+      "_description": "永続的なメモリ・ナレッジグラフ（セッション間で情報保持）",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+
+    "fetch": {
+      "_description": "Webコンテンツの取得とマークダウン変換",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+
+    "sequential-thinking": {
+      "_description": "複雑な問題を段階的に分析・解決",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+
+    "_comment_database": "=== データベース連携 ===",
+
+    "sqlite": {
+      "_description": "SQLiteデータベースへのアクセス",
+      "_enabled": false,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path",
+        "C:/path/to/database.db"
+      ]
+    },
+
+    "postgres": {
+      "_description": "PostgreSQLデータベースへの接続",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:password@localhost:5432/dbname"
+      }
+    },
+
+    "_comment_services": "=== 外部サービス連携 ===",
+
+    "github": {
+      "_description": "GitHub API連携（Issue, PR, リポジトリ操作）",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_your_personal_access_token_here"
+      }
+    },
+
+    "slack": {
+      "_description": "Slack連携（メッセージ送信、チャンネル操作）",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-slack-bot-token"
+      }
+    },
+
+    "_comment_browser": "=== ブラウザ自動化 ===",
+
+    "puppeteer": {
+      "_description": "ブラウザ自動化（スクレイピング、スクリーンショット）",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+
+    "_comment_advanced": "=== 高度なツール ===",
+
+    "time": {
+      "_description": "時刻・タイムゾーン情報",
+      "_enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-time"]
+    }
+  }
+}

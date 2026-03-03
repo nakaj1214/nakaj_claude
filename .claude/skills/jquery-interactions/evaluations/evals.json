@@ -1,0 +1,40 @@
+{
+  "skill_name": "jquery-interactions",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "ボタンをクリックしたらパネルをフェードインで表示したい",
+      "expected_behavior": "$.stop(true, true).fadeIn() を使った実装例を提示し、連打対策も含めて説明する",
+      "pass_criteria": "stop(true, true) による競合防止が含まれること、または CSS トランジション推奨の言及があること",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "AJAXでフォームを送信したい。Laravelバックエンドにポストする",
+      "expected_behavior": "$.ajaxSetup で CSRF トークンを設定する手順と、$.ajax POST のコード例を提示する。ボタン無効化・エラー処理・always() も含める",
+      "pass_criteria": "CSRF トークン設定・ボタン無効化・.fail() または error: ハンドラーの3点が揃っていること",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "テーブルに動的に追加した行の削除ボタンにクリックイベントを付けたい",
+      "expected_behavior": "イベント委譲 $(親要素).on('click', '.btn-delete', handler) パターンを提示し、動的追加要素に直接バインドできない理由を説明する",
+      "pass_criteria": "委譲パターン（on の第2引数にセレクターを渡す形式）が使われていること",
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "検索フォームの入力中にリアルタイムで候補を取得したい",
+      "expected_behavior": "debounce パターン（setTimeout + clearTimeout）で入力が止まってから AJAX を呼ぶ実装例を提示する",
+      "pass_criteria": "clearTimeout + setTimeout による debounce 実装が含まれること",
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "prompt": "スクロールして画面内に入った要素をアニメーションさせたい",
+      "expected_behavior": "scroll イベントを throttle で間引きながら offset().top と scrollTop + height() を比較し、CSS クラスを付与する実装例を提示する",
+      "pass_criteria": "throttle（scrollTimer パターン）と画面内判定ロジックの両方が含まれること",
+      "assertions": []
+    }
+  ]
+}
