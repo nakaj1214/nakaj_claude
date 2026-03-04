@@ -1,10 +1,10 @@
 ---
 name: codex-review
 description: |
-  Runs a Codex review loop on a specified document file.
-  Iterates until APPROVED or max iterations reached, with Claude fixing blocking issues each round.
-  Use when reviewing implementation plans, design docs, or any structured document with Codex.
-  Trigger on: "Codex review", "codex-review", "review with Codex", "Codex loop".
+  指定されたドキュメントファイルに対して Codex レビューループを実行する。
+  APPROVED になるか最大反復回数に達するまで、各ラウンドで Claude がブロッキング問題を修正する。
+  実装計画、設計ドキュメント、その他の構造化ドキュメントを Codex でレビューする際に使用する。
+  トリガー: "Codex review", "codex-review", "review with Codex", "Codex loop"。
 metadata:
   short-description: Codex review loop for any document
 ---

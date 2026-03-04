@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "/create-plan",
-      "expected_output": "proposal.md を読み、品質チェック7項目を実行。現在の proposal.md には「改善されていない（4回目）」が2件、曖昧な記述が多数あるため FAIL 判定となり、構造化テンプレートでリライトを提案する",
-      "files": ["docs/implement/proposal.md"],
+      "expected_output": "prompt.md を読み、proposal.md を生成して品質チェック7項目を実行。依頼文に「改善されていない（4回目）」が2件、曖昧な記述が多数あるため FAIL 判定となり、構造化テンプレートでリライトを提案する",
+      "files": ["docs/implement/prompt.md"],
       "expectations": [
-        "proposal.md を読み取っている",
+        "prompt.md を読み取っている",
+        "prompt.md の内容から proposal.md を生成している",
         "7項目の品質チェック結果をテーブル形式で表示している",
         "「改善されていない」パターンを検出して FAIL としている",
-        "元ファイルのバックアップを作成している",
         "テンプレートに沿った構造化リライトを実施している",
         "RETRY セクションに繰り返し失敗項目を配置している",
         "コメントアウトされた要件を完了済み/保留中に分類している",
@@ -20,19 +20,21 @@
     {
       "id": 2,
       "prompt": "計画を作成して",
-      "expected_output": "proposal-quality-gate がトリガーされ、proposal.md の品質チェックを実行する",
-      "files": ["docs/implement/proposal.md"],
+      "expected_output": "proposal-quality-gate がトリガーされ、prompt.md を読んで proposal.md を生成し品質チェックを実行する",
+      "files": ["docs/implement/prompt.md"],
       "expectations": [
         "create-plan の前にこのスキルがトリガーされている",
+        "prompt.md から proposal.md を生成している",
         "品質チェック結果を日本語で報告している"
       ]
     },
     {
       "id": 3,
-      "prompt": "/create-plan（proposal.md が構造化テンプレートに従って書かれている場合）",
+      "prompt": "/create-plan（prompt.md の内容が明確で構造化しやすい場合）",
       "expected_output": "品質チェックが PASS となり、そのまま create-plan に進む",
-      "files": [],
+      "files": ["docs/implement/prompt.md"],
       "expectations": [
+        "prompt.md から proposal.md を生成している",
         "チェック結果が PASS であることを報告している",
         "リライトせずに create-plan への引き継ぎを行っている"
       ]

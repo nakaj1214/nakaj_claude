@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook: Slack-based Edit/Write approval (for background agents).
+PreToolUse フック: Slack ベースの Edit/Write 承認（バックグラウンドエージェント用）。
 
-Sends a Slack message when Claude Code wants to edit or write a file,
-then polls for allow/deny via:
-  - Emoji reaction: :white_check_mark: (allow) or :x: (deny)
-  - Thread reply: keywords like "allow" / "deny" (and Japanese equivalents)
-  - Block Kit buttons (if Socket Mode daemon is running)
+Claude Code がファイルを編集または書き込もうとした際に Slack メッセージを送信し、
+以下の方法で許可/拒否をポーリングする:
+  - 絵文字リアクション: :white_check_mark:（許可） または :x:（拒否）
+  - スレッド返信: "allow" / "deny" 等のキーワード（日本語にも対応）
+  - Block Kit ボタン（Socket Mode デーモン実行中の場合）
 
-Required environment variables (set in .claude/settings.json env section):
+必須環境変数（.claude/settings.json の env セクションで設定）:
   SLACK_BOT_TOKEN        - Slack Bot Token (xoxb-...)
   SLACK_CHANNEL_ID       - Slack Channel ID (C0XXXXXXX)
-  SLACK_APPROVER_USER_ID - Approver's Slack user ID (U0XXXXXXX, NOT Bot ID)
+  SLACK_APPROVER_USER_ID - 承認者の Slack ユーザー ID (U0XXXXXXX, Bot ID ではない)
 
-Optional:
-  EDIT_APPROVAL_ENABLED  - Set to "1" to enable this hook (default: disabled)
+オプション:
+  EDIT_APPROVAL_ENABLED  - "1" に設定して有効化（デフォルト: 無効）
 
-Exit codes:
-  0: Allow (tool execution continues)
-  2: Block (tool execution is blocked)
+終了コード:
+  0: 許可（ツール実行を継続）
+  2: ブロック（ツール実行を阻止）
 """
 
 import datetime
@@ -40,7 +40,8 @@ POLL_MAX_COUNT = 60  # 5s * 60 = max 5 minutes
 PREVIEW_CHARS = 300  # Max chars for content preview in Slack message
 
 # --- Load env with settings.json fallback ---
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.env import get as _env
 
 # Environment variables
@@ -51,7 +52,7 @@ EDIT_APPROVAL_ENABLED = _env("EDIT_APPROVAL_ENABLED") or "0"
 
 # File paths
 PROJECT_DIR = _env("CLAUDE_PROJECT_DIR")
-_BASE = Path(PROJECT_DIR) if PROJECT_DIR else Path(__file__).resolve().parent.parent.parent
+_BASE = Path(PROJECT_DIR) if PROJECT_DIR else _HOOKS_DIR.parent.parent
 AUDIT_LOG_PATH = _BASE / ".claude/logs/edit_approval_audit.jsonl"
 
 # Socket Mode IPC

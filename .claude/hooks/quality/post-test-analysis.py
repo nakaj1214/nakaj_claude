@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: Suggest Codex analysis after test/build failures.
+PostToolUse フック: テスト/ビルド失敗後に Codex 分析を提案する。
 
-Analyzes test and build output and suggests Codex consultation
-for debugging complex failures.
+テストおよびビルド出力を分析し、複雑な失敗のデバッグに
+Codex の活用を提案する。
 """
 
 import json
 import sys
 import re
 
-# Commands that run tests or builds
+# テストまたはビルドを実行するコマンド
 TEST_BUILD_COMMANDS = [
     "pytest",
     "npm test",
@@ -27,7 +27,7 @@ TEST_BUILD_COMMANDS = [
     "make build",
 ]
 
-# Patterns indicating failures that need debugging
+# デバッグが必要な失敗を示すパターン
 FAILURE_PATTERNS = [
     r"FAILED",
     r"ERROR",
@@ -48,7 +48,7 @@ FAILURE_PATTERNS = [
     r"FAIL:",
 ]
 
-# Simple errors that don't need Codex
+# Codex が不要な単純エラー
 SIMPLE_ERRORS = [
     "ModuleNotFoundError",  # Usually just need to install
     "command not found",
@@ -57,13 +57,13 @@ SIMPLE_ERRORS = [
 
 
 def is_test_or_build_command(command: str) -> bool:
-    """Check if the command runs tests or builds."""
+    """テストまたはビルドを実行するコマンドか判定する。"""
     command_lower = command.lower()
     return any(cmd in command_lower for cmd in TEST_BUILD_COMMANDS)
 
 
 def has_complex_failure(output: str) -> tuple[bool, str]:
-    """Check if output contains complex failures that need debugging."""
+    """デバッグが必要な複雑な失敗が出力に含まれるか判定する。"""
     # Skip if it's a simple error
     for simple in SIMPLE_ERRORS:
         if simple in output:

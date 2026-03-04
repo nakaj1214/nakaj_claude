@@ -1,14 +1,14 @@
-# Command Documentation Patterns
+# コマンドドキュメントパターン
 
-Strategies for creating self-documenting, maintainable commands with excellent user experience.
+自己文書化型で保守しやすく、優れたユーザー体験を持つコマンドを作成するための戦略。
 
-## Overview
+## 概要
 
-Well-documented commands are easier to use, maintain, and distribute. Documentation should be embedded in the command itself, making it immediately accessible to users and maintainers.
+よくドキュメント化されたコマンドは使いやすく、保守しやすく、配布しやすい。ドキュメントはコマンド自体に埋め込むべきであり、ユーザーと保守者が即座にアクセスできるようにする。
 
-## Self-Documenting Command Structure
+## 自己文書化型コマンド構造
 
-### Complete Command Template
+### 完全なコマンドテンプレート
 
 ```markdown
 ---
@@ -70,81 +70,81 @@ CHANGELOG:
 [Provide clear output...]
 ```
 
-### Documentation Comment Sections
+### ドキュメントコメントセクション
 
-**PURPOSE**: Why the command exists
-- Problem it solves
-- Use cases
-- When to use vs when not to use
+**PURPOSE**: コマンドが存在する理由
+- 解決する問題
+- ユースケース
+- 使うべき場合と使うべきでない場合
 
-**USAGE**: Basic syntax
-- Command invocation pattern
-- Required vs optional arguments
-- Default values
+**USAGE**: 基本的な構文
+- コマンド呼び出しパターン
+- 必須引数とオプション引数
+- デフォルト値
 
-**ARGUMENTS**: Detailed argument documentation
-- Each argument described
-- Type information
-- Valid values/ranges
-- Defaults
+**ARGUMENTS**: 詳細な引数ドキュメント
+- 各引数の説明
+- 型情報
+- 有効な値・範囲
+- デフォルト値
 
-**EXAMPLES**: Concrete usage examples
-- Common use cases
-- Edge cases
-- Expected outputs
+**EXAMPLES**: 具体的な使用例
+- 一般的なユースケース
+- エッジケース
+- 期待される出力
 
-**REQUIREMENTS**: Prerequisites
-- Dependencies
-- Permissions
-- Environmental setup
+**REQUIREMENTS**: 前提条件
+- 依存関係
+- 権限
+- 環境セットアップ
 
-**RELATED COMMANDS**: Connections
-- Similar commands
-- Complementary commands
-- Alternative approaches
+**RELATED COMMANDS**: 関連性
+- 類似コマンド
+- 補完的なコマンド
+- 代替アプローチ
 
-**TROUBLESHOOTING**: Common issues
-- Known problems
-- Solutions
-- Workarounds
+**TROUBLESHOOTING**: よくある問題
+- 既知の問題
+- 解決策
+- 回避策
 
-**CHANGELOG**: Version history
-- What changed when
-- Breaking changes highlighted
-- Migration guidance
+**CHANGELOG**: バージョン履歴
+- 何がいつ変更されたか
+- 破壊的変更のハイライト
+- 移行ガイダンス
 
-## In-Line Documentation Patterns
+## インラインドキュメントパターン
 
-### Commented Sections
+### コメント付きセクション
 
 ```markdown
 ---
 description: Complex multi-step command
 ---
 
-<!-- SECTION 1: VALIDATION -->
-<!-- This section checks prerequisites before proceeding -->
+<!-- セクション1: バリデーション -->
+<!-- このセクションは続行前に前提条件をチェックする -->
 
 Checking prerequisites...
 - Git repository: !`git rev-parse --git-dir 2>/dev/null`
 - Branch exists: [validation logic]
 
-<!-- SECTION 2: ANALYSIS -->
-<!-- Analyzes the differences between branches -->
+<!-- セクション2: 分析 -->
+<!-- ブランチ間の差分を分析する -->
 
 Analyzing differences between $1 and $2...
 [Analysis logic...]
 
-<!-- SECTION 3: RECOMMENDATIONS -->
-<!-- Provides actionable recommendations -->
+<!-- セクション3: 推奨事項 -->
+<!-- 実行可能な推奨事項を提供する -->
 
 Based on analysis, recommend:
 [Recommendations...]
 
-<!-- END: Next steps for user -->
+<!-- 終了: ユーザーへの次のステップ -->
 ```
 
-### Inline Explanations
+### インライン説明
 
 ```markdown
 ---
@@ -155,28 +155,28 @@ description: Deployment command with inline docs
 
 ## Pre-flight Checks
 
-<!-- We check branch status to prevent deploying from wrong branch -->
+<!-- 間違ったブランチからのデプロイを防ぐためにブランチ状態をチェック -->
 Current branch: !`git branch --show-current`
 
-<!-- Production deploys must come from main/master -->
+<!-- 本番デプロイは main/master からでなければならない -->
 if [ "$1" = "production" ] && [ "$(git branch --show-current)" != "main" ]; then
   ⚠️  WARNING: Not on main branch for production deploy
   This is unusual. Confirm this is intentional.
 fi
 
-<!-- Test status ensures we don't deploy broken code -->
+<!-- テスト状態を確認して壊れたコードをデプロイしないようにする -->
 Running tests: !`npm test`
 
 ✓ All checks passed
 
 ## Deployment
 
-<!-- Actual deployment happens here -->
-<!-- Uses blue-green strategy for zero-downtime -->
+<!-- 実際のデプロイメントはここで行われる -->
+<!-- ゼロダウンタイムのためにブルーグリーン戦略を使用 -->
 Deploying to $1 environment...
 [Deployment steps...]
 
-<!-- Post-deployment verification -->
+<!-- デプロイ後の検証 -->
 Verifying deployment health...
 [Health checks...]
 
@@ -184,13 +184,13 @@ Deployment complete!
 
 ## Next Steps
 
-<!-- Guide user on what to do after deployment -->
+<!-- デプロイ後にユーザーが行うべきことをガイド -->
 1. Monitor logs: /logs $1
 2. Run smoke tests: /smoke-test $1
 3. Notify team: /notify-deployment $1
 ```
 
-### Decision Point Documentation
+### 判断ポイントのドキュメント
 
 ```markdown
 ---
@@ -205,9 +205,9 @@ Target: $1
 Current version: !`cat version.txt`
 New version: $2
 
-<!-- DECISION POINT: User confirms configuration -->
-<!-- This pause allows user to verify everything is correct -->
-<!-- We can't automatically proceed because deployment is risky -->
+<!-- 判断ポイント: ユーザーが設定を確認する -->
+<!-- このポーズによりユーザーがすべてが正しいか確認できる -->
+<!-- デプロイはリスクがあるため自動的に進行できない -->
 
 Review the above configuration.
 
@@ -218,17 +218,17 @@ Review the above configuration.
 
 [Await user input before continuing...]
 
-<!-- After user confirms, we proceed with deployment -->
-<!-- All subsequent steps are automated -->
+<!-- ユーザー確認後にデプロイを進行する -->
+<!-- 以降のステップはすべて自動化されている -->
 
 Proceeding with deployment...
 ```
 
-## Help Text Patterns
+## ヘルプテキストパターン
 
-### Built-in Help Command
+### 組み込みヘルプコマンド
 
-Create a help subcommand for complex commands:
+複雑なコマンドのためにヘルプサブコマンドを作成する:
 
 ```markdown
 ---
@@ -266,9 +266,9 @@ fi
 [Regular command processing...]
 ```
 
-### Contextual Help
+### コンテキストヘルプ
 
-Provide help based on context:
+コンテキストに基づいたヘルプを提供する:
 
 ```markdown
 ---
@@ -301,9 +301,9 @@ fi
 [Command continues if operation provided...]
 ```
 
-## Error Message Documentation
+## エラーメッセージドキュメント
 
-### Helpful Error Messages
+### 有用なエラーメッセージ
 
 ```markdown
 ---
@@ -349,7 +349,7 @@ fi
 [Command continues if validation passes...]
 ```
 
-### Error Recovery Guidance
+### エラー復旧ガイダンス
 
 ```markdown
 ---
@@ -390,9 +390,9 @@ if [ $? -ne 0 ]; then
 fi
 ```
 
-## Usage Example Documentation
+## 使用例ドキュメント
 
-### Embedded Examples
+### 埋め込み例
 
 ```markdown
 ---
@@ -449,7 +449,7 @@ Now processing your request...
 [Command implementation...]
 ```
 
-### Example-Driven Documentation
+### 例駆動型ドキュメント
 
 ```markdown
 ---
@@ -507,9 +507,9 @@ Format: $2
 [Perform transformation...]
 ```
 
-## Maintenance Documentation
+## メンテナンスドキュメント
 
-### Version and Changelog
+### バージョンと変更ログ
 
 ```markdown
 <!--
@@ -519,88 +519,88 @@ AUTHOR: DevOps Team
 
 CHANGELOG:
   v2.1.0 (2025-01-15):
-    - Added support for YAML configuration
-    - Improved error messages
-    - Fixed bug with special characters in arguments
+    - YAML 設定のサポートを追加
+    - エラーメッセージを改善
+    - 引数の特殊文字に関するバグを修正
 
   v2.0.0 (2025-01-01):
-    - BREAKING: Changed argument order
-    - BREAKING: Removed deprecated --old-flag
-    - Added new validation checks
-    - Migration guide: /migration-v2
+    - 破壊的変更: 引数の順序を変更
+    - 破壊的変更: 非推奨の --old-flag を削除
+    - 新しいバリデーションチェックを追加
+    - 移行ガイド: /migration-v2
 
   v1.5.0 (2024-12-15):
-    - Added --verbose flag
-    - Improved performance by 50%
+    - --verbose フラグを追加
+    - パフォーマンスを50%改善
 
   v1.0.0 (2024-12-01):
-    - Initial stable release
+    - 初回安定版リリース
 
 MIGRATION NOTES:
-  From v1.x to v2.0:
-    Old: /command arg1 arg2 --old-flag
-    New: /command arg2 arg1
+  v1.x から v2.0 への移行:
+    旧: /command arg1 arg2 --old-flag
+    新: /command arg2 arg1
 
-  The --old-flag is removed. Use --new-flag instead.
+  --old-flag は削除されました。代わりに --new-flag を使用してください。
 
 DEPRECATION WARNINGS:
-  - The --legacy-mode flag is deprecated as of v2.1.0
-  - Will be removed in v3.0.0 (estimated 2025-06-01)
-  - Use --modern-mode instead
+  - --legacy-mode フラグは v2.1.0 で非推奨
+  - v3.0.0 で削除予定（2025-06-01 予定）
+  - 代わりに --modern-mode を使用してください
 
 KNOWN ISSUES:
-  - #123: Slow performance with large files (workaround: use --stream flag)
-  - #456: Special characters in Windows (fix planned for v2.2.0)
+  - #123: 大きなファイルでのパフォーマンス低下（回避策: --stream フラグを使用）
+  - #456: Windows での特殊文字（v2.2.0 で修正予定）
 -->
 ```
 
-### Maintenance Notes
+### メンテナンスノート
 
 ```markdown
 <!--
 MAINTENANCE NOTES:
 
 CODE STRUCTURE:
-  - Lines 1-50: Argument parsing and validation
-  - Lines 51-100: Main processing logic
-  - Lines 101-150: Output formatting
-  - Lines 151-200: Error handling
+  - 行 1-50: 引数の解析とバリデーション
+  - 行 51-100: メイン処理ロジック
+  - 行 101-150: 出力フォーマット
+  - 行 151-200: エラーハンドリング
 
 DEPENDENCIES:
-  - Requires git 2.x or later
-  - Uses jq for JSON processing
-  - Needs bash 4.0+ for associative arrays
+  - git 2.x 以降が必要
+  - JSON 処理に jq を使用
+  - 連想配列に bash 4.0+ が必要
 
 PERFORMANCE:
-  - Fast path for small inputs (< 1MB)
-  - Streams large files to avoid memory issues
-  - Caches results in /tmp for 1 hour
+  - 小さな入力（< 1MB）の高速パス
+  - メモリ問題を避けるため大きなファイルをストリーム処理
+  - /tmp に結果を1時間キャッシュ
 
 SECURITY CONSIDERATIONS:
-  - Validates all inputs to prevent injection
-  - Uses allowed-tools to limit Bash access
-  - No credentials in command file
+  - インジェクション防止のためすべての入力をバリデーション
+  - allowed-tools で Bash アクセスを制限
+  - コマンドファイルに認証情報なし
 
 TESTING:
-  - Unit tests: tests/command-test.sh
-  - Integration tests: tests/integration/
-  - Manual test checklist: tests/manual-checklist.md
+  - ユニットテスト: tests/command-test.sh
+  - インテグレーションテスト: tests/integration/
+  - 手動テストチェックリスト: tests/manual-checklist.md
 
 FUTURE IMPROVEMENTS:
-  - TODO: Add support for TOML format
-  - TODO: Implement parallel processing
-  - TODO: Add progress bar for large files
+  - TODO: TOML フォーマットのサポートを追加
+  - TODO: 並列処理を実装
+  - TODO: 大きなファイル用のプログレスバーを追加
 
 RELATED FILES:
-  - lib/parser.sh: Shared parsing logic
-  - lib/formatter.sh: Output formatting
-  - config/defaults.yml: Default configuration
+  - lib/parser.sh: 共有解析ロジック
+  - lib/formatter.sh: 出力フォーマット
+  - config/defaults.yml: デフォルト設定
 -->
 ```
 
-## README Documentation
+## README ドキュメント
 
-Commands should have companion README files:
+コマンドにはコンパニオン README ファイルを用意すべき:
 
 ```markdown
 # Command Name
@@ -686,54 +686,54 @@ MIT License - See [LICENSE](LICENSE).
 - Email: support@example.com
 ```
 
-## Best Practices
+## ベストプラクティス
 
-### Documentation Principles
+### ドキュメントの原則
 
-1. **Write for your future self**: Assume you'll forget details
-2. **Examples before explanations**: Show, then tell
-3. **Progressive disclosure**: Basic info first, details available
-4. **Keep it current**: Update docs when code changes
-5. **Test your docs**: Verify examples actually work
+1. **将来の自分のために書く:** 詳細を忘れることを前提にする
+2. **説明の前に例を:** まず見せて、それから説明する
+3. **段階的な開示:** 基本情報を先に、詳細は利用可能に
+4. **最新の状態を保つ:** コードが変わったらドキュメントも更新
+5. **ドキュメントをテストする:** 例が実際に動くか確認
 
-### Documentation Locations
+### ドキュメントの配置場所
 
-1. **In command file**: Core usage, examples, inline explanations
-2. **README**: Installation, configuration, troubleshooting
-3. **Separate docs**: Detailed guides, tutorials, API reference
-4. **Comments**: Implementation details for maintainers
+1. **コマンドファイル内:** コアの使い方、例、インライン説明
+2. **README:** インストール、設定、トラブルシューティング
+3. **別ドキュメント:** 詳細ガイド、チュートリアル、API リファレンス
+4. **コメント:** メンテナー向けの実装詳細
 
-### Documentation Style
+### ドキュメントのスタイル
 
-1. **Clear and concise**: No unnecessary words
-2. **Active voice**: "Run the command" not "The command can be run"
-3. **Consistent terminology**: Use same terms throughout
-4. **Formatted well**: Use headings, lists, code blocks
-5. **Accessible**: Assume reader is beginner
+1. **明確で簡潔に:** 不要な言葉は省く
+2. **能動態:** 「コマンドを実行できます」ではなく「コマンドを実行する」
+3. **一貫した用語:** 全体を通じて同じ用語を使用
+4. **適切なフォーマット:** 見出し、リスト、コードブロックを使用
+5. **アクセシブルに:** 読者が初心者であることを前提にする
 
-### Documentation Maintenance
+### ドキュメントのメンテナンス
 
-1. **Version everything**: Track what changed when
-2. **Deprecate gracefully**: Warn before removing features
-3. **Migration guides**: Help users upgrade
-4. **Archive old docs**: Keep old versions accessible
-5. **Review regularly**: Ensure docs match reality
+1. **すべてバージョン管理:** 何がいつ変わったかを追跡
+2. **優雅な非推奨化:** 機能削除前に警告する
+3. **移行ガイド:** ユーザーのアップグレードを支援
+4. **古いドキュメントのアーカイブ:** 旧バージョンをアクセス可能に保つ
+5. **定期的にレビュー:** ドキュメントが現実と一致しているか確認
 
-## Documentation Checklist
+## ドキュメントチェックリスト
 
-Before releasing a command:
+コマンドをリリースする前に:
 
-- [ ] Description in frontmatter is clear
-- [ ] argument-hint documents all arguments
-- [ ] Usage examples in comments
-- [ ] Common use cases shown
-- [ ] Error messages are helpful
-- [ ] Requirements documented
-- [ ] Related commands listed
-- [ ] Changelog maintained
-- [ ] Version number updated
-- [ ] README created/updated
-- [ ] Examples actually work
-- [ ] Troubleshooting section complete
+- [ ] フロントマターの description が明確
+- [ ] argument-hint がすべての引数を文書化
+- [ ] コメント内の使用例
+- [ ] 一般的なユースケースが示されている
+- [ ] エラーメッセージが有用
+- [ ] 要件が文書化されている
+- [ ] 関連コマンドが列挙されている
+- [ ] 変更ログが維持されている
+- [ ] バージョン番号が更新されている
+- [ ] README が作成/更新されている
+- [ ] 例が実際に動作する
+- [ ] トラブルシューティングセクションが完備
 
-With good documentation, commands become self-service, reducing support burden and improving user experience.
+良いドキュメントがあれば、コマンドはセルフサービスとなり、サポート負荷を軽減しユーザー体験を向上させる。

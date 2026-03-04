@@ -1,9 +1,9 @@
 ---
 name: esp32
 description: >
-  Guides ESP32 firmware development using PlatformIO and the Arduino framework,
-  covering WiFi/BLE connectivity, FreeRTOS tasks, deep sleep power management,
-  NVS storage, OTA updates, LittleFS, and serial debugging workflows.
+  PlatformIO と Arduino フレームワークを使用した ESP32 ファームウェア開発をガイドする。
+  WiFi/BLE 接続、FreeRTOS タスク、ディープスリープ省電力管理、
+  NVS ストレージ、OTA アップデート、LittleFS、シリアルデバッグワークフローを扱う。
 triggers:
   - "esp32"
   - "esp-idf"

@@ -1,16 +1,16 @@
-# Advanced Workflow Patterns
+# 高度なワークフローパターン
 
-Multi-step command sequences and composition patterns for complex workflows.
+複雑なワークフローのためのマルチステップコマンドシーケンスと構成パターン。
 
-## Overview
+## 概要
 
-Advanced workflows combine multiple commands, coordinate state across invocations, and create sophisticated automation sequences. These patterns enable building complex functionality from simple command building blocks.
+高度なワークフローは複数のコマンドを組み合わせ、呼び出し間の状態を調整し、洗練された自動化シーケンスを作成する。これらのパターンにより、シンプルなコマンドの構成要素から複雑な機能を構築できる。
 
-## Multi-Step Command Patterns
+## マルチステップコマンドパターン
 
-### Sequential Workflow Command
+### シーケンシャルワークフローコマンド
 
-Commands that guide users through multi-step processes:
+マルチステッププロセスを通じてユーザーをガイドするコマンド:
 
 ```markdown
 ---
@@ -55,15 +55,15 @@ Would you like to:
 Reply with your choice and I'll help complete the action.
 ```
 
-**Key features:**
-- Numbered steps for clarity
-- Bash execution for context
-- Decision points for user input
-- Next action suggestions
+**主な特徴:**
+- 番号付きステップで明確さを確保
+- コンテキストのための Bash 実行
+- ユーザー入力のための判断ポイント
+- 次のアクションの提案
 
-### State-Carrying Workflow
+### 状態保持ワークフロー
 
-Commands that maintain state between invocations:
+呼び出し間で状態を維持するコマンド:
 
 ```markdown
 ---
@@ -103,7 +103,7 @@ Next steps:
 State saved. Run `/deploy-test` to continue.
 ```
 
-**Next command** (`/deploy-test`):
+**次のコマンド** (`/deploy-test`):
 ```markdown
 ---
 description: Run deployment tests
@@ -119,15 +119,15 @@ Updating state to 'tested'...
 Tests complete. Run `/deploy-build` to continue.
 ```
 
-**Pattern benefits:**
-- Persistent state across commands
-- Clear workflow progression
-- Safety checkpoints
-- Resume capability
+**パターンの利点:**
+- コマンド間での永続的な状態
+- 明確なワークフロー進行
+- 安全なチェックポイント
+- 再開機能
 
-### Conditional Workflow Branching
+### 条件分岐ワークフロー
 
-Commands that adapt based on conditions:
+条件に基づいて適応するコマンド:
 
 ```markdown
 ---
@@ -168,11 +168,11 @@ Based on above, proceeding with: [determined workflow]
 Ready to deploy? (yes/no)
 ```
 
-## Command Composition Patterns
+## コマンド構成パターン
 
-### Command Chaining
+### コマンドチェーン
 
-Commands designed to work together:
+連携して動作するように設計されたコマンド:
 
 ```markdown
 ---
@@ -195,16 +195,16 @@ I'll compile results and prepare comprehensive review materials.
 Starting sequence...
 ```
 
-**Individual commands** are simple:
-- `/format-code` - Just formats
-- `/lint-code` - Just lints
-- `/test-all` - Just tests
+**個別のコマンド** はシンプル:
+- `/format-code` - フォーマットのみ
+- `/lint-code` - リントのみ
+- `/test-all` - テストのみ
 
-**Composition command** orchestrates them.
+**構成コマンド** がそれらを統合する。
 
-### Pipeline Pattern
+### パイプラインパターン
 
-Commands that process output from previous commands:
+前のコマンドの出力を処理するコマンド:
 
 ```markdown
 ---
@@ -241,9 +241,9 @@ Would you like me to:
 3. Create GitHub issues for each
 ```
 
-### Parallel Execution Pattern
+### 並列実行パターン
 
-Commands that coordinate multiple simultaneous operations:
+複数の同時操作を調整するコマンド:
 
 ```markdown
 ---
@@ -276,11 +276,11 @@ Details:
 [Collated results from all checks]
 ```
 
-## Workflow State Management
+## ワークフロー状態管理
 
-### Using .local.md Files
+### .local.md ファイルの使用
 
-Store workflow state in plugin-specific files:
+プラグイン固有のファイルにワークフロー状態を保存する:
 
 ```markdown
 .claude/plugin-name-workflow.local.md:
@@ -312,7 +312,7 @@ Pending steps:
 - Smoke tests
 ```
 
-**Reading state in commands:**
+**コマンドで状態を読み取る:**
 
 ```markdown
 ---
@@ -329,9 +329,9 @@ Current stage: @.claude/plugin-name-workflow.local.md
 Next action based on state: [determined action]
 ```
 
-### Workflow Recovery
+### ワークフロー復旧
 
-Handle interrupted workflows:
+中断されたワークフローを処理する:
 
 ```markdown
 ---
@@ -358,11 +358,11 @@ State file: @.claude/plugin-name-workflow.local.md
 Which would you like? (1/2/3)
 ```
 
-## Workflow Coordination Patterns
+## ワークフロー調整パターン
 
-### Cross-Command Communication
+### コマンド間通信
 
-Commands that signal each other:
+相互にシグナルを送るコマンド:
 
 ```markdown
 ---
@@ -384,7 +384,7 @@ This signals other commands that feature is ready for:
 Feature marked complete.
 ```
 
-**Other commands check for flag:**
+**他のコマンドがフラグをチェックする:**
 
 ```markdown
 ---
@@ -401,9 +401,9 @@ fi
 [Include in release notes]
 ```
 
-### Workflow Locking
+### ワークフローロック
 
-Prevent concurrent workflow execution:
+ワークフローの同時実行を防止する:
 
 ```markdown
 ---
@@ -431,7 +431,7 @@ Deployment started. Lock created.
 [Proceed with deployment]
 ```
 
-**Lock cleanup:**
+**ロックのクリーンアップ:**
 
 ```markdown
 ---
@@ -447,9 +447,9 @@ rm .claude/deployment.lock
 Ready for next deployment.
 ```
 
-## Advanced Argument Handling
+## 高度な引数処理
 
-### Optional Arguments with Defaults
+### デフォルト付きオプション引数
 
 ```markdown
 ---
@@ -467,7 +467,7 @@ Note: Using defaults for missing arguments:
 - Version defaults to 'latest'
 ```
 
-### Argument Validation
+### 引数バリデーション
 
 ```markdown
 ---
@@ -489,7 +489,7 @@ fi
 Environment validated. Proceeding...
 ```
 
-### Argument Transformation
+### 引数変換
 
 ```markdown
 ---
@@ -514,9 +514,9 @@ esac
 Deploying to: $ENV
 ```
 
-## Error Handling in Workflows
+## ワークフローのエラーハンドリング
 
-### Graceful Failure
+### グレースフルフェイルオーバー
 
 ```markdown
 ---
@@ -547,7 +547,7 @@ fi
 [Continue only if Step 1 succeeded]
 ```
 
-### Rollback on Failure
+### 失敗時のロールバック
 
 ```markdown
 ---
@@ -576,7 +576,7 @@ fi
 Deployment complete.
 ```
 
-### Checkpoint Recovery
+### チェックポイント復旧
 
 ```markdown
 ---
@@ -601,42 +601,42 @@ If any step fails, resume with:
 /deployment-resume [last-successful-checkpoint]
 ```
 
-## Best Practices
+## ベストプラクティス
 
-### Workflow Design
+### ワークフロー設計
 
-1. **Clear progression**: Number steps, show current position
-2. **Explicit state**: Don't rely on implicit state
-3. **User control**: Provide decision points
-4. **Error recovery**: Handle failures gracefully
-5. **Progress indication**: Show what's done, what's pending
+1. **明確な進行:** ステップに番号を付け、現在の位置を表示
+2. **明示的な状態:** 暗黙の状態に依存しない
+3. **ユーザーコントロール:** 判断ポイントを提供
+4. **エラー復旧:** 失敗を優雅に処理
+5. **進捗表示:** 完了済みと保留中を表示
 
-### Command Composition
+### コマンド構成
 
-1. **Single responsibility**: Each command does one thing well
-2. **Composable design**: Commands work together easily
-3. **Standard interfaces**: Consistent input/output formats
-4. **Loose coupling**: Commands don't depend on each other's internals
+1. **単一責任:** 各コマンドは1つのことをうまく行う
+2. **構成可能な設計:** コマンドが容易に連携
+3. **標準インターフェース:** 一貫した入出力フォーマット
+4. **疎結合:** コマンドが互いの内部に依存しない
 
-### State Management
+### 状態管理
 
-1. **Persistent state**: Use .local.md files
-2. **Atomic updates**: Write complete state files atomically
-3. **State validation**: Check state file format/completeness
-4. **Cleanup**: Remove stale state files
-5. **Documentation**: Document state file formats
+1. **永続的な状態:** .local.md ファイルを使用
+2. **アトミック更新:** 完全な状態ファイルをアトミックに書き込む
+3. **状態バリデーション:** 状態ファイルのフォーマット/完全性をチェック
+4. **クリーンアップ:** 古い状態ファイルを削除
+5. **ドキュメント化:** 状態ファイルフォーマットをドキュメント化
 
-### Error Handling
+### エラーハンドリング
 
-1. **Fail fast**: Detect errors early
-2. **Clear messages**: Explain what went wrong
-3. **Recovery options**: Provide clear next steps
-4. **State preservation**: Keep state for recovery
-5. **Rollback capability**: Support undoing changes
+1. **早期失敗:** エラーを早期に検出
+2. **明確なメッセージ:** 何が問題だったか説明
+3. **復旧オプション:** 明確な次のステップを提供
+4. **状態の保持:** 復旧のために状態を保持
+5. **ロールバック機能:** 変更の取り消しをサポート
 
-## Example: Complete Deployment Workflow
+## 例: 完全なデプロイメントワークフロー
 
-### Initialize Command
+### 初期化コマンド
 
 ```markdown
 ---
@@ -665,7 +665,7 @@ Written to .claude/deployment-state.local.md
 Next: Run /deployment-validate
 ```
 
-### Validation Command
+### バリデーションコマンド
 
 ```markdown
 ---
@@ -685,7 +685,7 @@ Updating state to 'validated'...
 Next: Run /deployment-execute
 ```
 
-### Execution Command
+### 実行コマンド
 
 ```markdown
 ---
@@ -705,7 +705,7 @@ Updating state to 'completed'...
 Cleanup: /deployment-cleanup
 ```
 
-### Cleanup Command
+### クリーンアップコマンド
 
 ```markdown
 ---
@@ -719,4 +719,4 @@ rm .claude/deployment-state.local.md
 Deployment workflow complete.
 ```
 
-This complete workflow demonstrates state management, sequential execution, error handling, and clean separation of concerns across multiple commands.
+この完全なワークフローは、状態管理、シーケンシャル実行、エラーハンドリング、および複数コマンド間での明確な関心の分離を示している。

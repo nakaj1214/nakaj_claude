@@ -1,10 +1,10 @@
 ---
 name: proposal-quality-gate
 description: >
-  create-plan 実行前に docs/implement/proposal.md の品質をチェックし、
-  曖昧な記述・繰り返し失敗パターン・具体性不足を検出した場合は
-  計画作成ではなく proposal.md の構造化リライトを行うゲートスキル。
-  「create-plan」「計画を作成」「plan作成」と言われたときに自動トリガーする。
+  create-plan の中間ステップ。docs/implement/prompt.md（ユーザー依頼文）から
+  構造化した docs/implement/proposal.md を生成し、品質チェック（7項目）を実行する。
+  曖昧な記述・繰り返し失敗パターン・具体性不足を検出した場合は proposal.md をリライトする。
+  create-plan の Step 0 で自動トリガーされる。
 ---
 
 # Proposal Quality Gate

@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook: Slack-based Bash command approval.
+PreToolUse フック: Slack ベースの Bash コマンド承認。
 
-Sends a Slack message when Claude Code wants to run a Bash command,
-then polls the message for allow/deny via:
-  - Emoji reaction: :white_check_mark: (allow) or :x: (deny)
-  - Thread reply: keywords like "allow" / "deny" (and Japanese equivalents)
+Claude Code が Bash コマンドを実行しようとした際に Slack メッセージを送信し、
+以下の方法で許可/拒否をポーリングする:
+  - 絵文字リアクション: :white_check_mark:（許可） または :x:（拒否）
+  - スレッド返信: "allow" / "deny" 等のキーワード（日本語にも対応）
 
-Required environment variables (set in .claude/settings.json env section):
+必須環境変数（.claude/settings.json の env セクションで設定）:
   SLACK_BOT_TOKEN        - Slack Bot Token (xoxb-...)
   SLACK_CHANNEL_ID       - Slack Channel ID (C0XXXXXXX)
-  SLACK_APPROVER_USER_ID - Approver's Slack user ID (U0XXXXXXX, NOT Bot ID)
+  SLACK_APPROVER_USER_ID - 承認者の Slack ユーザー ID (U0XXXXXXX, Bot ID ではない)
 
-Exit codes:
-  0: Allow (tool execution continues)
-  2: Block (tool execution is blocked)
+終了コード:
+  0: 許可（ツール実行を継続）
+  2: ブロック（ツール実行を阻止）
 """
 
 import datetime
@@ -43,7 +43,8 @@ SUBSHELL_PATTERN = re.compile(r"\$\(|`|<\(|>\(")
 COMPOUND_SPLIT_PATTERN = re.compile(r"&&|\|\||;|\|")
 
 # --- Load env with settings.json fallback ---
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.env import get as _env
 
 # Environment variables
@@ -53,9 +54,9 @@ APPROVER_USER_ID = _env("SLACK_APPROVER_USER_ID")
 
 # File paths
 PROJECT_DIR = _env("CLAUDE_PROJECT_DIR")
-_BASE = Path(PROJECT_DIR) if PROJECT_DIR else Path(__file__).resolve().parent.parent.parent
+_BASE = Path(PROJECT_DIR) if PROJECT_DIR else _HOOKS_DIR.parent.parent
 AUDIT_LOG_PATH = _BASE / ".claude/logs/approval_audit.jsonl"
-PATTERNS_PATH = _BASE / ".claude/hooks/approval_skip_patterns.txt"
+PATTERNS_PATH = _HOOKS_DIR / "slack/approval_skip_patterns.txt"
 
 # Socket Mode IPC paths and settings
 IPC_DIR = _BASE / ".claude/hooks/ipc"

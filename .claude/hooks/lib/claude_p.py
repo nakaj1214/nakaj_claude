@@ -10,7 +10,35 @@ claude -p（非対話モード）を呼び出すユーティリティ。
     result = run("Summarize this: " + text, timeout=120)
 """
 
+import os
+import shutil
 import subprocess
+import sys
+
+
+def _find_claude() -> str:
+    """claude CLI 実行ファイルのパスを解決する。
+
+    検索順序:
+    1. shutil.which("claude") — 標準 PATH 検索
+    2. ~/.local/bin/claude(.exe) — 一般的なインストール先
+    3. フォールバック: 素の "claude"（subprocess が FileNotFoundError を発生させる）
+    """
+    found = shutil.which("claude")
+    if found:
+        return found
+
+    home = os.path.expanduser("~")
+    ext = ".exe" if sys.platform == "win32" else ""
+    local_bin = os.path.join(home, ".local", "bin", f"claude{ext}")
+    if os.path.isfile(local_bin):
+        return local_bin
+
+    return "claude"
+
+
+# インポート時に1回だけ解決する
+_CLAUDE_BIN = _find_claude()
 
 
 def run(prompt: str, timeout: int = 120) -> str:
@@ -31,9 +59,11 @@ def run(prompt: str, timeout: int = 120) -> str:
     """
     try:
         # Remove CLAUDECODE env var to allow nested claude -p invocation
-        env = {k: v for k, v in __import__("os").environ.items() if k != "CLAUDECODE"}
+        env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+        # Pass prompt via stdin to avoid Windows 32KB command-line limit
         result = subprocess.run(
-            ["claude", "-p", prompt],
+            [_CLAUDE_BIN, "-p"],
+            input=prompt,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -47,6 +77,8 @@ def run(prompt: str, timeout: int = 120) -> str:
     except subprocess.TimeoutExpired:
         return f"(生成がタイムアウトしました: {timeout}秒)"
     except FileNotFoundError:
-        return "(claude CLI が見つかりません。PATH を確認してください)"
+        return f"(claude CLI が見つかりません: {_CLAUDE_BIN})"
+    except OSError as e:
+        return f"(OS エラー: {e})"
     except Exception as e:
         return f"(予期しないエラー: {e})"

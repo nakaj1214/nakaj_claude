@@ -1,40 +1,40 @@
-# UI Fix Verification Rules
+# UI 修正検証ルール
 
-## Read Requirements Literally
+## 要件を文字通りに読む
 
-When reading `proposal.md` or bug reports in Japanese:
+`prompt.md` / `proposal.md` やバグレポート（日本語）を読む際:
 
-- "〜が存在している" = remove it
-- "文字がない" = add the text
-- "中央になってない" = add `vertical-align: middle` or equivalent
-- "大きさが違う" = unify padding/height/font-size
+- "〜が存在している" = 削除する
+- "文字がない" = テキストを追加する
+- "中央になってない" = `vertical-align: middle` または同等のものを追加
+- "大きさが違う" = padding/height/font-size を統一する
 
-**Start with the simplest possible fix.** Only investigate deeper if the simple fix doesn't work.
+**最もシンプルな修正から始める。** シンプルな修正で解決しない場合のみ深く調査する。
 
-If a fix should take less than 5 minutes but you're spending longer, re-read the requirement — the interpretation is likely wrong.
+5分以内で終わるはずの修正に時間がかかっている場合は、要件を読み直す — 解釈が間違っている可能性が高い。
 
-"改善されていない（N回目）" means **you misread the requirement**, not that the problem is complex.
+"改善されていない（N回目）" は **要件を読み間違えている** ことを意味する。問題が複雑なわけではない。
 
-## Verify Execution Paths After UI Changes
+## UI 変更後に実行パスを検証する
 
-After modifying frontend code, trace these before marking complete:
+フロントエンドコードの変更後、完了とマークする前に以下をトレースする:
 
-### Event Handlers
-- Does the jQuery selector actually match the DOM? (e.g. `a[data-bs-toggle="tab"]` vs `div.tab[data-tab]`)
-- Is the event delegated to a parent that exists at bind time?
+### イベントハンドラー
+- jQuery セレクターが実際に DOM に一致するか？（例: `a[data-bs-toggle="tab"]` vs `div.tab[data-tab]`）
+- イベントはバインド時に存在する親要素に委譲されているか？
 
-### Async Operations
-- Does `ajax.reload()` have a callback for post-reload work?
-- Is scroll restoration called AFTER data rendering completes?
+### 非同期操作
+- `ajax.reload()` にリロード後の処理用コールバックがあるか？
+- スクロール復元はデータレンダリング完了後に呼ばれているか？
 
-### CSS Overrides
-- Check ALL properties injected by JS (not just `background` — also `box-shadow`, `outline`, `border`)
-- Use `#id` selectors to beat `!important` from injected styles
+### CSS オーバーライド
+- JS で注入されるすべてのプロパティを確認する（`background` だけでなく `box-shadow`、`outline`、`border` も）
+- 注入スタイルの `!important` に勝つために `#id` セレクターを使用する
 
-### User Flow Simulation
-- Trace the full user flow: login → action → logout → re-login
-- Check if cleanup logic (e.g. localStorage deletion) conflicts with save logic
+### ユーザーフローのシミュレーション
+- 完全なユーザーフローをトレースする: ログイン → 操作 → ログアウト → 再ログイン
+- クリーンアップロジック（例: localStorage 削除）が保存ロジックと競合しないか確認する
 
-### This Project's Custom Components
-- Tabs: `<div class="tab" data-tab="...">` — NOT Bootstrap `<a data-bs-toggle="tab">`
-- DataTables Scroller: use `scroller.toPosition(rowIndex)` — NOT `scrollTop(px)`
+### このプロジェクト固有のコンポーネント
+- タブ: `<div class="tab" data-tab="...">` — Bootstrap の `<a data-bs-toggle="tab">` ではない
+- DataTables Scroller: `scroller.toPosition(rowIndex)` を使用 — `scrollTop(px)` ではない

@@ -1,21 +1,25 @@
 # Proposal Quality Gate — 詳細手順
 
-create-plan の前段として `docs/implement/proposal.md` の品質を検査し、
-計画作成が失敗しやすい記述パターンを検出したら、計画ではなく proposal 自体をリライトするスキル。
+create-plan の中間ステップとして `docs/implement/proposal.md` の品質を検査し、
+計画作成が失敗しやすい記述パターンを検出したら proposal をリライトするスキル。
+
+proposal.md は `docs/implement/prompt.md`（ユーザーの依頼文）から Claude が構造化して生成する。
 
 ---
 
 ## トリガー条件
 
-ユーザーが `create-plan` `/create-plan` 「計画を作成」「plan作成」と言ったとき、
-**create-plan を実行する前に**このスキルが起動する。
+create-plan の Step 0 で自動実行される。
+prompt.md → proposal.md 生成後、品質チェックを実施する。
 
 ---
 
 ## 実行フロー
 
 ```
-proposal.md を読む
+prompt.md を読む（ユーザーの依頼文）
+    ↓
+proposal.md を生成（構造化テンプレートに変換）
     ↓
 品質チェック（7項目）
     ↓
@@ -27,13 +31,16 @@ proposal.md を読む
 
 ---
 
-## Step 1: proposal.md を読む
+## Step 1: prompt.md を読む
 
 ```
-docs/implement/proposal.md
+docs/implement/prompt.md
 ```
 
-ファイルが存在しなければ「proposal.md が見つかりません」と報告して終了。
+ファイルが存在しなければ「prompt.md が見つかりません」と報告して終了。
+
+prompt.md の内容を構造化テンプレート（Step 3-2 のテンプレート）に当てはめて
+`docs/implement/proposal.md` を生成する。
 
 ---
 
@@ -165,7 +172,7 @@ HTML コメント `<!-- ... -->` で囲まれた要件が大量にある場合 F
 ### 3-2. proposal.md を構造化テンプレートでリライト
 
 以下のテンプレートに当てはめて `docs/implement/proposal.md` を**上書き**する。
-元の内容は `docs/implement/proposal_original_YYYYMMDD.md` にバックアップする。
+（元の依頼文は `docs/implement/prompt.md` に残っているためバックアップ不要）
 
 #### テンプレート
 

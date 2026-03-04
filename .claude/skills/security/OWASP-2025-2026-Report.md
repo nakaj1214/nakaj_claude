@@ -1,59 +1,59 @@
-# OWASP Security Best Practices 2025-2026
+# OWASP セキュリティベストプラクティス 2025-2026
 
-A comprehensive guide to the latest OWASP security standards for developers building secure applications.
+安全なアプリケーションを構築する開発者のための、最新 OWASP セキュリティ基準の包括的ガイド。
 
 ---
 
-## Table of Contents
+## 目次
 
 1. [OWASP Top 10:2025](#owasp-top-102025)
 2. [OWASP ASVS 5.0.0](#owasp-asvs-500)
 3. [OWASP Top 10 for Agentic Applications 2026](#owasp-top-10-for-agentic-applications-2026)
-4. [Key Security Principles](#key-security-principles)
-5. [Sources and References](#sources-and-references)
+4. [主要なセキュリティ原則](#主要なセキュリティ原則)
+5. [出典と参考資料](#出典と参考資料)
 
 ---
 
 ## OWASP Top 10:2025
 
-Released at OWASP Global AppSec EU Barcelona 2025, based on analysis of 175,000+ CVEs and 2.8 million applications tested.
+OWASP Global AppSec EU Barcelona 2025 で発表。175,000 以上の CVE と 280 万のテスト済みアプリケーションの分析に基づく。
 
-### Summary Table
+### サマリーテーブル
 
-| Rank | Category | Change from 2021 |
+| ランク | カテゴリ | 2021 からの変更 |
 |------|----------|------------------|
-| A01 | Broken Access Control | Unchanged #1 |
-| A02 | Security Misconfiguration | Up from #5 |
-| A03 | Software Supply Chain Failures | **NEW** (expanded from A06:2021) |
-| A04 | Cryptographic Failures | Down from #2 |
-| A05 | Injection | Down from #3 |
-| A06 | Insecure Design | Down from #4 |
-| A07 | Identification and Authentication Failures | Unchanged #7 |
-| A08 | Software and Data Integrity Failures | Unchanged #8 |
-| A09 | Security Logging and Monitoring Failures | Unchanged #9 |
-| A10 | Mishandling of Exceptional Conditions | **NEW** |
+| A01 | Broken Access Control | #1 のまま |
+| A02 | Security Misconfiguration | #5 から上昇 |
+| A03 | Software Supply Chain Failures | **新規**（A06:2021 から拡張） |
+| A04 | Cryptographic Failures | #2 から下降 |
+| A05 | Injection | #3 から下降 |
+| A06 | Insecure Design | #4 から下降 |
+| A07 | Identification and Authentication Failures | #7 のまま |
+| A08 | Software and Data Integrity Failures | #8 のまま |
+| A09 | Security Logging and Monitoring Failures | #9 のまま |
+| A10 | Mishandling of Exceptional Conditions | **新規** |
 
 ---
 
-### A01:2025 – Broken Access Control
+### A01:2025 – Broken Access Control（アクセス制御の不備）
 
-**Description:** Access control enforces policies that prevent users from acting outside their intended permissions. Failures lead to unauthorized data disclosure, modification, or destruction.
+**説明:** アクセス制御は、ユーザーが意図された権限の範囲外で行動することを防ぐポリシーを強制する。失敗すると、不正なデータの開示、変更、または破壊につながる。
 
-**Common Vulnerabilities:**
-- Bypassing access control by modifying URLs, application state, or HTML pages
-- Allowing primary key changes to access others' records (IDOR)
-- Privilege escalation (acting as admin while logged in as user)
-- Missing access control for POST, PUT, DELETE APIs
-- CORS misconfiguration allowing unauthorized API access
+**よくある脆弱性:**
+- URL、アプリケーション状態、HTML ページの改変によるアクセス制御のバイパス
+- 主キーの変更による他者のレコードへのアクセス（IDOR）
+- 権限昇格（ユーザーとしてログインしたまま管理者として行動）
+- POST, PUT, DELETE API のアクセス制御の欠如
+- CORS の設定ミスによる不正な API アクセスの許可
 
-**Prevention:**
+**防止策:**
 ```python
-# BAD: No authorization check
+# 悪い例: 認可チェックなし
 @app.route('/api/user/<user_id>')
 def get_user(user_id):
     return db.get_user(user_id)
 
-# GOOD: Authorization enforced
+# 良い例: 認可を強制
 @app.route('/api/user/<user_id>')
 @login_required
 def get_user(user_id):
@@ -62,35 +62,35 @@ def get_user(user_id):
     return db.get_user(user_id)
 ```
 
-**Mitigation Strategies:**
-1. Deny access by default (allowlist approach)
-2. Implement access control once, reuse throughout application
-3. Enforce record ownership instead of accepting user-supplied IDs
-4. Disable directory listing and remove sensitive files from web roots
-5. Log access control failures and alert on repeated attempts
-6. Rate limit API access to minimize automated attack damage
+**緩和策:**
+1. デフォルトでアクセスを拒否（許可リストアプローチ）
+2. アクセス制御を一度実装し、アプリケーション全体で再利用
+3. ユーザー提供の ID を受け入れる代わりにレコードの所有権を強制
+4. ディレクトリリスティングを無効化し、Web ルートから機密ファイルを削除
+5. アクセス制御の失敗をログに記録し、繰り返しの試行を警告
+6. API アクセスにレート制限を適用して自動化攻撃の被害を最小化
 
 ---
 
-### A02:2025 – Security Misconfiguration
+### A02:2025 – Security Misconfiguration（セキュリティの設定ミス）
 
-**Description:** Applications are vulnerable when security hardening is missing, cloud permissions are improperly configured, unnecessary features are enabled, or default accounts remain active.
+**説明:** セキュリティの強化が不足している、クラウド権限が不適切に設定されている、不要な機能が有効になっている、またはデフォルトアカウントが残っている場合にアプリケーションが脆弱になる。
 
-**Common Vulnerabilities:**
-- Missing security hardening across the application stack
-- Unnecessary features enabled (ports, services, pages, accounts)
-- Default credentials unchanged
-- Error handling revealing stack traces
-- Outdated or vulnerable software components
-- Insecure cloud storage permissions (S3 buckets public)
+**よくある脆弱性:**
+- アプリケーションスタック全体でのセキュリティ強化の欠如
+- 不要な機能の有効化（ポート、サービス、ページ、アカウント）
+- デフォルト認証情報が未変更
+- スタックトレースを露出するエラーハンドリング
+- 古いまたは脆弱なソフトウェアコンポーネント
+- 安全でないクラウドストレージ権限（S3 バケットの公開）
 
-**Prevention:**
+**防止策:**
 ```yaml
-# BAD: Debug mode in production
+# 悪い例: 本番環境でデバッグモード
 DEBUG=True
 SECRET_KEY="development-key"
 
-# GOOD: Production hardened
+# 良い例: 本番環境で強化
 DEBUG=False
 SECRET_KEY="${RANDOM_SECRET_FROM_VAULT}"
 ALLOWED_HOSTS=["app.example.com"]
@@ -99,41 +99,41 @@ SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
 ```
 
-**Mitigation Strategies:**
-1. Automated, repeatable hardening process across environments
-2. Minimal platform without unnecessary features or frameworks
-3. Regularly review and update configurations (cloud permissions, patches)
-4. Segmented application architecture with secure separation
-5. Send security directives (CSP, HSTS, X-Frame-Options)
-6. Automated verification of configurations in all environments
+**緩和策:**
+1. 環境全体で自動化された再現可能な強化プロセス
+2. 不要な機能やフレームワークを含まない最小限のプラットフォーム
+3. 設定の定期的なレビューと更新（クラウド権限、パッチ）
+4. 安全な分離によるセグメント化されたアプリケーションアーキテクチャ
+5. セキュリティディレクティブの送信（CSP, HSTS, X-Frame-Options）
+6. すべての環境での設定の自動検証
 
 ---
 
-### A03:2025 – Software Supply Chain Failures
+### A03:2025 – Software Supply Chain Failures（ソフトウェアサプライチェーンの障害）
 
-**Description:** NEW category highlighting risks from third-party dependencies, compromised build pipelines, and insecure package management. Expanded from 2021's component vulnerabilities focus.
+**説明:** サードパーティ依存関係、侵害されたビルドパイプライン、安全でないパッケージ管理のリスクを強調する新カテゴリ。2021年のコンポーネント脆弱性フォーカスから拡張。
 
-**Common Vulnerabilities:**
-- Using components with known vulnerabilities
-- Dependency confusion attacks
-- Typosquatting in package registries
-- Compromised CI/CD pipelines
-- Unsigned or unverified packages
-- Lack of software bill of materials (SBOM)
+**よくある脆弱性:**
+- 既知の脆弱性を持つコンポーネントの使用
+- 依存関係の混同攻撃
+- パッケージレジストリでのタイポスクワッティング
+- 侵害された CI/CD パイプライン
+- 署名されていないまたは未検証のパッケージ
+- ソフトウェア部品表（SBOM）の欠如
 
-**Prevention:**
+**防止策:**
 ```bash
-# BAD: Installing without verification
+# 悪い例: 検証なしでインストール
 npm install some-package
 
-# GOOD: Lock versions, verify integrity, audit
+# 良い例: バージョンをロック、整合性を検証、監査
 npm install some-package@1.2.3 --save-exact
 npm audit
 npm audit signatures
 ```
 
 ```json
-// package-lock.json with integrity hashes
+// 整合性ハッシュ付き package-lock.json
 {
   "dependencies": {
     "lodash": {
@@ -144,124 +144,124 @@ npm audit signatures
 }
 ```
 
-**Mitigation Strategies:**
-1. Maintain inventory of all components (SBOM)
-2. Remove unused dependencies and features
-3. Continuously monitor for vulnerabilities (Dependabot, Snyk)
-4. Obtain components from official sources over secure links
-5. Sign packages and verify signatures
-6. Ensure CI/CD pipelines have proper access controls and audit logs
-7. Use lock files and verify integrity hashes
+**緩和策:**
+1. すべてのコンポーネントのインベントリを維持（SBOM）
+2. 未使用の依存関係と機能を削除
+3. 脆弱性の継続的な監視（Dependabot, Snyk）
+4. 安全なリンクを通じて公式ソースからコンポーネントを取得
+5. パッケージに署名し、署名を検証
+6. CI/CD パイプラインに適切なアクセス制御と監査ログを確保
+7. ロックファイルを使用し、整合性ハッシュを検証
 
 ---
 
-### A04:2025 – Cryptographic Failures
+### A04:2025 – Cryptographic Failures（暗号化の失敗）
 
-**Description:** Failures related to cryptography that lead to exposure of sensitive data. Includes weak algorithms, improper key management, and missing encryption.
+**説明:** 機密データの露出につながる暗号化に関する失敗。弱いアルゴリズム、不適切な鍵管理、暗号化の欠如を含む。
 
-**Common Vulnerabilities:**
-- Transmitting data in clear text (HTTP, SMTP, FTP)
-- Using deprecated algorithms (MD5, SHA1, DES)
-- Weak or default cryptographic keys
-- Missing certificate validation
-- Using encryption without authenticated modes
-- Insufficient entropy for random number generation
+**よくある脆弱性:**
+- 平文でのデータ転送（HTTP, SMTP, FTP）
+- 非推奨アルゴリズムの使用（MD5, SHA1, DES）
+- 弱いまたはデフォルトの暗号鍵
+- 証明書検証の欠如
+- 認証モードなしの暗号化の使用
+- 乱数生成のエントロピー不足
 
-**Prevention:**
+**防止策:**
 ```python
-# BAD: Weak hashing
+# 悪い例: 弱いハッシュ
 import hashlib
 password_hash = hashlib.md5(password.encode()).hexdigest()
 
-# GOOD: Modern password hashing
+# 良い例: モダンなパスワードハッシュ
 from argon2 import PasswordHasher
 ph = PasswordHasher()
 password_hash = ph.hash(password)
 
-# BAD: ECB mode
+# 悪い例: ECB モード
 from Crypto.Cipher import AES
 cipher = AES.new(key, AES.MODE_ECB)
 
-# GOOD: Authenticated encryption
+# 良い例: 認証付き暗号化
 from cryptography.fernet import Fernet
 cipher = Fernet(key)
 ```
 
-**Mitigation Strategies:**
-1. Classify data by sensitivity; apply controls accordingly
-2. Don't store sensitive data unnecessarily
-3. Encrypt all data in transit (TLS 1.2+) and at rest
-4. Use strong, current algorithms (AES-256-GCM, Argon2, bcrypt)
-5. Encrypt with authenticated modes (GCM, CCM)
-6. Generate keys randomly; store securely (HSM, vault)
-7. Disable caching for sensitive responses
+**緩和策:**
+1. データを機密性でクラス分けし、それに応じたコントロールを適用
+2. 不必要に機密データを保存しない
+3. すべてのデータを転送中（TLS 1.2+）および保存時に暗号化
+4. 強力で最新のアルゴリズムを使用（AES-256-GCM, Argon2, bcrypt）
+5. 認証モード（GCM, CCM）で暗号化
+6. 鍵をランダムに生成し、安全に保管（HSM, vault）
+7. 機密レスポンスのキャッシュを無効化
 
 ---
 
-### A05:2025 – Injection
+### A05:2025 – Injection（インジェクション）
 
-**Description:** Injection occurs when untrusted data is sent to an interpreter as part of a command or query. Includes SQL, NoSQL, OS, LDAP, and expression language injection.
+**説明:** 信頼できないデータがコマンドやクエリの一部としてインタープリターに送信されるときに発生。SQL, NoSQL, OS, LDAP, 式言語インジェクションを含む。
 
-**Common Vulnerabilities:**
-- User input not validated, filtered, or sanitized
-- Dynamic queries without parameterization
-- Hostile data used in ORM search parameters
-- Direct concatenation of user input in commands
+**よくある脆弱性:**
+- ユーザー入力のバリデーション、フィルタリング、サニタイズの欠如
+- パラメータ化されていない動的クエリ
+- ORM 検索パラメータでの敵対的データの使用
+- コマンド内でのユーザー入力の直接結合
 
-**Prevention:**
+**防止策:**
 ```python
-# BAD: SQL Injection vulnerable
+# 悪い例: SQL インジェクション脆弱性
 query = f"SELECT * FROM users WHERE id = {user_id}"
 cursor.execute(query)
 
-# GOOD: Parameterized query
+# 良い例: パラメータ化クエリ
 cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 
-# BAD: Command injection
+# 悪い例: コマンドインジェクション
 os.system(f"convert {filename} output.png")
 
-# GOOD: Use safe APIs, avoid shell
+# 良い例: 安全な API を使用、シェルを避ける
 subprocess.run(["convert", filename, "output.png"], shell=False)
 ```
 
 ```javascript
-// BAD: NoSQL injection
+// 悪い例: NoSQL インジェクション
 db.users.find({ username: req.body.username })
 
-// GOOD: Validate type
+// 良い例: 型をバリデーション
 if (typeof req.body.username !== 'string') throw new Error();
 db.users.find({ username: req.body.username })
 ```
 
-**Mitigation Strategies:**
-1. Use safe APIs with parameterized interfaces
-2. Validate all input using allowlists
-3. Escape special characters for specific interpreters
-4. Use LIMIT and pagination to prevent mass disclosure
-5. Implement positive server-side input validation
+**緩和策:**
+1. パラメータ化されたインターフェースを持つ安全な API を使用
+2. 許可リストですべての入力をバリデーション
+3. 特定のインタープリター用に特殊文字をエスケープ
+4. LIMIT とページネーションで大量開示を防止
+5. サーバーサイドでの正（ポジティブ）入力バリデーションを実装
 
 ---
 
-### A06:2025 – Insecure Design
+### A06:2025 – Insecure Design（安全でない設計）
 
-**Description:** Flaws in design and architecture that cannot be fixed by perfect implementation. Represents missing or ineffective security controls at the design phase.
+**説明:** 完璧な実装では修正できない設計とアーキテクチャの欠陥。設計フェーズでのセキュリティコントロールの欠如または非効果を示す。
 
-**Common Vulnerabilities:**
-- Missing rate limiting on sensitive operations
-- No account lockout for failed authentication
-- Lack of tenant isolation in multi-tenant systems
-- Missing fraud detection controls
-- Insufficient trust boundaries
+**よくある脆弱性:**
+- 機密操作のレート制限の欠如
+- 認証失敗時のアカウントロックアウトなし
+- マルチテナントシステムのテナント分離の欠如
+- 不正検知コントロールの欠如
+- 信頼境界の不足
 
-**Prevention:**
+**防止策:**
 ```python
-# BAD: No rate limiting on password reset
+# 悪い例: パスワードリセットにレート制限なし
 @app.route('/password-reset', methods=['POST'])
 def password_reset():
     send_reset_email(request.form['email'])
     return "Email sent"
 
-# GOOD: Rate limiting and verification
+# 良い例: レート制限と検証
 from flask_limiter import Limiter
 limiter = Limiter(app)
 
@@ -271,126 +271,126 @@ def password_reset():
     email = request.form['email']
     if not is_valid_email_format(email):
         abort(400)
-    # Use consistent timing to prevent enumeration
+    # 列挙を防ぐために一貫したタイミングを使用
     send_reset_email_async(email)
     return "If account exists, email was sent"
 ```
 
-**Mitigation Strategies:**
-1. Establish secure development lifecycle with security experts
-2. Create and use secure design patterns library
-3. Threat modeling for authentication, access control, business logic
-4. Integrate security language in user stories
-5. Implement tenant isolation and resource limits
-6. Limit resource consumption per user/service
+**緩和策:**
+1. セキュリティ専門家を含む安全な開発ライフサイクルの確立
+2. 安全な設計パターンライブラリの作成と使用
+3. 認証、アクセス制御、ビジネスロジックの脅威モデリング
+4. ユーザーストーリーにセキュリティ言語を統合
+5. テナント分離とリソース制限の実装
+6. ユーザー/サービスごとのリソース消費制限
 
 ---
 
-### A07:2025 – Identification and Authentication Failures
+### A07:2025 – Identification and Authentication Failures（識別と認証の失敗）
 
-**Description:** Confirmation of user identity, authentication, and session management is critical. Weaknesses allow attackers to compromise passwords, keys, or session tokens.
+**説明:** ユーザーの身元確認、認証、セッション管理は重要。弱点があると攻撃者がパスワード、鍵、セッショントークンを侵害できる。
 
-**Common Vulnerabilities:**
-- Permitting weak or well-known passwords
-- Using weak credential recovery (knowledge-based answers)
-- Plain text or weakly hashed passwords
-- Missing or ineffective MFA
-- Exposing session IDs in URLs
-- Not properly invalidating sessions on logout
+**よくある脆弱性:**
+- 弱いまたはよく知られたパスワードの許可
+- 弱い資格情報回復（知識ベースの質問）
+- 平文または弱くハッシュ化されたパスワード
+- MFA の欠如または非効果
+- URL でのセッション ID の露出
+- ログアウト時のセッションの適切な無効化の欠如
 
-**Prevention:**
+**防止策:**
 ```python
-# Password strength requirements
+# パスワード強度要件
 import re
 def validate_password(password):
     if len(password) < 12:
         return False
-    if password in COMMON_PASSWORDS:  # Check against breach lists
+    if password in COMMON_PASSWORDS:  # 漏洩リストに対してチェック
         return False
     return True
 
-# Session management
+# セッション管理
 @app.route('/logout')
 @login_required
 def logout():
-    session.clear()  # Clear server-side session
+    session.clear()  # サーバーサイドセッションをクリア
     response = redirect('/')
     response.delete_cookie('session')
     return response
 ```
 
-**Mitigation Strategies:**
-1. Implement MFA to prevent automated attacks
-2. Avoid shipping with default credentials
-3. Check passwords against known breached password lists
-4. Align password policies with NIST 800-63b
-5. Harden against enumeration attacks (consistent responses)
-6. Limit failed login attempts with exponential backoff
-7. Use server-side, secure session manager; regenerate IDs after login
+**緩和策:**
+1. 自動化攻撃を防ぐ MFA の実装
+2. デフォルト認証情報を含めない
+3. 漏洩パスワードリストに対してパスワードをチェック
+4. NIST 800-63b に沿ったパスワードポリシー
+5. 列挙攻撃への対策（一貫したレスポンス）
+6. 指数バックオフによるログイン試行回数の制限
+7. サーバーサイドの安全なセッションマネージャーの使用; ログイン後に ID を再生成
 
 ---
 
-### A08:2025 – Software and Data Integrity Failures
+### A08:2025 – Software and Data Integrity Failures（ソフトウェアとデータの完全性の障害）
 
-**Description:** Code and infrastructure that doesn't protect against integrity violations. Includes insecure deserialization, trusting unsigned updates, and CI/CD without verification.
+**説明:** 完全性違反から保護しないコードとインフラストラクチャ。安全でないデシリアライゼーション、署名されていない更新、検証なしの CI/CD を含む。
 
-**Common Vulnerabilities:**
-- Applications relying on untrusted CDNs or repositories
-- Auto-update without integrity verification
-- Insecure deserialization of untrusted data
-- CI/CD pipelines without proper access controls
-- Unsigned or unverified code deployments
+**よくある脆弱性:**
+- 信頼できない CDN やリポジトリに依存するアプリケーション
+- 整合性検証なしの自動更新
+- 信頼できないデータの安全でないデシリアライゼーション
+- 適切なアクセス制御のない CI/CD パイプライン
+- 署名されていないまたは未検証のコードデプロイ
 
-**Prevention:**
+**防止策:**
 ```html
-<!-- BAD: CDN without integrity -->
+<!-- 悪い例: 整合性なしの CDN -->
 <script src="https://cdn.example.com/lib.js"></script>
 
-<!-- GOOD: Subresource Integrity -->
+<!-- 良い例: サブリソース整合性 -->
 <script src="https://cdn.example.com/lib.js"
         integrity="sha384-abc123..."
         crossorigin="anonymous"></script>
 ```
 
 ```python
-# BAD: Unsafe deserialization
+# 悪い例: 安全でないデシリアライゼーション
 import pickle
 data = pickle.loads(user_input)
 
-# GOOD: Safe serialization with validation
+# 良い例: バリデーション付き安全なシリアライゼーション
 import json
 data = json.loads(user_input)
 validate_schema(data)
 ```
 
-**Mitigation Strategies:**
-1. Use digital signatures to verify software/data from expected source
-2. Ensure dependencies are from trusted repositories
-3. Use software supply chain security tools (OWASP Dependency-Check)
-4. Review code and configuration changes
-5. Ensure CI/CD has proper segregation, configuration, and access control
-6. Don't send unsigned/unencrypted serialized data to untrusted clients
+**緩和策:**
+1. デジタル署名でソフトウェア/データが期待されるソースからであることを検証
+2. 信頼できるリポジトリからの依存関係を確保
+3. ソフトウェアサプライチェーンセキュリティツールの使用（OWASP Dependency-Check）
+4. コードと設定の変更をレビュー
+5. CI/CD に適切な分離、設定、アクセス制御を確保
+6. 信頼できないクライアントに署名/暗号化されていないシリアライズデータを送信しない
 
 ---
 
-### A09:2025 – Security Logging and Monitoring Failures
+### A09:2025 – Security Logging and Monitoring Failures（セキュリティログとモニタリングの不備）
 
-**Description:** Without logging and monitoring, breaches cannot be detected. Insufficient logging, detection, monitoring, and response allows attackers to persist.
+**説明:** ログとモニタリングがなければ、侵害を検出できない。不十分なログ、検出、モニタリング、レスポンスにより攻撃者が潜伏し続ける。
 
-**Common Vulnerabilities:**
-- Auditable events not logged (logins, failed logins, transactions)
-- Warnings and errors generate unclear log messages
-- Logs only stored locally
-- Alerting thresholds not set or ineffective
-- Penetration tests don't trigger alerts
-- Application can't detect active attacks in real-time
+**よくある脆弱性:**
+- 監査可能なイベントがログに記録されない（ログイン、ログイン失敗、トランザクション）
+- 警告とエラーが不明確なログメッセージを生成
+- ログがローカルにのみ保存
+- アラート閾値が設定されていないまたは非効果
+- ペネトレーションテストがアラートをトリガーしない
+- アプリケーションがリアルタイムでアクティブな攻撃を検出できない
 
-**Prevention:**
+**防止策:**
 ```python
 import logging
 from datetime import datetime
 
-# Configure structured logging
+# 構造化ログの設定
 logging.basicConfig(
     format='%(asctime)s %(levelname)s %(name)s %(message)s',
     level=logging.INFO
@@ -408,36 +408,36 @@ def login():
         return "Invalid credentials", 401
 ```
 
-**Mitigation Strategies:**
-1. Log all login, access control, and server-side validation failures
-2. Generate logs in format consumable by log management solutions
-3. Encode log data correctly to prevent injection attacks
-4. Ensure high-value transactions have audit trail with integrity controls
-5. Establish effective monitoring and alerting
-6. Create incident response and recovery plan (NIST 800-61r2)
+**緩和策:**
+1. すべてのログイン、アクセス制御、サーバーサイドバリデーション失敗をログ記録
+2. ログ管理ソリューションで消費可能な形式でログを生成
+3. インジェクション攻撃を防ぐためにログデータを正しくエンコード
+4. 高価値トランザクションに整合性管理付き監査証跡を確保
+5. 効果的なモニタリングとアラートを確立
+6. インシデント対応と復旧計画を作成（NIST 800-61r2）
 
 ---
 
-### A10:2025 – Mishandling of Exceptional Conditions
+### A10:2025 – Mishandling of Exceptional Conditions（例外的条件の不適切な処理）
 
-**Description:** NEW category addressing failures in handling errors, edge cases, and unexpected states. Poor exception handling can leak information or cause security failures.
+**説明:** エラー、エッジケース、予期しない状態の処理の失敗に対処する新カテゴリ。不適切な例外処理は情報漏洩やセキュリティ障害を引き起こす可能性がある。
 
-**Common Vulnerabilities:**
-- Exposing stack traces to users
-- Inconsistent error handling between components
-- Fail-open behavior (allowing access on error)
-- Resource exhaustion without graceful degradation
-- Race conditions in error paths
-- Incomplete transaction rollbacks
+**よくある脆弱性:**
+- ユーザーへのスタックトレースの露出
+- コンポーネント間の一貫性のないエラーハンドリング
+- フェイルオープン動作（エラー時のアクセス許可）
+- 優雅な劣化なしのリソース枯渇
+- エラーパスでの競合状態
+- 不完全なトランザクションロールバック
 
-**Prevention:**
+**防止策:**
 ```python
-# BAD: Leaking information
+# 悪い例: 情報漏洩
 @app.errorhandler(Exception)
 def handle_error(e):
-    return str(e), 500  # Exposes internal details
+    return str(e), 500  # 内部詳細を露出
 
-# GOOD: Secure error handling
+# 良い例: 安全なエラーハンドリング
 @app.errorhandler(Exception)
 def handle_error(e):
     error_id = uuid.uuid4()
@@ -446,347 +446,347 @@ def handle_error(e):
 ```
 
 ```python
-# BAD: Fail-open
+# 悪い例: フェイルオープン
 def check_permission(user, resource):
     try:
         return authorization_service.check(user, resource)
     except Exception:
-        return True  # Fail-open!
+        return True  # フェイルオープン！
 
-# GOOD: Fail-closed
+# 良い例: フェイルクローズド
 def check_permission(user, resource):
     try:
         return authorization_service.check(user, resource)
     except Exception as e:
         logger.error(f"Auth check failed: {e}")
-        return False  # Fail-closed
+        return False  # フェイルクローズド
 ```
 
-**Mitigation Strategies:**
-1. Design for failure: expect and handle all error conditions
-2. Implement fail-closed (deny by default) on errors
-3. Use structured exception handling with appropriate granularity
-4. Never expose internal errors to end users
-5. Log all exceptions with context for debugging
-6. Test error handling paths as thoroughly as happy paths
-7. Implement circuit breakers for external dependencies
+**緩和策:**
+1. 障害を前提に設計: すべてのエラー条件を予測し処理
+2. エラー時のフェイルクローズド（デフォルトで拒否）を実装
+3. 適切な粒度で構造化された例外処理を使用
+4. エンドユーザーに内部エラーを決して露出しない
+5. デバッグ用のコンテキスト付きですべての例外をログ記録
+6. 正常パスと同じ徹底度でエラーハンドリングパスをテスト
+7. 外部依存関係のサーキットブレーカーを実装
 
 ---
 
 ## OWASP ASVS 5.0.0
 
-The Application Security Verification Standard (ASVS) 5.0.0 was released May 30, 2025. It provides ~350 security requirements across 17 categories with three verification levels.
+Application Security Verification Standard (ASVS) 5.0.0 は 2025年5月30日にリリース。17 カテゴリにわたる約 350 のセキュリティ要件を 3 つの検証レベルで提供。
 
-### Verification Levels
+### 検証レベル
 
-| Level | Use Case | Description |
+| レベル | ユースケース | 説明 |
 |-------|----------|-------------|
-| L1 | All applications | Basic security controls for low-risk applications |
-| L2 | Most applications | Standard security for applications handling sensitive data |
-| L3 | High-value targets | Advanced security for critical infrastructure, healthcare, finance |
+| L1 | すべてのアプリケーション | 低リスクアプリケーション向けの基本的なセキュリティコントロール |
+| L2 | ほとんどのアプリケーション | 機密データを扱うアプリケーション向けの標準セキュリティ |
+| L3 | 高価値ターゲット | 重要インフラ、医療、金融向けの高度なセキュリティ |
 
-### ASVS Categories
+### ASVS カテゴリ
 
-1. **V1: Architecture, Design & Threat Modeling**
-2. **V2: Authentication**
-3. **V3: Session Management**
-4. **V4: Access Control**
-5. **V5: Input Validation**
-6. **V6: Stored Cryptography**
-7. **V7: Error Handling & Logging**
-8. **V8: Data Protection**
-9. **V9: Communication**
-10. **V10: Malicious Code**
-11. **V11: Business Logic**
-12. **V12: Files and Resources**
-13. **V13: API and Web Services**
-14. **V14: Configuration**
-15. **V15: OAuth and OIDC** (New in 5.0)
-16. **V16: Self-Contained Tokens** (New in 5.0)
-17. **V17: WebSockets** (New in 5.0)
+1. **V1: アーキテクチャ、設計、脅威モデリング**
+2. **V2: 認証**
+3. **V3: セッション管理**
+4. **V4: アクセス制御**
+5. **V5: 入力バリデーション**
+6. **V6: 保存時の暗号化**
+7. **V7: エラーハンドリングとログ**
+8. **V8: データ保護**
+9. **V9: 通信**
+10. **V10: 悪意のあるコード**
+11. **V11: ビジネスロジック**
+12. **V12: ファイルとリソース**
+13. **V13: API と Web サービス**
+14. **V14: 設定**
+15. **V15: OAuth と OIDC**（5.0 の新規）
+16. **V16: 自己完結型トークン**（5.0 の新規）
+17. **V17: WebSockets**（5.0 の新規）
 
-### Key Requirements Examples
+### 主要な要件の例
 
-**Authentication (V2):**
-- V2.1.1: User passwords SHALL be at least 12 characters
-- V2.1.6: Passwords SHALL be checked against breached password lists
-- V2.2.1: Anti-automation controls SHALL prevent credential stuffing
-- V2.5.2: Password recovery SHALL NOT reveal if account exists
+**認証 (V2):**
+- V2.1.1: ユーザーパスワードは最低 12 文字でなければならない（SHALL）
+- V2.1.6: パスワードは漏洩パスワードリストに対してチェックされなければならない（SHALL）
+- V2.2.1: クレデンシャルスタッフィングを防ぐアンチオートメーションコントロールが必要（SHALL）
+- V2.5.2: パスワード回復はアカウントの存在を明かしてはならない（SHALL NOT）
 
-**Session Management (V3):**
-- V3.2.1: Session tokens SHALL have at least 128 bits of entropy
-- V3.3.1: Sessions SHALL be invalidated on logout
-- V3.4.1: Cookie-based tokens SHALL have Secure attribute set
+**セッション管理 (V3):**
+- V3.2.1: セッショントークンは最低 128 ビットのエントロピーを持つこと（SHALL）
+- V3.3.1: ログアウト時にセッションを無効化すること（SHALL）
+- V3.4.1: Cookie ベースのトークンは Secure 属性を設定すること（SHALL）
 
-**Access Control (V4):**
-- V4.1.1: Access control SHALL be enforced server-side
-- V4.2.1: Sensitive data SHALL only be accessible to authorized users
-- V4.3.1: Directory browsing SHALL be disabled
+**アクセス制御 (V4):**
+- V4.1.1: アクセス制御はサーバーサイドで強制すること（SHALL）
+- V4.2.1: 機密データは認可されたユーザーのみがアクセス可能であること（SHALL）
+- V4.3.1: ディレクトリブラウジングを無効化すること（SHALL）
 
-**Cryptography (V6):**
-- V6.2.1: All cryptographic modules SHALL fail securely
-- V6.4.1: Keys SHALL be generated using approved random generators
-- V6.4.2: Keys SHALL be stored securely (HSM, vault)
+**暗号化 (V6):**
+- V6.2.1: すべての暗号モジュールは安全に失敗すること（SHALL）
+- V6.4.1: 鍵は承認された乱数生成器を使用して生成すること（SHALL）
+- V6.4.2: 鍵は安全に保管すること（HSM, vault）（SHALL）
 
 ---
 
 ## OWASP Top 10 for Agentic Applications 2026
 
-Released December 2025, this framework addresses security risks specific to AI agents, multi-agent systems, and autonomous applications.
+2025年12月にリリース。AI エージェント、マルチエージェントシステム、自律型アプリケーションに特有のセキュリティリスクに対処するフレームワーク。
 
-### Summary Table
+### サマリーテーブル
 
-| ID | Risk | Description |
+| ID | リスク | 説明 |
 |----|------|-------------|
-| ASI01 | Agent Goal Hijack | Prompt injection alters agent's core objectives |
-| ASI02 | Tool Misuse | Legitimate tools used in unintended/unsafe ways |
-| ASI03 | Identity & Privilege Abuse | Credential escalation across agent interactions |
-| ASI04 | Supply Chain Vulnerabilities | Compromised plugins, MCP servers, or dependencies |
-| ASI05 | Unexpected Code Execution | Unsafe code generation or execution by agents |
-| ASI06 | Memory & Context Poisoning | Manipulation of RAG systems or agent memory |
-| ASI07 | Insecure Inter-Agent Communication | Spoofing or tampering between agent systems |
-| ASI08 | Cascading Failures | Error propagation across interconnected systems |
-| ASI09 | Human-Agent Trust Exploitation | Social engineering through AI-generated content |
-| ASI10 | Rogue Agents | Compromised or malicious agents within systems |
+| ASI01 | Agent Goal Hijack | プロンプトインジェクションがエージェントの中核目標を変更 |
+| ASI02 | Tool Misuse | 正当なツールが意図しない/安全でない方法で使用される |
+| ASI03 | Identity & Privilege Abuse | エージェント間インタラクションでの資格情報のエスカレーション |
+| ASI04 | Supply Chain Vulnerabilities | 侵害されたプラグイン、MCP サーバー、または依存関係 |
+| ASI05 | Unexpected Code Execution | エージェントによる安全でないコード生成または実行 |
+| ASI06 | Memory & Context Poisoning | RAG システムやエージェントメモリの操作 |
+| ASI07 | Insecure Inter-Agent Communication | エージェントシステム間のなりすましや改ざん |
+| ASI08 | Cascading Failures | 相互接続されたシステム全体へのエラー伝播 |
+| ASI09 | Human-Agent Trust Exploitation | AI 生成コンテンツによるソーシャルエンジニアリング |
+| ASI10 | Rogue Agents | システム内の侵害された/悪意のあるエージェント |
 
 ---
 
-### ASI01: Agent Goal Hijack
+### ASI01: Agent Goal Hijack（エージェント目標のハイジャック）
 
-**Description:** Attackers use prompt injection to alter an agent's intended goals, making it serve malicious purposes while appearing to function normally.
+**説明:** 攻撃者がプロンプトインジェクションを使用してエージェントの意図された目標を変更し、正常に機能しているように見せながら悪意のある目的に利用する。
 
-**Attack Vectors:**
-- Direct prompt injection in user inputs
-- Indirect injection via compromised data sources
-- Hidden instructions in documents, websites, or emails
-- Multi-turn conversation manipulation
+**攻撃ベクター:**
+- ユーザー入力での直接プロンプトインジェクション
+- 侵害されたデータソースを通じた間接インジェクション
+- ドキュメント、Web サイト、メールに隠された指示
+- マルチターン会話の操作
 
-**Prevention:**
-- Implement strict input sanitization and filtering
-- Use structured output formats to limit agent responses
-- Establish clear goal boundaries with system prompts
-- Monitor for goal deviation through behavioral analysis
-- Implement human-in-the-loop for sensitive operations
-
----
-
-### ASI02: Tool Misuse
-
-**Description:** Agents with access to tools (APIs, databases, file systems) may use them in unintended ways due to malicious instructions or flawed reasoning.
-
-**Attack Vectors:**
-- Tricking agents into executing harmful commands
-- Using tools with elevated privileges
-- Chaining tool calls to achieve unauthorized outcomes
-- Exploiting ambiguous tool descriptions
-
-**Prevention:**
-- Apply principle of least privilege to all tool access
-- Implement fine-grained permissions per tool
-- Validate all tool inputs and outputs
-- Create tool usage policies and enforce them
-- Log all tool invocations for audit
+**防止策:**
+- 厳格な入力サニタイゼーションとフィルタリングの実装
+- エージェントの応答を制限する構造化出力形式の使用
+- システムプロンプトで明確な目標境界を確立
+- 行動分析による目標逸脱の監視
+- 機密操作での Human-in-the-loop の実装
 
 ---
 
-### ASI03: Identity & Privilege Abuse
+### ASI02: Tool Misuse（ツールの悪用）
 
-**Description:** Agents may inherit, accumulate, or escalate privileges beyond what's appropriate, especially in multi-agent or long-running contexts.
+**説明:** ツール（API、データベース、ファイルシステム）にアクセスできるエージェントが、悪意のある指示や欠陥のある推論により意図しない方法でそれらを使用する可能性がある。
 
-**Attack Vectors:**
-- Credential theft through prompt injection
-- Session token exposure
-- Privilege escalation through tool chaining
-- Identity confusion in multi-agent systems
+**攻撃ベクター:**
+- エージェントをだまして有害なコマンドを実行させる
+- 昇格された権限でのツール使用
+- 不正な結果を達成するためのツールコールの連鎖
+- 曖昧なツール説明の悪用
 
-**Prevention:**
-- Use short-lived, scoped credentials
-- Implement identity verification between agents
-- Don't pass raw credentials through agent context
-- Audit privilege usage patterns
-- Implement credential rotation
-
----
-
-### ASI04: Supply Chain Vulnerabilities
-
-**Description:** Compromised plugins, MCP servers, or third-party integrations introduce vulnerabilities into agent systems.
-
-**Attack Vectors:**
-- Malicious MCP server implementations
-- Typosquatting in plugin registries
-- Compromised update mechanisms
-- Backdoored agent frameworks
-
-**Prevention:**
-- Verify plugin/server authenticity and signatures
-- Maintain inventory of all integrations
-- Sandbox third-party components
-- Monitor for anomalous behavior from integrations
-- Use allowlists for permitted plugins
+**防止策:**
+- すべてのツールアクセスに最小権限の原則を適用
+- ツールごとの細粒度権限の実装
+- すべてのツール入出力のバリデーション
+- ツール使用ポリシーの作成と強制
+- 監査のためのすべてのツール呼び出しのログ記録
 
 ---
 
-### ASI05: Unexpected Code Execution
+### ASI03: Identity & Privilege Abuse（ID と権限の悪用）
 
-**Description:** Agents that generate or execute code may be tricked into running malicious code.
+**説明:** エージェントが、特にマルチエージェントや長時間実行のコンテキストで、適切な範囲を超えて権限を継承、蓄積、またはエスカレーションする可能性がある。
 
-**Attack Vectors:**
-- Code injection through prompts
-- Malicious code in retrieved context
-- Unsafe code execution environments
-- Bypassing code review through obfuscation
+**攻撃ベクター:**
+- プロンプトインジェクションによる資格情報の窃取
+- セッショントークンの露出
+- ツールチェーンによる権限昇格
+- マルチエージェントシステムでの ID 混乱
 
-**Prevention:**
-- Execute generated code in sandboxed environments
-- Implement static analysis before execution
-- Limit code execution capabilities
-- Require human approval for sensitive operations
-- Use allowlists for permitted operations
-
----
-
-### ASI06: Memory & Context Poisoning
-
-**Description:** Attackers corrupt agent memory, RAG databases, or context to influence future behavior.
-
-**Attack Vectors:**
-- Injecting malicious content into vector databases
-- Manipulating conversation history
-- Poisoning knowledge bases
-- Exploiting context window limitations
-
-**Prevention:**
-- Validate and sanitize all stored content
-- Implement content integrity verification
-- Segment memory by trust level
-- Regular audits of stored knowledge
-- Implement memory decay/expiration
+**防止策:**
+- 短期間の、スコープ付き資格情報の使用
+- エージェント間の ID 検証の実装
+- エージェントコンテキストを通じた生の資格情報の受け渡しをしない
+- 権限使用パターンの監査
+- 資格情報のローテーションの実装
 
 ---
 
-### ASI07: Insecure Inter-Agent Communication
+### ASI04: Supply Chain Vulnerabilities（サプライチェーンの脆弱性）
 
-**Description:** Communication between agents may be vulnerable to interception, spoofing, or tampering.
+**説明:** 侵害されたプラグイン、MCP サーバー、またはサードパーティ統合がエージェントシステムに脆弱性を導入する。
 
-**Attack Vectors:**
-- Man-in-the-middle attacks on agent communication
-- Agent identity spoofing
-- Message tampering
-- Replay attacks
+**攻撃ベクター:**
+- 悪意のある MCP サーバー実装
+- プラグインレジストリでのタイポスクワッティング
+- 侵害された更新メカニズム
+- バックドア付きエージェントフレームワーク
 
-**Prevention:**
-- Authenticate all agent communications
-- Encrypt inter-agent messages
-- Implement message integrity verification
-- Use secure channels for agent orchestration
-- Validate agent identities cryptographically
-
----
-
-### ASI08: Cascading Failures
-
-**Description:** Errors in one agent or component propagate through interconnected systems, causing widespread failures.
-
-**Attack Vectors:**
-- Triggering errors that cascade through agent chains
-- Resource exhaustion in one agent affecting others
-- Error handling that exposes sensitive information
-- Retry storms from failed operations
-
-**Prevention:**
-- Implement circuit breakers between agents
-- Design for graceful degradation
-- Isolate agent failures
-- Rate limit inter-agent calls
-- Monitor for cascade patterns
+**防止策:**
+- プラグイン/サーバーの信頼性と署名の検証
+- すべての統合のインベントリ維持
+- サードパーティコンポーネントのサンドボックス化
+- 統合からの異常な動作の監視
+- 許可されたプラグインの許可リストの使用
 
 ---
 
-### ASI09: Human-Agent Trust Exploitation
+### ASI05: Unexpected Code Execution（予期しないコード実行）
 
-**Description:** Attackers leverage the trust humans place in AI agents to conduct social engineering attacks.
+**説明:** コードを生成または実行するエージェントが、悪意のあるコードの実行にだまされる可能性がある。
 
-**Attack Vectors:**
-- AI-generated phishing content
-- Impersonation through agent responses
-- Trust exploitation via helpful-seeming agents
-- Deceptive multi-turn conversations
+**攻撃ベクター:**
+- プロンプトを通じたコードインジェクション
+- 取得されたコンテキスト内の悪意のあるコード
+- 安全でないコード実行環境
+- 難読化によるコードレビューのバイパス
 
-**Prevention:**
-- Clear labeling of AI-generated content
-- User education on AI limitations
-- Verification steps for sensitive actions
-- Maintain human oversight for critical decisions
-- Implement suspicious behavior detection
-
----
-
-### ASI10: Rogue Agents
-
-**Description:** Agents that have been compromised or are acting maliciously, either through external attack or flawed design.
-
-**Attack Vectors:**
-- Agent compromise through injection attacks
-- Malicious agent deployment
-- Agent behavior modification
-- Insider threats via agent systems
-
-**Prevention:**
-- Monitor agent behavior for anomalies
-- Implement agent authentication and authorization
-- Regular security audits of agent systems
-- Kill switches for agent operations
-- Behavioral baselines and deviation detection
+**防止策:**
+- サンドボックス環境で生成されたコードを実行
+- 実行前の静的分析の実装
+- コード実行機能の制限
+- 機密操作の人間による承認の要求
+- 許可された操作の許可リストの使用
 
 ---
 
-## Key Security Principles
+### ASI06: Memory & Context Poisoning（メモリとコンテキストの汚染）
 
-### Defense in Depth
-Layer multiple security controls so that if one fails, others provide protection.
+**説明:** 攻撃者がエージェントのメモリ、RAG データベース、またはコンテキストを破壊し、将来の動作に影響を与える。
 
-### Least Privilege
-Grant minimum permissions necessary for functionality. Regularly review and revoke unnecessary access.
+**攻撃ベクター:**
+- ベクターデータベースへの悪意のあるコンテンツの注入
+- 会話履歴の操作
+- ナレッジベースの汚染
+- コンテキストウィンドウの制限の悪用
 
-### Fail Secure
-When errors occur, default to a secure state. Deny access rather than allow it when uncertain.
-
-### Zero Trust
-Never trust, always verify. Authenticate and authorize every request regardless of source.
-
-### Secure by Default
-Ship products with secure defaults. Require explicit action to reduce security.
-
-### Input Validation
-Validate all input on the server side. Use allowlists over denylists.
-
-### Output Encoding
-Encode output based on context (HTML, JavaScript, SQL, etc.) to prevent injection.
-
-### Keep Security Simple
-Complex security is often bypassed. Prefer simple, understandable controls.
+**防止策:**
+- すべての保存コンテンツのバリデーションとサニタイズ
+- コンテンツ整合性検証の実装
+- 信頼レベルによるメモリのセグメント化
+- 保存された知識の定期的な監査
+- メモリの減衰/有効期限の実装
 
 ---
 
-## Sources and References
+### ASI07: Insecure Inter-Agent Communication（安全でないエージェント間通信）
 
-### Official OWASP Resources
+**説明:** エージェント間の通信が傍受、なりすまし、または改ざんに対して脆弱である可能性がある。
+
+**攻撃ベクター:**
+- エージェント通信への中間者攻撃
+- エージェント ID のなりすまし
+- メッセージの改ざん
+- リプレイ攻撃
+
+**防止策:**
+- すべてのエージェント通信の認証
+- エージェント間メッセージの暗号化
+- メッセージ整合性検証の実装
+- エージェントオーケストレーション用の安全なチャネルの使用
+- 暗号的なエージェント ID の検証
+
+---
+
+### ASI08: Cascading Failures（カスケード障害）
+
+**説明:** 1 つのエージェントまたはコンポーネントのエラーが、相互接続されたシステム全体に伝播し、広範な障害を引き起こす。
+
+**攻撃ベクター:**
+- エージェントチェーン全体にカスケードするエラーのトリガー
+- 1 つのエージェントのリソース枯渇が他に影響
+- 機密情報を露出するエラーハンドリング
+- 失敗した操作からのリトライストーム
+
+**防止策:**
+- エージェント間のサーキットブレーカーの実装
+- 優雅な劣化の設計
+- エージェント障害の分離
+- エージェント間コールのレート制限
+- カスケードパターンの監視
+
+---
+
+### ASI09: Human-Agent Trust Exploitation（人間-エージェント間の信頼の悪用）
+
+**説明:** 攻撃者が人間が AI エージェントに寄せる信頼を利用してソーシャルエンジニアリング攻撃を行う。
+
+**攻撃ベクター:**
+- AI 生成フィッシングコンテンツ
+- エージェント応答を通じたなりすまし
+- 有用に見えるエージェントを通じた信頼の悪用
+- 欺瞞的なマルチターン会話
+
+**防止策:**
+- AI 生成コンテンツの明確なラベリング
+- AI の限界に関するユーザー教育
+- 機密アクションの検証ステップ
+- 重要な判断に対する人間の監視の維持
+- 不審な動作の検出の実装
+
+---
+
+### ASI10: Rogue Agents（ローグエージェント）
+
+**説明:** 外部攻撃または欠陥のある設計により、侵害されたまたは悪意を持って行動するエージェント。
+
+**攻撃ベクター:**
+- インジェクション攻撃によるエージェントの侵害
+- 悪意のあるエージェントのデプロイ
+- エージェント動作の変更
+- エージェントシステムを通じたインサイダー脅威
+
+**防止策:**
+- 異常に対するエージェント動作の監視
+- エージェントの認証と認可の実装
+- エージェントシステムの定期的なセキュリティ監査
+- エージェント操作のキルスイッチ
+- 動作ベースラインと逸脱検出
+
+---
+
+## 主要なセキュリティ原則
+
+### 多層防御（Defense in Depth）
+複数のセキュリティコントロールを重層化し、1 つが失敗しても他が保護を提供するようにする。
+
+### 最小権限（Least Privilege）
+機能に必要な最小限の権限を付与する。不要なアクセスを定期的にレビューし取り消す。
+
+### フェイルセキュア（Fail Secure）
+エラーが発生した場合、安全な状態をデフォルトとする。不確実な場合はアクセスを許可するのではなく拒否する。
+
+### ゼロトラスト（Zero Trust）
+信頼せず、常に検証する。ソースに関係なく、すべてのリクエストを認証・認可する。
+
+### デフォルトで安全（Secure by Default）
+安全なデフォルトで製品を出荷する。セキュリティを低下させるには明示的なアクションを要求する。
+
+### 入力バリデーション（Input Validation）
+すべての入力をサーバーサイドでバリデーションする。拒否リストよりも許可リストを使用する。
+
+### 出力エンコーディング（Output Encoding）
+コンテキスト（HTML, JavaScript, SQL など）に基づいて出力をエンコードし、インジェクションを防止する。
+
+### セキュリティをシンプルに（Keep Security Simple）
+複雑なセキュリティはしばしばバイパスされる。シンプルで理解しやすいコントロールを優先する。
+
+---
+
+## 出典と参考資料
+
+### 公式 OWASP リソース
 - [OWASP Top 10:2025](https://owasp.org/Top10/)
 - [OWASP ASVS 5.0](https://github.com/OWASP/ASVS)
 - [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/)
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 
-### Industry Analysis
+### 業界分析
 - [GitLab: OWASP Top 10 2025 - What's Changed and Why It Matters](https://about.gitlab.com/blog/)
 - [Aikido: OWASP Top 10 for Agentic Applications Guide](https://www.aikido.dev/blog/)
 - [Security Boulevard: OWASP 2025 Analysis](https://securityboulevard.com/)
 
-### Standards and Guidelines
+### 標準とガイドライン
 - [NIST SP 800-63b: Digital Identity Guidelines](https://pages.nist.gov/800-63-3/)
 - [NIST SP 800-61r2: Incident Handling Guide](https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final)
 - [CWE/SANS Top 25 Software Errors](https://cwe.mitre.org/top25/)
 
 ---
 
-*Last updated: January 2026*
+*最終更新: 2026年1月*

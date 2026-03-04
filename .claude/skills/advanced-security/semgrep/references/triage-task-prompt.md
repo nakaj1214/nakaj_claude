@@ -1,8 +1,8 @@
-# Triage Subagent Task Prompt
+# トリアージサブエージェント タスクプロンプト
 
-Use this prompt template when spawning triage Tasks in Step 5. Use `subagent_type: general-purpose`.
+ステップ 5 でトリアージ Task を生成する際に、このプロンプトテンプレートを使用する。`subagent_type: general-purpose` を使用。
 
-## Template
+## テンプレート
 
 ```
 You are a security finding triager for [LANGUAGE_CATEGORY].
@@ -49,14 +49,14 @@ Return summary:
 - False positives: N (with breakdown by reason)
 ```
 
-## Variable Substitutions
+## 変数の置換
 
-| Variable | Description | Example |
+| 変数 | 説明 | 例 |
 |----------|-------------|---------|
-| `[LANGUAGE_CATEGORY]` | Language group being triaged | Python, JavaScript, Docker |
-| `[OUTPUT_DIR]` | Results directory with run number | semgrep-results-001 |
+| `[LANGUAGE_CATEGORY]` | トリアージ対象の言語グループ | Python, JavaScript, Docker |
+| `[OUTPUT_DIR]` | 実行番号付きの結果ディレクトリ | semgrep-results-001 |
 
-## Example: Python Triage Task
+## 使用例: Python トリアージタスク
 
 ```
 You are a security finding triager for Python.
@@ -107,16 +107,16 @@ Return summary:
 - False positives: 33 (18 test files, 10 sanitized inputs, 5 dead code)
 ```
 
-## Triage Decision Tree
+## トリアージ判定ツリー
 
 ```
-Finding
-├── Is it in a test file? → FALSE_POSITIVE (add to .semgrepignore)
-├── Is it in example/docs? → FALSE_POSITIVE
-├── Does it have nosemgrep comment? → FALSE_POSITIVE (already acknowledged)
-├── Is the input sanitized/validated upstream?
-│   └── Check 10-20 lines before for validation → FALSE_POSITIVE if validated
-├── Is the code path reachable?
-│   └── Check if function is called/exported → FALSE_POSITIVE if dead code
-└── None of the above → TRUE_POSITIVE
+検出結果
+├── テストファイルか？ → FALSE_POSITIVE（.semgrepignore に追加）
+├── サンプル/ドキュメントのコードか？ → FALSE_POSITIVE
+├── nosemgrep コメントがあるか？ → FALSE_POSITIVE（既に確認済み）
+├── 入力が上流でサニタイズ/バリデーションされているか？
+│   └── 10〜20行前にバリデーションがあるか確認 → バリデーション済みなら FALSE_POSITIVE
+├── コードパスに到達可能か？
+│   └── 関数が呼び出し/エクスポートされているか確認 → デッドコードなら FALSE_POSITIVE
+└── 上記のいずれにも該当しない → TRUE_POSITIVE
 ```

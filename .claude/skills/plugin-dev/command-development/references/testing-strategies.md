@@ -1,37 +1,37 @@
-# Command Testing Strategies
+# コマンドテスト戦略
 
-Comprehensive strategies for testing slash commands before deployment and distribution.
+デプロイと配布前にスラッシュコマンドをテストするための包括的な戦略。
 
-## Overview
+## 概要
 
-Testing commands ensures they work correctly, handle edge cases, and provide good user experience. A systematic testing approach catches issues early and builds confidence in command reliability.
+コマンドのテストにより、正しく動作し、エッジケースを処理し、良好なユーザーエクスペリエンスを提供できることを確認する。体系的なテストアプローチにより、問題を早期に発見し、コマンドの信頼性への確信を築く。
 
-## Testing Levels
+## テストレベル
 
-### Level 1: Syntax and Structure Validation
+### レベル 1: 構文と構造の検証
 
-**What to test:**
-- YAML frontmatter syntax
-- Markdown format
-- File location and naming
+**テスト対象:**
+- YAML フロントマター構文
+- Markdown フォーマット
+- ファイルの場所と命名
 
-**How to test:**
+**テスト方法:**
 
 ```bash
-# Validate YAML frontmatter
+# YAML フロントマターの検証
 head -n 20 .claude/commands/my-command.md | grep -A 10 "^---"
 
-# Check for closing frontmatter marker
-head -n 20 .claude/commands/my-command.md | grep -c "^---" # Should be 2
+# 閉じフロントマターマーカーの確認
+head -n 20 .claude/commands/my-command.md | grep -c "^---" # 2であるべき
 
-# Verify file has .md extension
+# .md 拡張子の確認
 ls .claude/commands/*.md
 
-# Check file is in correct location
+# 正しい場所にあるか確認
 test -f .claude/commands/my-command.md && echo "Found" || echo "Missing"
 ```
 
-**Automated validation script:**
+**自動検証スクリプト:**
 
 ```bash
 #!/bin/bash
@@ -44,15 +44,15 @@ if [ ! -f "$COMMAND_FILE" ]; then
   exit 1
 fi
 
-# Check .md extension
+# .md 拡張子の確認
 if [[ ! "$COMMAND_FILE" =~ \.md$ ]]; then
   echo "ERROR: File must have .md extension"
   exit 1
 fi
 
-# Validate YAML frontmatter if present
+# YAML フロントマターの検証（存在する場合）
 if head -n 1 "$COMMAND_FILE" | grep -q "^---"; then
-  # Count frontmatter markers
+  # フロントマターマーカーのカウント
   MARKERS=$(head -n 50 "$COMMAND_FILE" | grep -c "^---")
   if [ "$MARKERS" -ne 2 ]; then
     echo "ERROR: Invalid YAML frontmatter (need exactly 2 '---' markers)"
@@ -61,7 +61,7 @@ if head -n 1 "$COMMAND_FILE" | grep -q "^---"; then
   echo "✓ YAML frontmatter syntax valid"
 fi
 
-# Check for empty file
+# 空ファイルの確認
 if [ ! -s "$COMMAND_FILE" ]; then
   echo "ERROR: File is empty"
   exit 1
@@ -70,14 +70,14 @@ fi
 echo "✓ Command file structure valid"
 ```
 
-### Level 2: Frontmatter Field Validation
+### レベル 2: フロントマターフィールドの検証
 
-**What to test:**
-- Field types correct
-- Values in valid ranges
-- Required fields present (if any)
+**テスト対象:**
+- フィールドの型が正しいか
+- 値が有効な範囲内か
+- 必須フィールドが存在するか（ある場合）
 
-**Validation script:**
+**検証スクリプト:**
 
 ```bash
 #!/bin/bash
@@ -85,7 +85,7 @@ echo "✓ Command file structure valid"
 
 COMMAND_FILE="$1"
 
-# Extract YAML frontmatter
+# YAML フロントマターの抽出
 FRONTMATTER=$(sed -n '/^---$/,/^---$/p' "$COMMAND_FILE" | sed '1d;$d')
 
 if [ -z "$FRONTMATTER" ]; then
@@ -93,7 +93,7 @@ if [ -z "$FRONTMATTER" ]; then
   exit 0
 fi
 
-# Check 'model' field if present
+# 'model' フィールドの確認（存在する場合）
 if echo "$FRONTMATTER" | grep -q "^model:"; then
   MODEL=$(echo "$FRONTMATTER" | grep "^model:" | cut -d: -f2 | tr -d ' ')
   if ! echo "sonnet opus haiku" | grep -qw "$MODEL"; then
@@ -103,13 +103,13 @@ if echo "$FRONTMATTER" | grep -q "^model:"; then
   echo "✓ Model field valid: $MODEL"
 fi
 
-# Check 'allowed-tools' field format
+# 'allowed-tools' フィールドのフォーマット確認
 if echo "$FRONTMATTER" | grep -q "^allowed-tools:"; then
   echo "✓ allowed-tools field present"
-  # Could add more sophisticated validation here
+  # より詳細な検証をここに追加可能
 fi
 
-# Check 'description' length
+# 'description' の長さ確認
 if echo "$FRONTMATTER" | grep -q "^description:"; then
   DESC=$(echo "$FRONTMATTER" | grep "^description:" | cut -d: -f2-)
   LENGTH=${#DESC}
@@ -123,56 +123,56 @@ fi
 echo "✓ Frontmatter fields valid"
 ```
 
-### Level 3: Manual Command Invocation
+### レベル 3: 手動コマンド呼び出し
 
-**What to test:**
-- Command appears in `/help`
-- Command executes without errors
-- Output is as expected
+**テスト対象:**
+- コマンドが `/help` に表示されるか
+- コマンドがエラーなく実行されるか
+- 出力が期待通りか
 
-**Test procedure:**
+**テスト手順:**
 
 ```bash
-# 1. Start Claude Code
+# 1. Claude Code を起動
 claude --debug
 
-# 2. Check command appears in help
+# 2. コマンドがヘルプに表示されるか確認
 > /help
-# Look for your command in the list
+# リスト内のコマンドを探す
 
-# 3. Invoke command without arguments
+# 3. 引数なしでコマンドを呼び出す
 > /my-command
-# Check for reasonable error or behavior
+# 適切なエラーまたは動作を確認
 
-# 4. Invoke with valid arguments
+# 4. 有効な引数で呼び出す
 > /my-command arg1 arg2
-# Verify expected behavior
+# 期待する動作を確認
 
-# 5. Check debug logs
+# 5. デバッグログを確認
 tail -f ~/.claude/debug-logs/latest
-# Look for errors or warnings
+# エラーや警告を探す
 ```
 
-### Level 4: Argument Testing
+### レベル 4: 引数テスト
 
-**What to test:**
-- Positional arguments work ($1, $2, etc.)
-- $ARGUMENTS captures all arguments
-- Missing arguments handled gracefully
-- Invalid arguments detected
+**テスト対象:**
+- 位置引数が機能するか ($1, $2 など)
+- $ARGUMENTS がすべての引数をキャプチャするか
+- 引数欠落が適切に処理されるか
+- 無効な引数が検出されるか
 
-**Test matrix:**
+**テストマトリクス:**
 
-| Test Case | Command | Expected Result |
+| テストケース | コマンド | 期待結果 |
 |-----------|---------|-----------------|
-| No args | `/cmd` | Graceful handling or useful message |
-| One arg | `/cmd arg1` | $1 substituted correctly |
-| Two args | `/cmd arg1 arg2` | $1 and $2 substituted |
-| Extra args | `/cmd a b c d` | All captured or extras ignored appropriately |
-| Special chars | `/cmd "arg with spaces"` | Quotes handled correctly |
-| Empty arg | `/cmd ""` | Empty string handled |
+| 引数なし | `/cmd` | 適切な処理またはメッセージ |
+| 引数1つ | `/cmd arg1` | $1 が正しく置換される |
+| 引数2つ | `/cmd arg1 arg2` | $1 と $2 が置換される |
+| 余分な引数 | `/cmd a b c d` | すべてキャプチャまたは適切に無視 |
+| 特殊文字 | `/cmd "arg with spaces"` | クォートが正しく処理される |
+| 空引数 | `/cmd ""` | 空文字列が処理される |
 
-**Test script:**
+**テストスクリプト:**
 
 ```bash
 #!/bin/bash
@@ -185,7 +185,7 @@ echo
 
 echo "Test 1: No arguments"
 echo "  Command: /$COMMAND"
-echo "  Expected: [describe expected behavior]"
+echo "  Expected: [期待する動作を記述]"
 echo "  Manual test required"
 echo
 
@@ -207,54 +207,54 @@ echo "  Expected: Entire phrase captured"
 echo "  Manual test required"
 ```
 
-### Level 5: File Reference Testing
+### レベル 5: ファイル参照テスト
 
-**What to test:**
-- @ syntax loads file contents
-- Non-existent files handled
-- Large files handled appropriately
-- Multiple file references work
+**テスト対象:**
+- @ 構文でファイル内容が読み込まれるか
+- 存在しないファイルが処理されるか
+- 大きなファイルが適切に処理されるか
+- 複数のファイル参照が機能するか
 
-**Test procedure:**
+**テスト手順:**
 
 ```bash
-# Create test files
+# テストファイルの作成
 echo "Test content" > /tmp/test-file.txt
 echo "Second file" > /tmp/test-file-2.txt
 
-# Test single file reference
+# 単一ファイル参照のテスト
 > /my-command /tmp/test-file.txt
-# Verify file content is read
+# ファイル内容が読み込まれることを確認
 
-# Test non-existent file
+# 存在しないファイルのテスト
 > /my-command /tmp/nonexistent.txt
-# Verify graceful error handling
+# 適切なエラーハンドリングを確認
 
-# Test multiple files
+# 複数ファイルのテスト
 > /my-command /tmp/test-file.txt /tmp/test-file-2.txt
-# Verify both files processed
+# 両方のファイルが処理されることを確認
 
-# Test large file
+# 大きなファイルのテスト
 dd if=/dev/zero of=/tmp/large-file.bin bs=1M count=100
 > /my-command /tmp/large-file.bin
-# Verify reasonable behavior (may truncate or warn)
+# 適切な動作を確認（切り詰めまたは警告の可能性）
 
-# Cleanup
+# クリーンアップ
 rm /tmp/test-file*.txt /tmp/large-file.bin
 ```
 
-### Level 6: Bash Execution Testing
+### レベル 6: Bash 実行テスト
 
-**What to test:**
-- !` commands execute correctly
-- Command output included in prompt
-- Command failures handled
-- Security: only allowed commands run
+**テスト対象:**
+- !` コマンドが正しく実行されるか
+- コマンド出力がプロンプトに含まれるか
+- コマンド失敗が処理されるか
+- セキュリティ: 許可されたコマンドのみが実行されるか
 
-**Test procedure:**
+**テスト手順:**
 
 ```bash
-# Create test command with bash execution
+# bash 実行付きテストコマンドの作成
 cat > .claude/commands/test-bash.md << 'EOF'
 ---
 description: Test bash execution
@@ -267,14 +267,14 @@ Test output: !`echo "Hello from bash"`
 Analysis of output above...
 EOF
 
-# Test in Claude Code
+# Claude Code でテスト
 > /test-bash
-# Verify:
-# 1. Date appears correctly
-# 2. Echo output appears
-# 3. No errors in debug logs
+# 確認事項:
+# 1. 日付が正しく表示される
+# 2. echo 出力が表示される
+# 3. デバッグログにエラーがない
 
-# Test with disallowed command (should fail or be blocked)
+# 許可されていないコマンドのテスト（失敗またはブロックされるべき）
 cat > .claude/commands/test-forbidden.md << 'EOF'
 ---
 description: Test forbidden command
@@ -285,68 +285,68 @@ Trying forbidden: !`ls -la /`
 EOF
 
 > /test-forbidden
-# Verify: Permission denied or appropriate error
+# 確認: 権限拒否または適切なエラー
 ```
 
-### Level 7: Integration Testing
+### レベル 7: インテグレーションテスト
 
-**What to test:**
-- Commands work with other plugin components
-- Commands interact correctly with each other
-- State management works across invocations
-- Workflow commands execute in sequence
+**テスト対象:**
+- コマンドが他のプラグインコンポーネントと連携するか
+- コマンド同士が正しく相互作用するか
+- 呼び出し間の状態管理が機能するか
+- ワークフローコマンドが順番に実行されるか
 
-**Test scenarios:**
+**テストシナリオ:**
 
-**Scenario 1: Command + Hook Integration**
+**シナリオ 1: コマンド + フック統合**
 
 ```bash
-# Setup: Command that triggers a hook
-# Test: Invoke command, verify hook executes
+# セットアップ: フックをトリガーするコマンド
+# テスト: コマンドを呼び出し、フックが実行されることを確認
 
-# Command: .claude/commands/risky-operation.md
-# Hook: PreToolUse that validates the operation
+# コマンド: .claude/commands/risky-operation.md
+# フック: 操作を検証する PreToolUse
 
 > /risky-operation
-# Verify: Hook executes and validates before command completes
+# 確認: コマンド完了前にフックが実行され検証される
 ```
 
-**Scenario 2: Command Sequence**
+**シナリオ 2: コマンドシーケンス**
 
 ```bash
-# Setup: Multi-command workflow
+# セットアップ: マルチコマンドワークフロー
 > /workflow-init
-# Verify: State file created
+# 確認: 状態ファイルが作成される
 
 > /workflow-step2
-# Verify: State file read, step 2 executes
+# 確認: 状態ファイルが読み込まれ、ステップ 2 が実行される
 
 > /workflow-complete
-# Verify: State file cleaned up
+# 確認: 状態ファイルがクリーンアップされる
 ```
 
-**Scenario 3: Command + MCP Integration**
+**シナリオ 3: コマンド + MCP 統合**
 
 ```bash
-# Setup: Command uses MCP tools
-# Test: Verify MCP server accessible
+# セットアップ: MCP ツールを使用するコマンド
+# テスト: MCP サーバーにアクセスできることを確認
 
 > /mcp-command
-# Verify:
-# 1. MCP server starts (if stdio)
-# 2. Tool calls succeed
-# 3. Results included in output
+# 確認:
+# 1. MCP サーバーが起動（stdio の場合）
+# 2. ツール呼び出しが成功
+# 3. 結果が出力に含まれる
 ```
 
-## Automated Testing Approaches
+## 自動テストアプローチ
 
-### Command Test Suite
+### コマンドテストスイート
 
-Create a test suite script:
+テストスイートスクリプトの作成:
 
 ```bash
 #!/bin/bash
-# test-commands.sh - Command test suite
+# test-commands.sh - コマンドテストスイート
 
 TEST_DIR=".claude/commands"
 FAILED_TESTS=0
@@ -359,7 +359,7 @@ for cmd_file in "$TEST_DIR"/*.md; do
   cmd_name=$(basename "$cmd_file" .md)
   echo "Testing: $cmd_name"
 
-  # Validate structure
+  # 構造の検証
   if ./validate-command.sh "$cmd_file"; then
     echo "  ✓ Structure valid"
   else
@@ -367,7 +367,7 @@ for cmd_file in "$TEST_DIR"/*.md; do
     ((FAILED_TESTS++))
   fi
 
-  # Validate frontmatter
+  # フロントマターの検証
   if ./validate-frontmatter.sh "$cmd_file"; then
     echo "  ✓ Frontmatter valid"
   else
@@ -385,9 +385,9 @@ echo "Failed: $FAILED_TESTS"
 exit $FAILED_TESTS
 ```
 
-### Pre-Commit Hook
+### プリコミットフック
 
-Validate commands before committing:
+コミット前にコマンドを検証する:
 
 ```bash
 #!/bin/bash
@@ -414,9 +414,9 @@ done
 echo "✓ All commands valid"
 ```
 
-### Continuous Testing
+### 継続的テスト
 
-Test commands in CI/CD:
+CI/CD でコマンドをテストする:
 
 ```yaml
 # .github/workflows/test-commands.yml
@@ -451,17 +451,17 @@ jobs:
           fi
 ```
 
-## Edge Case Testing
+## エッジケーステスト
 
-### Test Edge Cases
+### エッジケースのテスト
 
-**Empty arguments:**
+**空引数:**
 ```bash
 > /cmd ""
 > /cmd '' ''
 ```
 
-**Special characters:**
+**特殊文字:**
 ```bash
 > /cmd "arg with spaces"
 > /cmd arg-with-dashes
@@ -470,12 +470,12 @@ jobs:
 > /cmd 'arg with "quotes"'
 ```
 
-**Long arguments:**
+**長い引数:**
 ```bash
 > /cmd $(python -c "print('a' * 10000)")
 ```
 
-**Unusual file paths:**
+**特殊なファイルパス:**
 ```bash
 > /cmd ./file
 > /cmd ../file
@@ -483,22 +483,22 @@ jobs:
 > /cmd "/path with spaces/file"
 ```
 
-**Bash command edge cases:**
+**Bash コマンドのエッジケース:**
 ```markdown
-# Commands that might fail
+# 失敗する可能性のあるコマンド
 !`exit 1`
 !`false`
 !`command-that-does-not-exist`
 
-# Commands with special output
+# 特殊な出力のコマンド
 !`echo ""`
 !`cat /dev/null`
 !`yes | head -n 1000000`
 ```
 
-## Performance Testing
+## パフォーマンステスト
 
-### Response Time Testing
+### レスポンスタイムテスト
 
 ```bash
 #!/bin/bash
@@ -513,7 +513,7 @@ for i in {1..5}; do
   echo "Run $i:"
   START=$(date +%s%N)
 
-  # Invoke command (manual step - record time)
+  # コマンドの呼び出し（手動ステップ — 時間を記録）
   echo "  Invoke: /$COMMAND"
   echo "  Start time: $START"
   echo "  (Record end time manually)"
@@ -526,177 +526,177 @@ echo "  - Variance"
 echo "  - Acceptable threshold: < 3 seconds for fast commands"
 ```
 
-### Resource Usage Testing
+### リソース使用量テスト
 
 ```bash
-# Monitor Claude Code during command execution
-# In terminal 1:
+# コマンド実行中の Claude Code を監視
+# ターミナル 1:
 claude --debug
 
-# In terminal 2:
+# ターミナル 2:
 watch -n 1 'ps aux | grep claude'
 
-# Execute command and observe:
-# - Memory usage
-# - CPU usage
-# - Process count
+# コマンドを実行して観察:
+# - メモリ使用量
+# - CPU 使用量
+# - プロセス数
 ```
 
-## User Experience Testing
+## ユーザーエクスペリエンステスト
 
-### Usability Checklist
+### ユーザビリティチェックリスト
 
-- [ ] Command name is intuitive
-- [ ] Description is clear in `/help`
-- [ ] Arguments are well-documented
-- [ ] Error messages are helpful
-- [ ] Output is formatted readably
-- [ ] Long-running commands show progress
-- [ ] Results are actionable
-- [ ] Edge cases have good UX
+- [ ] コマンド名が直感的
+- [ ] `/help` の説明が明確
+- [ ] 引数がドキュメント化されている
+- [ ] エラーメッセージがヘルプフル
+- [ ] 出力が読みやすくフォーマットされている
+- [ ] 長時間実行コマンドが進捗を表示
+- [ ] 結果がアクション可能
+- [ ] エッジケースの UX が良好
 
-### User Acceptance Testing
+### ユーザー受け入れテスト
 
-Recruit testers:
+テスターの募集:
 
 ```markdown
-# Testing Guide for Beta Testers
+# ベータテスター向けテストガイド
 
-## Command: /my-new-command
+## コマンド: /my-new-command
 
-### Test Scenarios
+### テストシナリオ
 
-1. **Basic usage:**
-   - Run: `/my-new-command`
-   - Expected: [describe]
-   - Rate clarity: 1-5
+1. **基本的な使い方:**
+   - 実行: `/my-new-command`
+   - 期待: [記述]
+   - 明確さを評価: 1-5
 
-2. **With arguments:**
-   - Run: `/my-new-command arg1 arg2`
-   - Expected: [describe]
-   - Rate usefulness: 1-5
+2. **引数付き:**
+   - 実行: `/my-new-command arg1 arg2`
+   - 期待: [記述]
+   - 有用性を評価: 1-5
 
-3. **Error case:**
-   - Run: `/my-new-command invalid-input`
-   - Expected: Helpful error message
-   - Rate error message: 1-5
+3. **エラーケース:**
+   - 実行: `/my-new-command invalid-input`
+   - 期待: ヘルプフルなエラーメッセージ
+   - エラーメッセージを評価: 1-5
 
-### Feedback Questions
+### フィードバック質問
 
-1. Was the command easy to understand?
-2. Did the output meet your expectations?
-3. What would you change?
-4. Would you use this command regularly?
+1. コマンドは理解しやすかったですか？
+2. 出力は期待通りでしたか？
+3. 何を変更しますか？
+4. このコマンドを定期的に使いますか？
 ```
 
-## Testing Checklist
+## テストチェックリスト
 
-Before releasing a command:
+コマンドをリリースする前に:
 
-### Structure
-- [ ] File in correct location
-- [ ] Correct .md extension
-- [ ] Valid YAML frontmatter (if present)
-- [ ] Markdown syntax correct
+### 構造
+- [ ] ファイルが正しい場所にある
+- [ ] 正しい .md 拡張子
+- [ ] 有効な YAML フロントマター（ある場合）
+- [ ] Markdown 構文が正しい
 
-### Functionality
-- [ ] Command appears in `/help`
-- [ ] Description is clear
-- [ ] Command executes without errors
-- [ ] Arguments work as expected
-- [ ] File references work
-- [ ] Bash execution works (if used)
+### 機能
+- [ ] コマンドが `/help` に表示される
+- [ ] 説明が明確
+- [ ] コマンドがエラーなく実行される
+- [ ] 引数が期待通りに機能する
+- [ ] ファイル参照が機能する
+- [ ] Bash 実行が機能する（使用する場合）
 
-### Edge Cases
-- [ ] Missing arguments handled
-- [ ] Invalid arguments detected
-- [ ] Non-existent files handled
-- [ ] Special characters work
-- [ ] Long inputs handled
+### エッジケース
+- [ ] 引数欠落が処理される
+- [ ] 無効な引数が検出される
+- [ ] 存在しないファイルが処理される
+- [ ] 特殊文字が機能する
+- [ ] 長い入力が処理される
 
-### Integration
-- [ ] Works with other commands
-- [ ] Works with hooks (if applicable)
-- [ ] Works with MCP (if applicable)
-- [ ] State management works
+### 統合
+- [ ] 他のコマンドと連携する
+- [ ] フックと連携する（該当する場合）
+- [ ] MCP と連携する（該当する場合）
+- [ ] 状態管理が機能する
 
-### Quality
-- [ ] Performance acceptable
-- [ ] No security issues
-- [ ] Error messages helpful
-- [ ] Output formatted well
-- [ ] Documentation complete
+### 品質
+- [ ] パフォーマンスが許容範囲
+- [ ] セキュリティ問題がない
+- [ ] エラーメッセージがヘルプフル
+- [ ] 出力が適切にフォーマットされている
+- [ ] ドキュメントが完全
 
-### Distribution
-- [ ] Tested by others
-- [ ] Feedback incorporated
-- [ ] README updated
-- [ ] Examples provided
+### 配布
+- [ ] 他の人がテスト済み
+- [ ] フィードバックを反映
+- [ ] README が更新済み
+- [ ] 例が提供されている
 
-## Debugging Failed Tests
+## 失敗したテストのデバッグ
 
-### Common Issues and Solutions
+### よくある問題と解決策
 
-**Issue: Command not appearing in /help**
+**問題: コマンドが /help に表示されない**
 
 ```bash
-# Check file location
+# ファイルの場所を確認
 ls -la .claude/commands/my-command.md
 
-# Check permissions
+# 権限を確認
 chmod 644 .claude/commands/my-command.md
 
-# Check syntax
+# 構文を確認
 head -n 20 .claude/commands/my-command.md
 
-# Restart Claude Code
+# Claude Code を再起動
 claude --debug
 ```
 
-**Issue: Arguments not substituting**
+**問題: 引数が置換されない**
 
 ```bash
-# Verify syntax
+# 構文を確認
 grep '\$1' .claude/commands/my-command.md
 grep '\$ARGUMENTS' .claude/commands/my-command.md
 
-# Test with simple command first
+# まずシンプルなコマンドでテスト
 echo "Test: \$1 and \$2" > .claude/commands/test-args.md
 ```
 
-**Issue: Bash commands not executing**
+**問題: Bash コマンドが実行されない**
 
 ```bash
-# Check allowed-tools
+# allowed-tools を確認
 grep "allowed-tools" .claude/commands/my-command.md
 
-# Verify command syntax
+# コマンド構文を確認
 grep '!\`' .claude/commands/my-command.md
 
-# Test command manually
+# コマンドを手動テスト
 date
 echo "test"
 ```
 
-**Issue: File references not working**
+**問題: ファイル参照が機能しない**
 
 ```bash
-# Check @ syntax
+# @ 構文を確認
 grep '@' .claude/commands/my-command.md
 
-# Verify file exists
+# ファイルの存在を確認
 ls -la /path/to/referenced/file
 
-# Check permissions
+# 権限を確認
 chmod 644 /path/to/referenced/file
 ```
 
-## Best Practices
+## ベストプラクティス
 
-1. **Test early, test often**: Validate as you develop
-2. **Automate validation**: Use scripts for repeatable checks
-3. **Test edge cases**: Don't just test the happy path
-4. **Get feedback**: Have others test before wide release
-5. **Document tests**: Keep test scenarios for regression testing
-6. **Monitor in production**: Watch for issues after release
-7. **Iterate**: Improve based on real usage data
+1. **早期にテスト、頻繁にテスト**: 開発中にバリデーションする
+2. **検証を自動化**: 繰り返し可能なチェックにスクリプトを使用
+3. **エッジケースをテスト**: ハッピーパスだけテストしない
+4. **フィードバックを得る**: 広く公開する前に他の人にテストしてもらう
+5. **テストをドキュメント化**: 回帰テストのためにテストシナリオを保存
+6. **本番環境を監視**: リリース後の問題を注視
+7. **反復する**: 実際の使用データに基づいて改善

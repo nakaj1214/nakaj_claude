@@ -22,14 +22,21 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
-# lib/ を import パスに追加（実行ディレクトリに依存しない）
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# lib/ を import パスに追加（hooks/ ディレクトリを指す）
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.transcript import read as read_transcript
 from lib.claude_p import run as claude_run
 from lib.jsonl_io import append_jsonl, read_jsonl_safe
 
-MEMORY_DIR = os.environ.get("HANDOVER_MEMORY_DIR", ".claude/docs/memory")
-EDIT_LOG_PATH = ".claude/logs/edit-history.jsonl"
+# Path resolution (portable across projects)
+_PROJECT_ROOT = _HOOKS_DIR.parent.parent  # project root
+
+MEMORY_DIR = os.environ.get(
+    "HANDOVER_MEMORY_DIR",
+    str(_PROJECT_ROOT / ".claude" / "docs" / "memory"),
+)
+EDIT_LOG_PATH = str(_PROJECT_ROOT / ".claude" / "logs" / "edit-history.jsonl")
 QUEUE_PATH = os.path.join(MEMORY_DIR, "AUTO-MATERIALIZE-QUEUE.jsonl")
 MIN_EDIT_ENTRIES = 10
 

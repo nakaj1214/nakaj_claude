@@ -1,45 +1,45 @@
-# Interactive Command Patterns
+# インタラクティブコマンドパターン
 
-Comprehensive guide to creating commands that gather user feedback and make decisions through the AskUserQuestion tool.
+AskUserQuestion ツールを通じてユーザーのフィードバックを収集し判断を行うコマンドの包括的ガイド。
 
-## Overview
+## 概要
 
-Some commands need user input that doesn't work well with simple arguments. For example:
-- Choosing between multiple complex options with trade-offs
-- Selecting multiple items from a list
-- Making decisions that require explanation
-- Gathering preferences or configuration interactively
+単純な引数ではうまくいかないユーザー入力を必要とするコマンドがある。例えば:
+- トレードオフのある複数の複雑なオプションからの選択
+- リストからの複数項目の選択
+- 説明を必要とする判断
+- インタラクティブな設定やプリファレンスの収集
 
-For these cases, use the **AskUserQuestion tool** within command execution rather than relying on command arguments.
+これらのケースでは、コマンド引数に頼るのではなく、コマンド実行内で **AskUserQuestion ツール** を使用する。
 
-## When to Use AskUserQuestion
+## AskUserQuestion を使うタイミング
 
-### Use AskUserQuestion When:
+### AskUserQuestion を使う場合:
 
-1. **Multiple choice decisions** with explanations needed
-2. **Complex options** that require context to choose
-3. **Multi-select scenarios** (choosing multiple items)
-4. **Preference gathering** for configuration
-5. **Interactive workflows** that adapt based on answers
+1. **説明が必要な複数選択肢の判断**
+2. **選択にコンテキストが必要な複雑なオプション**
+3. **複数選択シナリオ**（複数項目の選択）
+4. **設定のためのプリファレンス収集**
+5. **回答に基づいて適応するインタラクティブワークフロー**
 
-### Use Command Arguments When:
+### コマンド引数を使う場合:
 
-1. **Simple values** (file paths, numbers, names)
-2. **Known inputs** user already has
-3. **Scriptable workflows** that should be automatable
-4. **Fast invocations** where prompting would slow down
+1. **単純な値**（ファイルパス、数値、名前）
+2. **ユーザーがすでに持っている既知の入力**
+3. **自動化可能であるべきスクリプト可能なワークフロー**
+4. **プロンプトが遅くなる高速呼び出し**
 
-## AskUserQuestion Basics
+## AskUserQuestion の基本
 
-### Tool Parameters
+### ツールパラメータ
 
 ```typescript
 {
   questions: [
     {
       question: "Which authentication method should we use?",
-      header: "Auth method",  // Short label (max 12 chars)
-      multiSelect: false,     // true for multiple selection
+      header: "Auth method",  // 短いラベル（最大12文字）
+      multiSelect: false,     // 複数選択の場合は true
       options: [
         {
           label: "OAuth 2.0",
@@ -59,15 +59,15 @@ For these cases, use the **AskUserQuestion tool** within command execution rathe
 }
 ```
 
-**Key points:**
-- Users can always choose "Other" to provide custom input (automatic)
-- `multiSelect: true` allows selecting multiple options
-- Options should be 2-4 choices (not more)
-- Can ask 1-4 questions per tool call
+**重要なポイント:**
+- ユーザーは常に「Other」を選択してカスタム入力を提供できる（自動）
+- `multiSelect: true` で複数のオプションを選択可能
+- オプションは 2-4 個（それ以上は避ける）
+- 1回のツールコールで 1-4 個の質問を聞ける
 
-## Command Pattern for User Interaction
+## ユーザーインタラクション用コマンドパターン
 
-### Basic Interactive Command
+### 基本的なインタラクティブコマンド
 
 ```markdown
 ---
@@ -146,7 +146,7 @@ Environments: [environments]
 Confirm configuration created and guide user on next steps.
 ```
 
-### Multi-Stage Interactive Workflow
+### マルチステージインタラクティブワークフロー
 
 ```markdown
 ---
@@ -196,11 +196,11 @@ If "Modify", ask which specific setting to change.
 Based on confirmed configuration, execute setup steps.
 ```
 
-## Interactive Question Design
+## インタラクティブ質問の設計
 
-### Question Structure
+### 質問の構造
 
-**Good questions:**
+**良い質問:**
 ```markdown
 Question: "Which database should we use for this project?"
 Header: "Database"
@@ -210,44 +210,44 @@ Options:
   - Redis (In-memory, fast, best for caching and sessions)
 ```
 
-**Poor questions:**
+**悪い質問:**
 ```markdown
-Question: "Database?"  // Too vague
-Header: "DB"  // Unclear abbreviation
+Question: "Database?"  // 曖昧すぎる
+Header: "DB"  // 不明確な略語
 Options:
-  - Option 1  // Not descriptive
+  - Option 1  // 説明的でない
   - Option 2
 ```
 
-### Option Design Best Practices
+### オプション設計のベストプラクティス
 
-**Clear labels:**
-- Use 1-5 words
-- Specific and descriptive
-- No jargon without context
+**明確なラベル:**
+- 1-5 語を使用
+- 具体的で説明的
+- コンテキストなしの専門用語は避ける
 
-**Helpful descriptions:**
-- Explain what the option means
-- Mention key benefits or trade-offs
-- Help user make informed decision
-- Keep to 1-2 sentences
+**有用な説明:**
+- オプションの意味を説明
+- 主なメリットやトレードオフに言及
+- ユーザーが情報に基づいた判断をできるよう支援
+- 1-2 文に収める
 
-**Appropriate number:**
-- 2-4 options per question
-- Don't overwhelm with too many choices
-- Group related options
-- "Other" automatically provided
+**適切な数:**
+- 1 つの質問に 2-4 個のオプション
+- 選択肢が多すぎて圧倒しない
+- 関連するオプションをグループ化
+- 「Other」は自動的に提供される
 
-### Multi-Select Questions
+### 複数選択の質問
 
-**When to use multiSelect:**
+**multiSelect を使う場合:**
 
 ```markdown
 Use AskUserQuestion for enabling features:
 
 Question: "Which features do you want to enable?"
 Header: "Features"
-multiSelect: true  // Allow selecting multiple
+multiSelect: true  // 複数選択を許可
 Options:
   - Logging (Detailed operation logs)
   - Metrics (Performance monitoring)
@@ -255,20 +255,20 @@ Options:
   - Backups (Automatic backups)
 ```
 
-User can select any combination: none, some, or all.
+ユーザーは任意の組み合わせを選択できる: なし、一部、またはすべて。
 
-**When NOT to use multiSelect:**
+**multiSelect を使わない場合:**
 
 ```markdown
 Question: "Which authentication method?"
-multiSelect: false  // Only one auth method makes sense
+multiSelect: false  // 認証方法は1つだけが妥当
 ```
 
-Mutually exclusive choices should not use multiSelect.
+相互排他的な選択肢には multiSelect を使わない。
 
-## Command Patterns with AskUserQuestion
+## AskUserQuestion を使ったコマンドパターン
 
-### Pattern 1: Simple Yes/No Decision
+### パターン 1: シンプルな Yes/No 判断
 
 ```markdown
 ---
@@ -297,7 +297,7 @@ If user selects "No":
   Exit without changes
 ```
 
-### Pattern 2: Multiple Configuration Questions
+### パターン 2: 複数の設定質問
 
 ```markdown
 ---
@@ -336,7 +336,7 @@ Use AskUserQuestion with multiple questions in one call:
 Process all answers together to generate cohesive configuration.
 ```
 
-### Pattern 3: Conditional Question Flow
+### パターン 3: 条件付き質問フロー
 
 ```markdown
 ---
@@ -378,7 +378,7 @@ If answer is "Complex":
 Generate configuration appropriate for selected complexity level.
 ```
 
-### Pattern 4: Iterative Collection
+### パターン 4: 反復的な収集
 
 ```markdown
 ---
@@ -424,7 +424,7 @@ Store each member's information.
 After collecting all N members, create team configuration file with all members and their roles.
 ```
 
-### Pattern 5: Dependency Selection
+### パターン 5: 依存関係の選択
 
 ```markdown
 ---
@@ -459,17 +459,17 @@ For each selected library:
 - Update documentation
 ```
 
-## Best Practices for Interactive Commands
+## インタラクティブコマンドのベストプラクティス
 
-### Question Design
+### 質問の設計
 
-1. **Clear and specific**: Question should be unambiguous
-2. **Concise header**: Max 12 characters for clean display
-3. **Helpful options**: Labels are clear, descriptions explain trade-offs
-4. **Appropriate count**: 2-4 options per question, 1-4 questions per call
-5. **Logical order**: Questions flow naturally
+1. **明確で具体的に:** 質問は曖昧でないこと
+2. **簡潔なヘッダー:** クリーンな表示のため最大12文字
+3. **有用なオプション:** ラベルが明確で、説明がトレードオフを説明
+4. **適切な数:** 1質問あたり 2-4 オプション、1コールあたり 1-4 質問
+5. **論理的な順序:** 質問が自然に流れること
 
-### Error Handling
+### エラーハンドリング
 
 ```markdown
 # Handle AskUserQuestion Responses
@@ -488,7 +488,7 @@ If answers look correct:
   Process as expected
 ```
 
-### Progressive Disclosure
+### 段階的な開示
 
 ```markdown
 # Start Simple, Get Detailed as Needed
@@ -515,9 +515,9 @@ If "Guided":
   Provide recommendations along the way
 ```
 
-### Multi-Select Guidelines
+### 複数選択のガイドライン
 
-**Good multi-select use:**
+**良い複数選択の使用:**
 ```markdown
 Question: "Which features do you want to enable?"
 multiSelect: true
@@ -527,20 +527,20 @@ Options:
   - Alerts
   - Backups
 
-Reason: User might want any combination
+理由: ユーザーは任意の組み合わせを選ぶ可能性がある
 ```
 
-**Bad multi-select use:**
+**悪い複数選択の使用:**
 ```markdown
 Question: "Which database engine?"
-multiSelect: true  // ❌ Should be single-select
+multiSelect: true  // ❌ 単一選択であるべき
 
-Reason: Can only use one database engine
+理由: データベースエンジンは1つしか使えない
 ```
 
-## Advanced Patterns
+## 高度なパターン
 
-### Validation Loop
+### バリデーションループ
 
 ```markdown
 ---
@@ -576,7 +576,7 @@ If validation fails:
   Based on answer, retry or proceed or exit.
 ```
 
-### Build Configuration Incrementally
+### 段階的な設定構築
 
 ```markdown
 ---
@@ -621,7 +621,7 @@ Options:
   - Modify (Edit specific settings)
 ```
 
-### Dynamic Options Based on Context
+### コンテキストに基づく動的オプション
 
 ```markdown
 ---
@@ -665,9 +665,9 @@ If language is Python:
 Questions adapt to project context.
 ```
 
-## Real-World Example: Multi-Agent Swarm Launch
+## 実例: マルチエージェントスワーム起動
 
-**From multi-agent-swarm plugin:**
+**multi-agent-swarm プラグインからの例:**
 
 ```markdown
 ---
@@ -777,43 +777,43 @@ After collecting all agent task details:
 5. Proceed with launch using generated task list
 ```
 
-## Best Practices
+## ベストプラクティス
 
-### Question Writing
+### 質問の書き方
 
-1. **Be specific**: "Which database?" not "Choose option?"
-2. **Explain trade-offs**: Describe pros/cons in option descriptions
-3. **Provide context**: Question text should stand alone
-4. **Guide decisions**: Help user make informed choice
-5. **Keep concise**: Header max 12 chars, descriptions 1-2 sentences
+1. **具体的に:** 「オプションを選んでください?」ではなく「どのデータベース?」
+2. **トレードオフを説明:** オプションの説明で長所・短所を記述
+3. **コンテキストを提供:** 質問のテキストだけで理解できるように
+4. **判断をガイド:** ユーザーが情報に基づいた選択をできるよう支援
+5. **簡潔に保つ:** ヘッダーは最大12文字、説明は1-2文
 
-### Option Design
+### オプションの設計
 
-1. **Meaningful labels**: Specific, clear names
-2. **Informative descriptions**: Explain what each option does
-3. **Show trade-offs**: Help user understand implications
-4. **Consistent detail**: All options equally explained
-5. **2-4 options**: Not too few, not too many
+1. **意味のあるラベル:** 具体的で明確な名前
+2. **情報量のある説明:** 各オプションが何をするか説明
+3. **トレードオフの表示:** ユーザーが影響を理解できるよう支援
+4. **一貫した詳細度:** すべてのオプションを同等に説明
+5. **2-4 オプション:** 少なすぎず多すぎず
 
-### Flow Design
+### フローの設計
 
-1. **Logical order**: Questions flow naturally
-2. **Build on previous**: Later questions use earlier answers
-3. **Minimize questions**: Ask only what's needed
-4. **Group related**: Ask related questions together
-5. **Show progress**: Indicate where in flow
+1. **論理的な順序:** 質問が自然に流れること
+2. **前の回答に基づく:** 後の質問が前の回答を活用
+3. **質問を最小限に:** 必要なことだけを聞く
+4. **関連をグループ化:** 関連する質問をまとめて聞く
+5. **進捗を表示:** フロー内の現在位置を示す
 
-### User Experience
+### ユーザー体験
 
-1. **Set expectations**: Tell user what to expect
-2. **Explain why**: Help user understand purpose
-3. **Provide defaults**: Suggest recommended options
-4. **Allow escape**: Let user cancel or restart
-5. **Confirm actions**: Summarize before executing
+1. **期待値を設定:** ユーザーに何が起こるか伝える
+2. **理由を説明:** ユーザーが目的を理解できるよう支援
+3. **デフォルトを提供:** 推奨オプションを提案
+4. **脱出を許可:** ユーザーがキャンセルまたはやり直しできるように
+5. **アクションを確認:** 実行前にまとめを表示
 
-## Common Patterns
+## よくあるパターン
 
-### Pattern: Feature Selection
+### パターン: 機能選択
 
 ```markdown
 Use AskUserQuestion:
@@ -828,7 +828,7 @@ Options:
   - Caching
 ```
 
-### Pattern: Environment Configuration
+### パターン: 環境設定
 
 ```markdown
 Use AskUserQuestion:
@@ -841,7 +841,7 @@ Options:
   - Production (Live environment)
 ```
 
-### Pattern: Priority Selection
+### パターン: 優先度選択
 
 ```markdown
 Use AskUserQuestion:
@@ -855,7 +855,7 @@ Options:
   - Low (Nice to have)
 ```
 
-### Pattern: Scope Selection
+### パターン: スコープ選択
 
 ```markdown
 Use AskUserQuestion:
@@ -868,11 +868,11 @@ Options:
   - Entire project (Full codebase scan)
 ```
 
-## Combining Arguments and Questions
+## 引数と質問の組み合わせ
 
-### Use Both Appropriately
+### 両方を適切に使用
 
-**Arguments for known values:**
+**既知の値には引数:**
 ```markdown
 ---
 argument-hint: [project-name]
@@ -886,7 +886,7 @@ Now gather additional configuration...
 Use AskUserQuestion for options that require explanation.
 ```
 
-**Questions for complex choices:**
+**複雑な選択には質問:**
 ```markdown
 Project name from argument: $1
 
@@ -898,23 +898,23 @@ Now use AskUserQuestion to choose:
 These require explanation, so questions work better than arguments.
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
-**Questions not appearing:**
-- Verify AskUserQuestion in allowed-tools
-- Check question format is correct
-- Ensure options array has 2-4 items
+**質問が表示されない場合:**
+- allowed-tools に AskUserQuestion があるか確認
+- 質問のフォーマットが正しいか確認
+- オプション配列が 2-4 項目か確認
 
-**User can't make selection:**
-- Check option labels are clear
-- Verify descriptions are helpful
-- Consider if too many options
-- Ensure multiSelect setting is correct
+**ユーザーが選択できない場合:**
+- オプションのラベルが明確か確認
+- 説明が有用か確認
+- オプションが多すぎないか検討
+- multiSelect の設定が正しいか確認
 
-**Flow feels confusing:**
-- Reduce number of questions
-- Group related questions
-- Add explanation between stages
-- Show progress through workflow
+**フローが分かりにくい場合:**
+- 質問の数を減らす
+- 関連する質問をグループ化
+- ステージ間に説明を追加
+- ワークフロー内の進捗を表示
 
-With AskUserQuestion, commands become interactive wizards that guide users through complex decisions while maintaining the clarity that simple arguments provide for straightforward inputs.
+AskUserQuestion を使えば、コマンドはインタラクティブなウィザードとなり、ユーザーを複雑な判断に導きつつ、単純な入力には引数の明確さを維持できる。

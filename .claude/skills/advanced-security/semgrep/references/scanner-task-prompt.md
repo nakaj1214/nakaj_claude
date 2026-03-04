@@ -1,8 +1,8 @@
-# Scanner Subagent Task Prompt
+# スキャナーサブエージェント タスクプロンプト
 
-Use this prompt template when spawning scanner Tasks in Step 4. Use `subagent_type: Bash`.
+ステップ 4 でスキャナー Task を生成する際に、このプロンプトテンプレートを使用する。`subagent_type: Bash` を使用。
 
-## Template
+## テンプレート
 
 ```
 You are a Semgrep scanner for [LANGUAGE_CATEGORY].
@@ -49,18 +49,18 @@ Report:
 - [If Pro] Note any cross-file findings detected
 ```
 
-## Variable Substitutions
+## 変数の置換表
 
-| Variable | Description | Example |
+| 変数 | 説明 | 例 |
 |----------|-------------|---------|
-| `[LANGUAGE_CATEGORY]` | Language group being scanned | Python, JavaScript, Docker |
-| `[LANGUAGE]` | Specific language | Python, TypeScript, Go |
-| `[OUTPUT_DIR]` | Results directory with run number | semgrep-results-001 |
-| `[PRO_AVAILABLE]` | Whether Pro engine is available | true, false |
-| `[RULESET]` | Semgrep ruleset identifier | p/python, https://github.com/... |
-| `[TARGET]` | Directory to scan | . (current dir) |
+| `[LANGUAGE_CATEGORY]` | スキャン対象の言語グループ | Python, JavaScript, Docker |
+| `[LANGUAGE]` | 具体的な言語 | Python, TypeScript, Go |
+| `[OUTPUT_DIR]` | 実行番号付きの結果ディレクトリ | semgrep-results-001 |
+| `[PRO_AVAILABLE]` | Pro エンジンが利用可能かどうか | true, false |
+| `[RULESET]` | Semgrep ルールセット識別子 | p/python, https://github.com/... |
+| `[TARGET]` | スキャン対象ディレクトリ | . (カレントディレクトリ) |
 
-## Example: Python Scanner Task
+## 使用例: Python スキャナータスク
 
 ```
 You are a Semgrep scanner for Python.

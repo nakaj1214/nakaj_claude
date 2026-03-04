@@ -1,4 +1,4 @@
-"""Load environment variables with fallback to .claude/settings.json."""
+"""環境変数を読み込み、.claude/settings.json をフォールバックとして使用する。"""
 
 import json
 import os
@@ -9,7 +9,7 @@ _settings_env: dict | None = None
 
 
 def _strip_jsonc(text: str) -> str:
-    """Strip // comments and trailing commas from JSONC (JSON with Comments)."""
+    """JSONC（コメント付き JSON）から // コメントと末尾カンマを除去する。"""
     # Remove // comments (but not inside strings)
     result = re.sub(r'(?<!["\w:])//.*', "", text)
     # Remove trailing commas before } or ]
@@ -18,7 +18,7 @@ def _strip_jsonc(text: str) -> str:
 
 
 def _load_settings_env() -> dict:
-    """Load env section from .claude/settings.json as fallback for missing env vars."""
+    """未設定の環境変数のフォールバックとして .claude/settings.json の env セクションを読み込む。"""
     candidates = [
         Path(os.environ.get("CLAUDE_PROJECT_DIR", "")) / ".claude/settings.json",
         Path(__file__).resolve().parent.parent.parent / "settings.json",
@@ -36,7 +36,7 @@ def _load_settings_env() -> dict:
 
 
 def get(key: str) -> str:
-    """Get env var from os.environ, falling back to settings.json env section."""
+    """os.environ から環境変数を取得し、なければ settings.json の env セクションにフォールバックする。"""
     global _settings_env
     if _settings_env is None:
         _settings_env = _load_settings_env()

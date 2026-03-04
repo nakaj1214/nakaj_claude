@@ -1,10 +1,10 @@
 ---
 name: jquery-interactions
 description: >
-  Implements jQuery-based user interactions including animations, AJAX calls, event handling,
-  and form interactions for Laravel backends. Use when implementing button clicks, modal toggling,
-  fade/slide animations, AJAX form submission, scroll events, dynamic content loading,
-  or any jQuery frontend interaction with a PHP/Laravel backend.
+  Laravel バックエンド向けの jQuery ベースのユーザーインタラクションを実装する。
+  アニメーション、AJAX 通信、イベントハンドリング、フォーム操作を含む。
+  ボタンクリック、モーダル切替、フェード/スライドアニメーション、AJAX フォーム送信、
+  スクロールイベント、動的コンテンツ読み込み、PHP/Laravel との jQuery フロントエンド連携に使用する。
 ---
 
 # jQuery インタラクション・AJAX

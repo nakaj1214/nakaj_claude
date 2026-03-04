@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(codex exec:*)"
+      "Bash(codex exec:*)",
+      "Bash(ls -la \"c:\\\\Users\\\\nakashima\\\\Desktop\\\\nakaj_claude\\\\.claude\"\" | grep -E \"^d \")",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ]
   }
 }

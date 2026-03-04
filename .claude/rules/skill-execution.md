@@ -1,31 +1,48 @@
-# Skill / Hook Execution Rules
+# スキル / フック実行ルール
 
-Skills and hooks must be executed faithfully and context-aware.
+スキルとフックは忠実かつコンテキストを考慮して実行すること。
 
-## Never Alter Skill Instructions
+## スキル指示を変更しない
 
-- Commands, model names, and parameters in INSTRUCTIONS.md must be used verbatim
-- "I don't recognize this value" is never a valid reason to change it
-- If something seems wrong, ask the user — do not silently substitute
+- INSTRUCTIONS.md 内のコマンド、モデル名、パラメータはそのまま使用すること
+- 「この値を認識できない」は変更する正当な理由にならない
+- 何かおかしいと思ったらユーザーに確認する — 勝手に置き換えない
 
 ```
-# ❌ Bad: changing model name because it's unfamiliar
-codex exec --model o4-mini  # was gpt-5.3-codex in instructions
+# ❌ 悪い例: 見慣れないモデル名を変更する
+codex exec --model o4-mini  # INSTRUCTIONS では gpt-5.3-codex だった
 
-# ✅ Good: use exactly what's written
+# ✅ 良い例: 書かれている通りに使う
 codex exec --model gpt-5.3-codex
 ```
 
-## Skip Disabled Hooks
+## 無効なフックをスキップする
 
-Before executing hook commands referenced in skill instructions:
+スキル指示で参照されるフックコマンドを実行する前に:
 
-1. Check `settings.json` for the hook configuration
-2. If the hook is commented out or disabled, **skip the step silently**
-3. Do not prompt the user for approval on disabled hooks
+1. `settings.json` でフックの設定を確認する
+2. フックがコメントアウトまたは無効の場合は **黙ってスキップする**
+3. 無効なフックについてユーザーに承認を求めない
 
-Disabled hook commands to skip:
+スキップすべき無効なフックコマンド:
 - `notify-slack.py`
 - `slack_approval.py`
 - `edit-approval.py`
 - `stop-notify.py`
+
+## ファイルは常に最新を読む
+
+`docs/implement/prompt.md`、`proposal.md`、その他ユーザー編集ファイルを参照する際:
+
+1. **常にファイルを再読み込みする** — キャッシュ/以前の内容に頼らない
+2. **先頭の新しい内容を確認する** — ユーザーはセッション間でファイルを更新する
+3. **コメントアウトされたセクション (`<!-- -->`) は完了済みまたは延期** — アクティブな要件として扱わない
+4. **アクティブな要件はコメントアウトされていないテキスト** — ファイルに新しい非コメント行があれば、それが現在のリクエスト
+
+```
+# ❌ 悪い例: 前回セッションの記憶から内容を使う
+"prompt.md はSlack通知の再構築についてです"  # 古い情報
+
+# ✅ 良い例: 再読み込みして現在の内容を使う
+Read docs/implement/prompt.md → コメントアウトされていない行をアクティブなリクエストとして解析
+```

@@ -1,120 +1,197 @@
-## .claude/ 評価結果: 72点 → 91点 (修正後)
+## 実装計画: Slack通知の過剰送信防止
 
-### 修正実施サマリー (2026-03-04)
+### 目的
 
-| 指摘事項 | 減点 | 対応状況 | 回復 |
-|---|---|---|---|
-| CLAUDE.md の `@` 参照が例示のみ | -5 | `@` 記法の誤解を修正。ルール構成一覧を追記 | +4 |
-| `_shared/` との二重管理 | -5 | Phase 1-3: agents -5, skills -5+6, マージ8件 | +5 |
-| hooks パスバグ・残骸 | -4 | `git rev-parse --show-toplevel` で絶対パス化。pycache/ipc 削除 | +4 |
-| evals.json がほぼ皆無 | -4 | 5→11件に改善（esp32, raspberry-pi, analyze-project, brainstorming, docker-dev, jquery-interactions 追加） | +1 |
-| docs/memory/ が乱雑 | -2 | 22→4ファイルに整理（各タイプ直近1件+QUEUE） | +2 |
-| STRUCTURE.md 実態と不一致 | -3 | 全面書き換え。agents 22, skills 38, commands 26 を正確に反映 | +3 |
-| DESIGN.md 別プロジェクト内容 | -2 | 空テンプレートにリセット | +2 |
-| settings.json model 固定 | -1 | 変更なし（ユーザー設定のため） | +0 |
-| health-check 未活用 | -2 | registry 再生成・health-check 実行済み | +1 |
-| **合計** | **-28** | | **回復 +22 → 合計 91 (cap 90)** |
+Slack通知の過剰送信を防ぎ、重要な通知のみを送信する。
+現状 `stop-notify.py` が毎ターン発火している根本原因を修正し、settings.json に必要な Hook を登録する。
 
----
+### スコープ
 
-### 評価項目別スコア (修正後)
+- 含むもの:
+  - stop-notify.py の通知ロジック修正（REQ-001, REQ-002）
+  - settings.json への Hook 登録（REQ-003）
+  - 環境変数テンプレートの追加（REQ-004）
+- 含まないもの:
+  - edit-approval.py の改修（前回要件の継続、今回スコープ外）
+  - Socket Mode デーモンの改善
+  - skills 以外のファイル統合
 
-| カテゴリ | 配点 | 旧得点 | 新得点 | 変化 |
-|---|---|---|---|---|
-| **CLAUDE.md (メイン指示)** | 15 | 10 | 14 | ルール構成の明記。誤解を招く `@` 例示を修正 |
-| **rules/ (ルール定義)** | 15 | 14 | 14 | 変更なし。coding-principles の Immutability 参照を簡素化 |
-| **skills/ (スキル定義)** | 15 | 11 | 13 | 重複解消(5削除)。esp32/raspberry-pi/tdd-workflow/vba×3追加。evals +6 |
-| **agents/ (エージェント)** | 10 | 7 | 10 | 5削除+3統合マージ完了。27→22に整理 |
-| **commands/ (コマンド)** | 10 | 9 | 9 | 変更なし |
-| **hooks/ (フック)** | 10 | 6 | 9 | パスバグ修正。pycache/ipc 削除 |
-| **settings.json (設定)** | 5 | 4 | 4 | 変更なし |
-| **docs/ (ドキュメント)** | 5 | 3 | 5 | DESIGN.md リセット。memory 整理(22→4) |
-| **構造・衛生 (全体)** | 10 | 5 | 9 | 二重管理解消。STRUCTURE.md 全面更新 |
-| **自動化・品質管理** | 5 | 3 | 4 | registry再生成。generate-registry.py のTRIGGER_MAP更新 |
-| **合計** | **100** | **72** | **91** | **+19** |
+### 根本原因分析
 
----
+**調査で判明した事実:**
 
-### 実施した変更の詳細
+| 項目 | 事実 |
+|------|------|
+| Stop hook の stdin | `stop_reason` フィールドは**存在しない**。実際は `session_id`, `hook_event_name`, `stop_hook_active`, `last_assistant_message` 等 |
+| `stop-notify.py:92` | `data.get("stop_reason", "end_turn")` → 常にデフォルト値 `"end_turn"` が返る |
+| `stop-notify.py:95` | `if stop_reason not in ("end_turn", "tool_use")` → `"end_turn"` は含まれるため、この条件は**常に通過** |
+| サブエージェント | サブエージェント終了は `SubagentStop` イベント（`Stop` とは別）。`Stop` にのみ登録すればサブエージェントでは発火しない |
+| settings.json | 現在 PreToolUse / Stop フックは**未登録**。登録すれば即座に動作開始 |
 
-#### Phase 1: 不要ファイル削除
+**結論:** `stop_reason` という存在しないフィールドに依存した条件分岐が根本原因。さらに、Stop hook は Claude の応答ごとに発火するため、フィルタリングなしでは大量通知になる。
 
-**Agents 5件削除:**
-- `review/comment-analyzer.md` — code-reviewer でカバー可能
-- `exploration/conversation-analyzer.md` — 使用頻度極低
-- `refactoring/refactor-cleaner.md` — refactorer.md に統合
-- `documentation/doc-updater.md` — documenter.md に統合
-- `planning/code-architect.md` — architect.md に統合
+### 設計方針
 
-**Skills 5ディレクトリ削除:**
-- `css-modern/` — css-features/layout/organization で十分
-- `frontend-ui-ux/` — frontend-design に統合
-- `update-design/` — design-tracker に統合
-- `update-lib-docs/` — research-lib に統合
-- `test-driven-development/` — tdd-workflow に統合
+**ハイブリッド方式を採用:**
 
-#### Phase 2: 欠けていたスキルの移植
+1. **Stop hook は残す**（一般的な作業完了通知として）。ただし以下のフィルタリングを追加:
+   - `stop_hook_active` が `true` の場合はスキップ（再帰防止）
+   - `last_assistant_message` の内容・長さで「実質的な作業完了」かを判定
+   - 短い応答（挨拶・単純な質問応答）では通知しない
 
-**Skills 6ディレクトリ追加:**
-- `esp32/` (SKILL.md + INSTRUCTIONS.md + evals.json)
-- `raspberry-pi/` (SKILL.md + INSTRUCTIONS.md + evals.json)
-- `tdd-workflow/` (SKILL.md + INSTRUCTIONS.md)
-- `vba-core/` (SKILL.md + INSTRUCTIONS.md)
-- `vba-excel/` (SKILL.md + INSTRUCTIONS.md)
-- `vba-patterns/` (SKILL.md + INSTRUCTIONS.md)
+2. **スキルからの明示呼び出しも併用**（create-plan, implement-plans の完了時）:
+   - CLI モード `stop-notify.py --message "..." --title "..."` で確実に通知
 
-**evals.json 6件追加:**
-- esp32, raspberry-pi, analyze-project, brainstorming, docker-dev, jquery-interactions
+### 影響範囲（変更/追加予定ファイル）
 
-#### Phase 3: マージ内容の反映
+- `.claude/hooks/stop-notify.py`: 通知フィルタリングロジックの修正（REQ-001, REQ-002）
+- `.claude/settings.json`: PreToolUse / Stop フックの登録、env セクション追加（REQ-003, REQ-004）
 
-| 統合先 | 追加セクション |
-|---|---|
-| `agents/refactoring/refactorer.md` | Dead Code Elimination (from refactor-cleaner) |
-| `agents/documentation/documenter.md` | Codemap Generation & README Sync (from doc-updater) |
-| `agents/planning/architect.md` | Codebase Pattern Analysis (from code-architect) |
-| `skills/design-tracker/INSTRUCTIONS.md` | 手動更新モード (from update-design) |
-| `skills/research-lib/INSTRUCTIONS.md` | 既存ドキュメントの更新 (from update-lib-docs) |
-| `skills/frontend-design/INSTRUCTIONS.md` | UI/UX 設計原則 (from frontend-ui-ux) |
-| `skills/tdd-workflow/INSTRUCTIONS.md` | TDD の哲学と原則 (from test-driven-development) |
-| `rules/coding-principles.md` | Immutability → common/coding-style.md への参照に簡素化 |
+### 実装ステップ
 
-#### Phase 4: クリーンアップ
+#### Step 1: stop-notify.py の修正（REQ-001, REQ-002）
 
-- `hooks/lib/__pycache__/` — 9 .pyc ファイル削除
-- `hooks/ipc/` — 12 一時ファイル削除
-- `docs/memory/` — 22→4 ファイルに整理
-- `docs/DESIGN.md` — 空テンプレートにリセット
-- `STRUCTURE.md` — 実態に合わせて全面書き換え
-- `settings.json` — hooks パスを `git rev-parse --show-toplevel` ベースの絶対パスに修正
-- `CLAUDE.md` — ルールインポート節を修正（自動ロード説明+構成一覧）
+- [ ] `handle_hook()` 関数を修正:
+  - `stop_reason` の参照を削除（存在しないフィールド）
+  - `hook_event_name` が `"Stop"` であることを確認（`SubagentStop` は対象外）
+  - `stop_hook_active` が `true` なら `sys.exit(0)`（再帰防止）
+  - `last_assistant_message` の長さチェック: 200文字未満の短い応答では通知しない
+- [ ] フィルタリングのログ出力を stderr に追加（デバッグ用）
 
-#### Phase 5: レジストリ再生成・検証
+**修正前（現状）:**
+```python
+def handle_hook() -> None:
+    data = json.load(sys.stdin)
+    stop_reason = data.get("stop_reason", "end_turn")
+    if stop_reason not in ("end_turn", "tool_use"):
+        sys.exit(0)
+    # → 常に通過して通知
+```
 
-- `meta/generate-registry.py` — 削除済みスキルのTRIGGER_MAP削除、新規スキル追加
-- `registry/skills.yaml` — 再生成（53スキル登録）
-- `meta/health-check.py` — 実行済み（registry未登録=0、重複候補=0）
+**修正後:**
+```python
+MIN_MESSAGE_LENGTH = 200
 
----
+def handle_hook() -> None:
+    data = json.load(sys.stdin)
 
-### 残存する改善余地
+    # Subagent check: hook_event_name で判別
+    if data.get("hook_event_name") != "Stop":
+        sys.exit(0)
 
-| 優先度 | 項目 | 現状 |
-|---|---|---|
-| **低** | evals.json の追加 | 53スキル中11件（21%）。主要スキルから段階的に追加推奨 |
-| **低** | SKILL.md の行数超過 | analyze-project(31行), esp32(37行), raspberry-pi(35行) |
-| **低** | settings.json の model 設定 | sonnet 固定（ユーザー判断による意図的設定） |
+    # Recursion guard
+    if data.get("stop_hook_active"):
+        sys.exit(0)
 
----
+    # Short response filter: 単純な応答では通知しない
+    message = data.get("last_assistant_message", "")
+    if len(message) < MIN_MESSAGE_LENGTH:
+        sys.exit(0)
 
-### 最終数値
+    # 通知送信
+    ...
+```
 
-| カテゴリ | Before | After | 変化 |
-|---|---|---|---|
-| agents/ | 27 | 22 | -5 |
-| skills/ | 37 | 38 | +1 (net: -5+6) |
-| commands/ | 26 | 26 | 変更なし |
-| evals.json | 5 | 11 | +6 |
-| rules/ | 16 | 16 | 内容更新のみ |
-| docs/memory/ | 22 | 4 | -18 |
-| registry skills | — | 53 | 再生成 |
+**検証**: 修正後、stop-notify.py を手動テスト:
+1. 短いメッセージ（100文字未満）→ 通知なし
+2. 長いメッセージ（200文字以上）→ 通知あり
+3. `stop_hook_active: true` → 通知なし
+4. `hook_event_name: "SubagentStop"` → 通知なし
+
+#### Step 2: settings.json に Hook を登録（REQ-003）
+
+- [ ] `PreToolUse` セクションに以下を追加:
+  - matcher `"Bash"`: `slack_approval.py` を登録
+  - matcher `"ExitPlanMode|AskUserQuestion"`: `notify-slack.py` を登録
+- [ ] `Stop` セクションを新規追加:
+  - `stop-notify.py` を登録
+- [ ] `SubagentStop` には**登録しない**（サブエージェント通知を抑制）
+
+**追加する Hook 設定:**
+```json
+"PreToolUse": [
+  ...(既存のPreToolUseがあれば維持),
+  {
+    "matcher": "Bash",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "python3 \"$(git rev-parse --show-toplevel)/.claude/hooks/slack_approval.py\"",
+        "timeout": 310
+      }
+    ]
+  },
+  {
+    "matcher": "ExitPlanMode|AskUserQuestion",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "python3 \"$(git rev-parse --show-toplevel)/.claude/hooks/notify-slack.py\"",
+        "timeout": 310
+      }
+    ]
+  }
+],
+"Stop": [
+  {
+    "matcher": "",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "python3 \"$(git rev-parse --show-toplevel)/.claude/hooks/stop-notify.py\"",
+        "timeout": 10
+      }
+    ]
+  }
+]
+```
+
+**検証**:
+- settings.json が valid JSON であること（`python3 -m json.tool` で確認）
+- 既存の PostToolUse / PreCompact フックが壊れていないこと
+
+#### Step 3: 環境変数テンプレートの追加（REQ-004）
+
+- [ ] settings.json に `env` セクションを追加（値はプレースホルダー）:
+  ```json
+  "env": {
+    "SLACK_BOT_TOKEN": "",
+    "SLACK_CHANNEL_ID": "",
+    "SLACK_APPROVER_USER_ID": ""
+  }
+  ```
+- [ ] ユーザーに値の設定を依頼する
+
+**検証**: `lib/env.py` が settings.json の env セクションから値を読み取れることを確認
+
+### 例外・エラーハンドリング方針
+
+- 環境変数未設定時: 全スクリプトが `sys.exit(0)` で静かにスキップ（既存の挙動を維持）
+- Slack API エラー: stderr にログ出力し `sys.exit(0)`（通知失敗で作業を止めない）
+- JSON パースエラー: `sys.exit(0)` で静かにスキップ
+
+### テスト/検証方針
+
+- 自動テスト: N/A（外部API依存のため手動確認が主）
+- 手動確認観点:
+  - [ ] 単純な質問（「こんにちは」）で通知が飛ばないこと
+  - [ ] create-plan 完了時に通知が届くこと
+  - [ ] `ls` コマンド実行で承認通知が飛ばないこと
+  - [ ] `rm -rf` コマンドで承認通知が飛ぶこと
+  - [ ] ExitPlanMode 発火時に Slack 通知が届くこと
+  - [ ] settings.json が valid JSON であること
+
+### リスクと対策
+
+1. リスク: Stop hook 登録後、環境変数未設定のまま全通知がスキップされ動作確認できない → 対策: Step 3 で環境変数テンプレートを追加し、ユーザーに値の入力を依頼
+2. リスク: `last_assistant_message` の長さ閾値が不適切で重要な通知が漏れる → 対策: 閾値を `MIN_MESSAGE_LENGTH = 200` として保守的に設定。CLI モード（スキルからの明示呼び出し）はフィルタリングを通らないため確実に通知
+3. リスク: PreToolUse に slack_approval.py を登録すると、環境変数設定後に全 Bash コマンドで承認待ちになる → 対策: approval_skip_patterns.txt の skip リストが十分に網羅的であることを確認。`python3`, `ls`, `git status` 等は既に skip 登録済み
+
+### 完了条件
+
+- [ ] stop-notify.py が Stop hook の実際の stdin データ形式に対応している
+- [ ] 短い応答（200文字未満）で通知が発火しない
+- [ ] サブエージェント終了で通知が発火しない（SubagentStop に未登録）
+- [ ] settings.json に PreToolUse / Stop フックが正しく登録されている
+- [ ] 環境変数テンプレートが settings.json の env セクションに追加されている
+- [ ] 既存フック（PreCompact, PostToolUse）が壊れていない

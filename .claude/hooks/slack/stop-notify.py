@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 """
-Stop hook: Claude が応答を完了した際に Slack へ進捗通知を送信する。
+Stop hook: Claude が作業を完了した際に Slack へ完了通知を送信する。
+
+Filters:
+  - hook_event_name must be "Stop" (SubagentStop is ignored)
+  - stop_hook_active must be false (recursion guard)
+  - last_assistant_message must be >= MIN_MESSAGE_LENGTH chars (skip short responses)
 
 Environment variables (set in .claude/settings.json env section):
   SLACK_BOT_TOKEN   - Slack Bot Token (xoxb-...) [preferred]
   SLACK_CHANNEL_ID  - Slack Channel ID (required when using Bot Token)
   SLACK_WEBHOOK_URL - Slack Incoming Webhook URL [fallback]
 
-Usage (hook mode):
-  echo '{"stop_reason": "end_turn"}' | python3 stop-notify.py
+Usage (hook mode — called by Claude Code Stop event):
+  echo '{"hook_event_name":"Stop","last_assistant_message":"..."}' | python3 stop-notify.py
 
-Usage (direct):
+Usage (direct — called from skills):
   python3 stop-notify.py --message "text" [--title "title"]
 """
 
@@ -22,8 +27,12 @@ import urllib.error
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.env import get as _env
+
+# Minimum message length to trigger notification (skip greetings / short Q&A)
+MIN_MESSAGE_LENGTH = 200
 
 WEBHOOK_URL = _env("SLACK_WEBHOOK_URL")
 BOT_TOKEN = _env("SLACK_BOT_TOKEN")
@@ -83,20 +92,40 @@ def send_slack(message: str, title: str = "") -> bool:
 
 
 def handle_hook() -> None:
-    """Handle Stop hook input from Claude Code."""
+    """Handle Stop hook input from Claude Code.
+
+    Filters applied (REQ-001, REQ-002):
+    1. hook_event_name must be "Stop" — SubagentStop is ignored
+    2. stop_hook_active must be false — prevents recursion
+    3. last_assistant_message length >= MIN_MESSAGE_LENGTH — skips short responses
+    """
     try:
         data = json.load(sys.stdin)
     except json.JSONDecodeError:
         sys.exit(0)
 
-    stop_reason = data.get("stop_reason", "end_turn")
+    # Filter 1: Only fire on main session Stop (not SubagentStop)
+    event_name = data.get("hook_event_name", "")
+    if event_name != "Stop":
+        print(f"[stop-notify] skip: event={event_name} (not Stop)", file=sys.stderr)
+        sys.exit(0)
 
-    # stop_reason が end_turn のときのみ通知（エラーや中断は除外）
-    if stop_reason not in ("end_turn", "tool_use"):
+    # Filter 2: Recursion guard
+    if data.get("stop_hook_active"):
+        print("[stop-notify] skip: stop_hook_active=true", file=sys.stderr)
+        sys.exit(0)
+
+    # Filter 3: Short response filter (greetings, simple Q&A)
+    assistant_message = data.get("last_assistant_message", "")
+    if len(assistant_message) < MIN_MESSAGE_LENGTH:
+        print(
+            f"[stop-notify] skip: message too short ({len(assistant_message)}<{MIN_MESSAGE_LENGTH})",
+            file=sys.stderr,
+        )
         sys.exit(0)
 
     now = datetime.now().strftime("%H:%M")
-    message = f"作業が完了しました。結果を確認してください。"
+    message = "作業が完了しました。結果を確認してください。"
 
     send_slack(
         message=message,

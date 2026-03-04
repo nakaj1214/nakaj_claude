@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: Suggest Codex review after significant implementations.
+PostToolUse フック: 大規模な実装後に Codex レビューを提案する。
 
-Tracks file changes and suggests code review when substantial
-code has been written.
+ファイル変更を追跡し、大量のコードが書かれた際にコードレビューを提案する。
 """
 
 import json
 import os
 import sys
+import tempfile
 
-# Input validation constants
+# 入力バリデーション定数
 MAX_PATH_LENGTH = 4096
 MAX_CONTENT_LENGTH = 1_000_000
 
 
 def validate_input(file_path: str, content: str) -> bool:
-    """Validate input for security."""
+    """セキュリティのため入力をバリデーションする。"""
     if not file_path or len(file_path) > MAX_PATH_LENGTH:
         return False
     if len(content) > MAX_CONTENT_LENGTH:
@@ -27,16 +27,16 @@ def validate_input(file_path: str, content: str) -> bool:
     return True
 
 
-# State file to track changes in this session
-STATE_FILE = "/tmp/claude-code-implementation-state.json"
+# セッション内の変更を追跡する状態ファイル（クロスプラットフォーム一時ディレクトリ）
+STATE_FILE = os.path.join(tempfile.gettempdir(), "claude-code-implementation-state.json")
 
-# Thresholds for suggesting review
+# レビュー提案のしきい値
 MIN_FILES_FOR_REVIEW = 3
 MIN_LINES_FOR_REVIEW = 100
 
 
 def load_state() -> dict:
-    """Load session state."""
+    """セッション状態を読み込む。"""
     try:
         if os.path.exists(STATE_FILE):
             with open(STATE_FILE) as f:
@@ -47,7 +47,7 @@ def load_state() -> dict:
 
 
 def save_state(state: dict):
-    """Save session state."""
+    """セッション状態を保存する。"""
     try:
         with open(STATE_FILE, "w") as f:
             json.dump(state, f)
@@ -56,7 +56,7 @@ def save_state(state: dict):
 
 
 def count_lines(content: str) -> int:
-    """Count meaningful lines in content."""
+    """コンテンツ内の意味のある行数をカウントする。"""
     lines = content.split("\n")
     # Count non-empty, non-comment lines
     meaningful = [l for l in lines if l.strip() and not l.strip().startswith("#")]
@@ -64,7 +64,7 @@ def count_lines(content: str) -> int:
 
 
 def should_suggest_review(state: dict) -> tuple[bool, str]:
-    """Check if we should suggest a code review."""
+    """コードレビューを提案すべきか判定する。"""
     if state.get("review_suggested"):
         return False, ""
 

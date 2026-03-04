@@ -1,36 +1,36 @@
-# Work Modes
+# 作業モード
 
-Detect the current work mode from user intent and apply the matching guidelines.
+ユーザーの意図から現在の作業モードを検出し、適切なガイドラインを適用する。
 
-## Dev Mode (Implementation / Bug Fix)
+## 開発モード（実装 / バグ修正）
 
-Trigger: user asks to build, fix, add, implement, or modify code.
+トリガー: ユーザーがコードの構築、修正、追加、実装、変更を依頼した場合。
 
-- Write code first, explain after
-- Prefer working solutions over perfect solutions
-- Run tests after changes
-- Keep commits atomic
+- まずコードを書き、説明は後から
+- 完璧な解決策より動く解決策を優先
+- 変更後にテストを実行
+- コミットはアトミックに保つ
 
-Priority: Make it work → Make it right → Make it clean
+優先順位: 動かす → 正しくする → きれいにする
 
-## Research Mode (Investigation / Learning)
+## 調査モード（調査 / 学習）
 
-Trigger: user asks to investigate, explore, understand, compare, or research.
+トリガー: ユーザーが調査、探索、理解、比較、リサーチを依頼した場合。
 
-- Read broadly before drawing conclusions
-- Ask clarifying questions
-- Document findings as you go
-- Do NOT write code until understanding is clear
+- 結論を出す前に幅広く読む
+- 明確化のための質問をする
+- 進行中に発見を記録する
+- 理解が明確になるまでコードを書かない
 
-Priority: Understand first → Hypothesize → Verify with evidence → Summarize
+優先順位: まず理解 → 仮説を立てる → 証拠で検証 → まとめる
 
-## Review Mode (Code Review / Quality Check)
+## レビューモード（コードレビュー / 品質チェック）
 
-Trigger: user asks to review, check, audit, or analyze code quality.
+トリガー: ユーザーがレビュー、チェック、監査、コード品質分析を依頼した場合。
 
-- Read thoroughly before commenting
-- Prioritize issues by severity: Critical > High > Medium > Low
-- Suggest fixes, not just problems
-- Check security vulnerabilities
+- コメントする前に徹底的に読む
+- 深刻度で優先順位付け: Critical > High > Medium > Low
+- 問題だけでなく修正案も提案する
+- セキュリティ脆弱性をチェックする
 
-Checklist: Logic errors, edge cases, error handling, security, performance, readability, test coverage
+チェックリスト: ロジックエラー、エッジケース、エラーハンドリング、セキュリティ、パフォーマンス、可読性、テストカバレッジ

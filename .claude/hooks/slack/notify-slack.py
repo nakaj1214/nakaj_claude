@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook: Slack-based approval for AskUserQuestion / ExitPlanMode.
+PreToolUse フック: AskUserQuestion / ExitPlanMode の Slack ベース承認。
 
-Sends a Slack message with allow/deny buttons when Claude Code needs user
-approval, then waits for the response via Socket Mode IPC or polling.
+Claude Code がユーザー承認を必要とする際に、許可/拒否ボタン付きの Slack メッセージを送信し、
+Socket Mode IPC またはポーリングで応答を待つ。
 
-Required environment variables (set in .claude/settings.json env section):
+必須環境変数（.claude/settings.json の env セクションで設定）:
   SLACK_BOT_TOKEN        - Slack Bot Token (xoxb-...)
   SLACK_CHANNEL_ID       - Slack Channel ID (C0XXXXXXX)
-  SLACK_APPROVER_USER_ID - Approver's Slack user ID (U0XXXXXXX, NOT Bot ID)
+  SLACK_APPROVER_USER_ID - 承認者の Slack ユーザー ID (U0XXXXXXX, Bot ID ではない)
 
-Optional:
-  SLACK_WEBHOOK_URL      - Incoming Webhook URL (fallback for CLI mode only)
+オプション:
+  SLACK_WEBHOOK_URL      - Incoming Webhook URL（CLI モードのフォールバック専用）
 
-Exit codes (hook mode):
-  0: Allow (tool execution continues)
-  2: Block (tool execution is blocked)
+終了コード（フックモード）:
+  0: 許可（ツール実行を継続）
+  2: ブロック（ツール実行を阻止）
 
-Usage (CLI mode — notification only, no approval):
+使い方（CLI モード — 通知のみ、承認なし）:
   python3 notify-slack.py --message "text" [--title "title"]
 """
 
@@ -37,7 +37,8 @@ POLL_INTERVAL_SECONDS = 5
 POLL_MAX_COUNT = 60  # 5s * 60 = max 5 minutes
 
 # --- Load env with settings.json fallback ---
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.env import get as _env
 
 # Environment variables
@@ -48,11 +49,7 @@ APPROVER_USER_ID = _env("SLACK_APPROVER_USER_ID")
 
 # File paths
 PROJECT_DIR = _env("CLAUDE_PROJECT_DIR")
-_BASE = (
-    Path(PROJECT_DIR)
-    if PROJECT_DIR
-    else Path(__file__).resolve().parent.parent.parent
-)
+_BASE = Path(PROJECT_DIR) if PROJECT_DIR else _HOOKS_DIR.parent.parent
 
 # Socket Mode IPC
 IPC_DIR = _BASE / ".claude/hooks/ipc"
@@ -420,6 +417,10 @@ def handle_hook() -> None:
     if tool_name == "ExitPlanMode":
         notification_text = build_exit_plan_text()
     else:  # AskUserQuestion
+        questions = tool_input.get("questions", [])
+        if not questions:
+            _log("no questions in AskUserQuestion, skipping")
+            sys.exit(0)
         notification_text = build_ask_user_question_text(tool_input)
 
     _log(f"starting approval flow, daemon_running={is_daemon_running()}")

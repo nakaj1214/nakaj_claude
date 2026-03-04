@@ -1,9 +1,9 @@
 ---
 name: analyze-project
 description: >
-  Analyzes an existing codebase to extract coding conventions, naming rules,
-  architecture patterns, and domain-specific workflows, then generates
-  corresponding rules/ and skills/ files tailored to that project.
+  既存のコードベースを解析し、コーディング規約・命名規則・アーキテクチャパターン・
+  ドメイン固有のワークフローを抽出した上で、そのプロジェクトに合わせた
+  rules/ および skills/ ファイルを自動生成する。
 triggers:
   - "プロジェクトを解析"
   - "コーディングルールを学習"

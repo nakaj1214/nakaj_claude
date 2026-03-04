@@ -1,12 +1,10 @@
 ---
 name: codeql
 description: >-
-  Runs CodeQL static analysis for security vulnerability detection
-  using interprocedural data flow and taint tracking. Applicable when
-  finding vulnerabilities, running a security scan, performing a security
-  audit, running CodeQL, building a CodeQL database, selecting query
-  rulesets, creating data extension models, or processing CodeQL SARIF
-  output. NOT for writing custom QL queries or CI/CD pipeline setup.
+  手続き間データフロー解析とテイント追跡を用いた CodeQL 静的解析でセキュリティ脆弱性を検出する。
+  脆弱性の発見、セキュリティスキャンの実行、セキュリティ監査、CodeQL データベースの構築、
+  クエリルールセットの選択、データ拡張モデルの作成、CodeQL SARIF 出力の処理に使用する。
+  カスタム QL クエリの作成や CI/CD パイプラインのセットアップには使用しない。
 allowed-tools:
   - Bash
   - Read

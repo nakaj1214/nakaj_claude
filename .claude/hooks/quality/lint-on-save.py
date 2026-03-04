@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Post-tool hook: Run formatter and type checker on Python files after Edit/Write.
+PostToolUse フック: Edit/Write 後に Python ファイルのフォーマッターと型チェッカーを実行する。
 
-Triggered after Edit or Write tools modify files.
-Runs ruff (format + lint) and ty (type check) on Python files.
+Edit または Write ツールがファイルを変更した後にトリガーされる。
+Python ファイルに対して ruff（フォーマット＋リント）と ty（型チェック）を実行する。
 """
 
 import json
@@ -11,12 +11,12 @@ import os
 import subprocess
 import sys
 
-# Input validation constants
+# 入力バリデーション定数
 MAX_PATH_LENGTH = 4096
 
 
 def validate_path(file_path: str) -> bool:
-    """Validate file path for security."""
+    """セキュリティのためファイルパスをバリデーションする。"""
     if not file_path or len(file_path) > MAX_PATH_LENGTH:
         return False
     # Check for path traversal
@@ -26,7 +26,7 @@ def validate_path(file_path: str) -> bool:
 
 
 def get_file_path() -> str | None:
-    """Extract file path from tool input."""
+    """ツール入力からファイルパスを抽出する。"""
     tool_input = os.environ.get("CLAUDE_TOOL_INPUT", "")
     if not tool_input:
         return None
@@ -39,12 +39,12 @@ def get_file_path() -> str | None:
 
 
 def is_python_file(path: str) -> bool:
-    """Check if the file is a Python file."""
+    """Python ファイルかどうかを判定する。"""
     return path.endswith(".py")
 
 
 def run_command(cmd: list[str], cwd: str) -> tuple[int, str, str]:
-    """Run a command and return (returncode, stdout, stderr)."""
+    """コマンドを実行し (returncode, stdout, stderr) を返す。"""
     try:
         result = subprocess.run(
             cmd,

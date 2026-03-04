@@ -1,9 +1,9 @@
 ---
 name: raspberry-pi
 description: >
-  Guides Raspberry Pi hardware development including GPIO control, I2C/SPI/UART
-  communication, Python scripting with RPi.GPIO and gpiozero, camera module usage,
-  systemd service setup, and SSH-based remote development workflows.
+  Raspberry Pi ハードウェア開発をガイドする。GPIO 制御、I2C/SPI/UART 通信、
+  RPi.GPIO と gpiozero による Python スクリプティング、カメラモジュールの使用、
+  systemd サービスのセットアップ、SSH ベースのリモート開発ワークフローを扱う。
 triggers:
   - "raspberry pi"
   - "raspberrypi"

@@ -1,9 +1,10 @@
 ---
 name: semgrep
-description: Run Semgrep static analysis scan on a codebase using parallel subagents. Automatically
-  detects and uses Semgrep Pro for cross-file analysis when available. Use when asked to scan
-  code for vulnerabilities, run a security audit with Semgrep, find bugs, or perform
-  static analysis. Spawns parallel workers for multi-language codebases and triage.
+description: >
+  並列サブエージェントを使用してコードベースに Semgrep 静的解析スキャンを実行する。
+  利用可能な場合は自動的に Semgrep Pro を検出しクロスファイル解析に使用する。
+  脆弱性スキャン、Semgrep によるセキュリティ監査、バグ検出、静的解析の依頼時に使用する。
+  多言語コードベースとトリアージ用に並列ワーカーを起動する。
 allowed-tools:
   - Bash
   - Read

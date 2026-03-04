@@ -1,38 +1,38 @@
-# Plugin-Specific Command Features Reference
+# プラグイン固有のコマンド機能リファレンス
 
-This reference covers features and patterns specific to commands bundled in Claude Code plugins.
+このリファレンスでは、Claude Code プラグインにバンドルされるコマンド固有の機能とパターンを扱う。
 
-## Table of Contents
+## 目次
 
-- [Plugin Command Discovery](#plugin-command-discovery)
-- [CLAUDE_PLUGIN_ROOT Environment Variable](#claude_plugin_root-environment-variable)
-- [Plugin Command Patterns](#plugin-command-patterns)
-- [Integration with Plugin Components](#integration-with-plugin-components)
-- [Validation Patterns](#validation-patterns)
+- [プラグインコマンドのディスカバリー](#プラグインコマンドのディスカバリー)
+- [CLAUDE_PLUGIN_ROOT 環境変数](#claude_plugin_root-環境変数)
+- [プラグインコマンドパターン](#プラグインコマンドパターン)
+- [プラグインコンポーネントとの統合](#プラグインコンポーネントとの統合)
+- [バリデーションパターン](#バリデーションパターン)
 
-## Plugin Command Discovery
+## プラグインコマンドのディスカバリー
 
-### Auto-Discovery
+### 自動検出
 
-Claude Code automatically discovers commands in plugins using the following locations:
+Claude Code はプラグイン内のコマンドを以下のロケーションから自動検出する:
 
 ```
 plugin-name/
-├── commands/              # Auto-discovered commands
+├── commands/              # 自動検出されるコマンド
 │   ├── foo.md            # /foo (plugin:plugin-name)
 │   └── bar.md            # /bar (plugin:plugin-name)
-└── plugin.json           # Plugin manifest
+└── plugin.json           # プラグインマニフェスト
 ```
 
-**Key points:**
-- Commands are discovered at plugin load time
-- No manual registration required
-- Commands appear in `/help` with "(plugin:plugin-name)" label
-- Subdirectories create namespaces
+**重要なポイント:**
+- コマンドはプラグインロード時に検出される
+- 手動登録は不要
+- コマンドは `/help` で "(plugin:plugin-name)" ラベル付きで表示される
+- サブディレクトリが名前空間を作成する
 
-### Namespaced Plugin Commands
+### 名前空間付きプラグインコマンド
 
-Organize commands in subdirectories for logical grouping:
+論理的なグループ化のためにサブディレクトリでコマンドを整理する:
 
 ```
 plugin-name/
@@ -45,48 +45,48 @@ plugin-name/
         └── prod.md        # /prod (plugin:plugin-name:deploy)
 ```
 
-**Namespace behavior:**
-- Subdirectory name becomes namespace
-- Shown as "(plugin:plugin-name:namespace)" in `/help`
-- Helps organize related commands
-- Use when plugin has 5+ commands
+**名前空間の動作:**
+- サブディレクトリ名が名前空間になる
+- `/help` で "(plugin:plugin-name:namespace)" として表示
+- 関連コマンドの整理に便利
+- プラグインに 5 つ以上のコマンドがある場合に使用
 
-### Command Naming Conventions
+### コマンドの命名規則
 
-**Plugin command names should:**
-1. Be descriptive and action-oriented
-2. Avoid conflicts with common command names
-3. Use hyphens for multi-word names
-4. Consider prefixing with plugin name for uniqueness
+**プラグインコマンド名は以下を満たすべき:**
+1. 説明的でアクション指向
+2. よくあるコマンド名との競合を避ける
+3. 複数語の名前にはハイフンを使用
+4. 一意性のためにプラグイン名のプレフィックスを検討
 
-**Examples:**
+**例:**
 ```
-Good:
-- /mylyn-sync          (plugin-specific prefix)
-- /analyze-performance (descriptive action)
-- /docker-compose-up   (clear purpose)
+良い例:
+- /mylyn-sync          (プラグイン固有のプレフィックス)
+- /analyze-performance (説明的なアクション)
+- /docker-compose-up   (明確な目的)
 
-Avoid:
-- /test               (conflicts with common name)
-- /run                (too generic)
-- /do-stuff           (not descriptive)
+避けるべき例:
+- /test               (よくある名前と競合)
+- /run                (汎用的すぎる)
+- /do-stuff           (説明的でない)
 ```
 
-## CLAUDE_PLUGIN_ROOT Environment Variable
+## CLAUDE_PLUGIN_ROOT 環境変数
 
-### Purpose
+### 目的
 
-`${CLAUDE_PLUGIN_ROOT}` is a special environment variable available in plugin commands that resolves to the absolute path of the plugin directory.
+`${CLAUDE_PLUGIN_ROOT}` はプラグインコマンドで利用可能な特別な環境変数で、プラグインディレクトリの絶対パスに解決される。
 
-**Why it matters:**
-- Enables portable paths within plugin
-- Allows referencing plugin files and scripts
-- Works across different installations
-- Essential for multi-file plugin operations
+**重要な理由:**
+- プラグイン内のポータブルなパスを実現
+- プラグインのファイルやスクリプトを参照可能
+- 異なるインストール先でも動作
+- マルチファイルプラグイン操作に不可欠
 
-### Basic Usage
+### 基本的な使い方
 
-Reference files within your plugin:
+プラグイン内のファイルを参照する:
 
 ```markdown
 ---
@@ -99,16 +99,16 @@ Run analysis: !`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js`
 Read template: @${CLAUDE_PLUGIN_ROOT}/templates/report.md
 ```
 
-**Expands to:**
+**展開結果:**
 ```
 Run analysis: !`node /path/to/plugins/plugin-name/scripts/analyze.js`
 
 Read template: @/path/to/plugins/plugin-name/templates/report.md
 ```
 
-### Common Patterns
+### よくあるパターン
 
-#### 1. Executing Plugin Scripts
+#### 1. プラグインスクリプトの実行
 
 ```markdown
 ---
@@ -121,7 +121,7 @@ Lint results: !`node ${CLAUDE_PLUGIN_ROOT}/bin/lint.js $1`
 Review the linting output and suggest fixes.
 ```
 
-#### 2. Loading Configuration Files
+#### 2. 設定ファイルの読み込み
 
 ```markdown
 ---
@@ -134,7 +134,7 @@ Configuration: @${CLAUDE_PLUGIN_ROOT}/config/deploy-config.json
 Deploy application using the configuration above for $1 environment.
 ```
 
-#### 3. Accessing Plugin Resources
+#### 3. プラグインリソースへのアクセス
 
 ```markdown
 ---
@@ -146,7 +146,7 @@ Use this template: @${CLAUDE_PLUGIN_ROOT}/templates/api-report.md
 Generate a report for @$1 following the template format.
 ```
 
-#### 4. Multi-Step Plugin Workflows
+#### 4. マルチステッププラグインワークフロー
 
 ```markdown
 ---
@@ -161,18 +161,18 @@ Step 3 - Execute: !`${CLAUDE_PLUGIN_ROOT}/bin/execute $1`
 Review results and report status.
 ```
 
-### Best Practices
+### ベストプラクティス
 
-1. **Always use for plugin-internal paths:**
+1. **プラグイン内部パスには常に使用する:**
    ```markdown
-   # Good
+   # 良い例
    @${CLAUDE_PLUGIN_ROOT}/templates/foo.md
 
-   # Bad
-   @./templates/foo.md  # Relative to current directory, not plugin
+   # 悪い例
+   @./templates/foo.md  # カレントディレクトリからの相対パス（プラグインからではない）
    ```
 
-2. **Validate file existence:**
+2. **ファイルの存在を検証する:**
    ```markdown
    ---
    description: Use plugin config if exists
@@ -185,44 +185,44 @@ Review results and report status.
    Otherwise, use defaults...
    ```
 
-3. **Document plugin file structure:**
+3. **プラグインのファイル構造をドキュメント化する:**
    ```markdown
    <!--
-   Plugin structure:
+   プラグイン構造:
    ${CLAUDE_PLUGIN_ROOT}/
-   ├── scripts/analyze.js  (analysis script)
-   ├── templates/          (report templates)
-   └── config/             (configuration files)
+   ├── scripts/analyze.js  (解析スクリプト)
+   ├── templates/          (レポートテンプレート)
+   └── config/             (設定ファイル)
    -->
    ```
 
-4. **Combine with arguments:**
+4. **引数と組み合わせる:**
    ```markdown
    Run: !`${CLAUDE_PLUGIN_ROOT}/bin/process.sh $1 $2`
    ```
 
-### Troubleshooting
+### トラブルシューティング
 
-**Variable not expanding:**
-- Ensure command is loaded from plugin
-- Check bash execution is allowed
-- Verify syntax is exact: `${CLAUDE_PLUGIN_ROOT}`
+**変数が展開されない場合:**
+- コマンドがプラグインから読み込まれていることを確認
+- bash 実行が許可されていることを確認
+- 構文が正確であることを確認: `${CLAUDE_PLUGIN_ROOT}`
 
-**File not found errors:**
-- Verify file exists in plugin directory
-- Check file path is correct relative to plugin root
-- Ensure file permissions allow reading/execution
+**ファイルが見つからないエラー:**
+- プラグインディレクトリにファイルが存在するか確認
+- プラグインルートからの相対パスが正しいか確認
+- ファイルの読み取り/実行権限を確認
 
-**Path with spaces:**
-- Bash commands automatically handle spaces
-- File references work with spaces in paths
-- No special quoting needed
+**スペースを含むパス:**
+- Bash コマンドは自動的にスペースを処理
+- ファイル参照もスペース付きパスで動作
+- 特別なクォーティングは不要
 
-## Plugin Command Patterns
+## プラグインコマンドパターン
 
-### Pattern 1: Configuration-Based Commands
+### パターン 1: 設定ベースのコマンド
 
-Commands that load plugin-specific configuration:
+プラグイン固有の設定を読み込むコマンド:
 
 ```markdown
 ---
@@ -240,11 +240,11 @@ Deploy to $1 environment using:
 Execute deployment and monitor progress.
 ```
 
-**When to use:** Commands that need consistent settings across invocations
+**使用場面:** 呼び出し間で一貫した設定が必要なコマンド
 
-### Pattern 2: Template-Based Generation
+### パターン 2: テンプレートベースの生成
 
-Commands that use plugin templates:
+プラグインテンプレートを使用するコマンド:
 
 ```markdown
 ---
@@ -262,11 +262,11 @@ Include:
 - Testing guidelines
 ```
 
-**When to use:** Standardized output generation
+**使用場面:** 標準化された出力の生成
 
-### Pattern 3: Multi-Script Workflow
+### パターン 3: マルチスクリプトワークフロー
 
-Commands that orchestrate multiple plugin scripts:
+複数のプラグインスクリプトを連携させるコマンド:
 
 ```markdown
 ---
@@ -285,11 +285,11 @@ Review all outputs and report:
 4. Recommended next steps
 ```
 
-**When to use:** Complex plugin workflows with multiple steps
+**使用場面:** 複数ステップを持つ複雑なプラグインワークフロー
 
-### Pattern 4: Environment-Aware Commands
+### パターン 4: 環境対応コマンド
 
-Commands that adapt to environment:
+環境に応じて動作を変えるコマンド:
 
 ```markdown
 ---
@@ -305,11 +305,11 @@ Deploy application using $1 environment configuration.
 Verify deployment and run smoke tests.
 ```
 
-**When to use:** Commands that behave differently per environment
+**使用場面:** 環境ごとに動作が異なるコマンド
 
-### Pattern 5: Plugin Data Management
+### パターン 5: プラグインデータ管理
 
-Commands that manage plugin-specific data:
+プラグイン固有のデータを管理するコマンド:
 
 ```markdown
 ---
@@ -325,13 +325,13 @@ Analyze @$1 and save results to cache:
 Store analysis for future reference and comparison.
 ```
 
-**When to use:** Commands that need persistent data storage
+**使用場面:** 永続的なデータストレージが必要なコマンド
 
-## Integration with Plugin Components
+## プラグインコンポーネントとの統合
 
-### Invoking Plugin Agents
+### プラグインエージェントの呼び出し
 
-Commands can trigger plugin agents using the Task tool:
+コマンドから Task ツールを使ってプラグインエージェントをトリガーできる:
 
 ```markdown
 ---
@@ -350,14 +350,14 @@ The agent will:
 Note: This uses the Task tool to launch the plugin's code-analyzer agent.
 ```
 
-**Key points:**
-- Agent must be defined in plugin's `agents/` directory
-- Claude will automatically use Task tool to launch agent
-- Agent has access to same plugin resources
+**重要なポイント:**
+- エージェントはプラグインの `agents/` ディレクトリに定義されている必要がある
+- Claude は自動的に Task ツールを使ってエージェントを起動する
+- エージェントは同じプラグインリソースにアクセスできる
 
-### Invoking Plugin Skills
+### プラグインスキルの呼び出し
 
-Commands can reference plugin skills for specialized knowledge:
+コマンドから専門知識のためにプラグインスキルを参照できる:
 
 ```markdown
 ---
@@ -377,14 +377,14 @@ Use the api-docs-standards skill to ensure documentation includes:
 Note: This leverages the plugin's api-docs-standards skill for consistency.
 ```
 
-**Key points:**
-- Skill must be defined in plugin's `skills/` directory
-- Mention skill by name to hint Claude should invoke it
-- Skills provide specialized domain knowledge
+**重要なポイント:**
+- スキルはプラグインの `skills/` ディレクトリに定義されている必要がある
+- スキル名を言及して Claude にスキル呼び出しのヒントを与える
+- スキルは専門的なドメイン知識を提供する
 
-### Coordinating with Plugin Hooks
+### プラグインフックとの連携
 
-Commands can be designed to work with plugin hooks:
+コマンドをプラグインフックと連携して設計できる:
 
 ```markdown
 ---
@@ -400,14 +400,14 @@ Note: This commit will trigger the plugin's pre-commit hook for validation.
 Review hook output for any issues.
 ```
 
-**Key points:**
-- Hooks execute automatically on events
-- Commands can prepare state for hooks
-- Document hook interaction in command
+**重要なポイント:**
+- フックはイベントに応じて自動的に実行される
+- コマンドはフックのための状態を準備できる
+- コマンド内にフックとの連携をドキュメント化する
 
-### Multi-Component Plugin Commands
+### マルチコンポーネントプラグインコマンド
 
-Commands that coordinate multiple plugin components:
+複数のプラグインコンポーネントを連携させるコマンド:
 
 ```markdown
 ---
@@ -419,28 +419,28 @@ File to review: @$1
 
 Execute comprehensive review:
 
-1. **Static Analysis** (via plugin scripts)
+1. **静的解析** (プラグインスクリプト経由)
    !`node ${CLAUDE_PLUGIN_ROOT}/scripts/lint.js $1`
 
-2. **Deep Review** (via plugin agent)
+2. **詳細レビュー** (プラグインエージェント経由)
    Launch the code-reviewer agent for detailed analysis.
 
-3. **Best Practices** (via plugin skill)
+3. **ベストプラクティス** (プラグインスキル経由)
    Use the code-standards skill to ensure compliance.
 
-4. **Documentation** (via plugin template)
+4. **ドキュメント** (プラグインテンプレート経由)
    Template: @${CLAUDE_PLUGIN_ROOT}/templates/review-report.md
 
 Generate final report combining all outputs.
 ```
 
-**When to use:** Complex workflows leveraging multiple plugin capabilities
+**使用場面:** 複数のプラグイン機能を活用する複雑なワークフロー
 
-## Validation Patterns
+## バリデーションパターン
 
-### Input Validation
+### 入力バリデーション
 
-Commands should validate inputs before processing:
+コマンドは処理前に入力をバリデーションすべき:
 
 ```markdown
 ---
@@ -456,14 +456,14 @@ $IF($1 in [dev, staging, prod],
 )
 ```
 
-**Validation approaches:**
-1. Bash validation using grep/test
-2. Inline validation in prompt
-3. Script-based validation
+**バリデーションアプローチ:**
+1. grep/test を使った Bash バリデーション
+2. プロンプト内のインラインバリデーション
+3. スクリプトベースのバリデーション
 
-### File Existence Checks
+### ファイル存在チェック
 
-Verify required files exist:
+必要なファイルが存在するか確認する:
 
 ```markdown
 ---
@@ -481,9 +481,9 @@ If file doesn't exist, explain:
 - How to create it
 ```
 
-### Required Arguments
+### 必須引数
 
-Validate required arguments provided:
+必須引数が提供されているかバリデーションする:
 
 ```markdown
 ---
@@ -499,9 +499,9 @@ $IF($1 AND $2,
 )
 ```
 
-### Plugin Resource Validation
+### プラグインリソースバリデーション
 
-Verify plugin resources available:
+プラグインリソースが利用可能か確認する:
 
 ```markdown
 ---
@@ -518,9 +518,9 @@ If all checks pass, proceed with analysis.
 Otherwise, report missing components and installation steps.
 ```
 
-### Output Validation
+### 出力バリデーション
 
-Validate command execution results:
+コマンド実行結果をバリデーションする:
 
 ```markdown
 ---
@@ -538,9 +538,9 @@ Validate output:
 Report build status and any validation failures.
 ```
 
-### Graceful Error Handling
+### グレースフルなエラーハンドリング
 
-Handle errors gracefully with helpful messages:
+ヘルプフルなメッセージでエラーを優雅に処理する:
 
 ```markdown
 ---
@@ -560,50 +560,50 @@ If processing failed:
 - Suggest alternative approaches
 ```
 
-## Best Practices Summary
+## ベストプラクティスのまとめ
 
-### Plugin Commands Should:
+### プラグインコマンドは以下を満たすべき:
 
-1. **Use ${CLAUDE_PLUGIN_ROOT} for all plugin-internal paths**
-   - Scripts, templates, configuration, resources
+1. **プラグイン内部パスには常に ${CLAUDE_PLUGIN_ROOT} を使用する**
+   - スクリプト、テンプレート、設定、リソース
 
-2. **Validate inputs early**
-   - Check required arguments
-   - Verify file existence
-   - Validate argument formats
+2. **入力を早期にバリデーションする**
+   - 必須引数のチェック
+   - ファイル存在の確認
+   - 引数フォーマットのバリデーション
 
-3. **Document plugin structure**
-   - Explain required files
-   - Document script purposes
-   - Clarify dependencies
+3. **プラグイン構造をドキュメント化する**
+   - 必要なファイルの説明
+   - スクリプトの目的のドキュメント化
+   - 依存関係の明確化
 
-4. **Integrate with plugin components**
-   - Reference agents for complex tasks
-   - Use skills for specialized knowledge
-   - Coordinate with hooks when relevant
+4. **プラグインコンポーネントと統合する**
+   - 複雑なタスクにはエージェントを参照
+   - 専門知識にはスキルを使用
+   - 関連する場合はフックと連携
 
-5. **Provide helpful error messages**
-   - Explain what went wrong
-   - Suggest how to fix
-   - Offer alternatives
+5. **ヘルプフルなエラーメッセージを提供する**
+   - 何が問題だったかを説明
+   - 修正方法を提案
+   - 代替案を提示
 
-6. **Handle edge cases**
-   - Missing files
-   - Invalid arguments
-   - Failed script execution
-   - Missing dependencies
+6. **エッジケースを処理する**
+   - ファイルの欠落
+   - 無効な引数
+   - スクリプト実行の失敗
+   - 依存関係の欠落
 
-7. **Keep commands focused**
-   - One clear purpose per command
-   - Delegate complex logic to scripts
-   - Use agents for multi-step workflows
+7. **コマンドを焦点を絞って保つ**
+   - 1 コマンドに 1 つの明確な目的
+   - 複雑なロジックはスクリプトに委譲
+   - マルチステップワークフローにはエージェントを使用
 
-8. **Test across installations**
-   - Verify paths work everywhere
-   - Test with different arguments
-   - Validate error cases
+8. **インストール間でテストする**
+   - パスがどこでも動作することを確認
+   - 異なる引数でテスト
+   - エラーケースを検証
 
 ---
 
-For general command development, see main SKILL.md.
-For command examples, see examples/ directory.
+一般的なコマンド開発については、メインの SKILL.md を参照。
+コマンドの例については、examples/ ディレクトリを参照。

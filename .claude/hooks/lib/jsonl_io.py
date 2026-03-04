@@ -1,53 +1,75 @@
-"""Atomic JSONL append and safe read with corrupt line isolation."""
+"""アトミックな JSONL 追記と、破損行を隔離する安全な読み取り。"""
 
-import fcntl
 import json
 import os
+import sys
 from pathlib import Path
+
+# fcntl は Unix 専用。Windows ではファイルロックに msvcrt を使用する
+if sys.platform == "win32":
+    import msvcrt
+
+    def _lock(fd: int) -> None:
+        msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+
+    def _unlock(fd: int) -> None:
+        try:
+            msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass
+else:
+    import fcntl
+
+    def _lock(fd: int) -> None:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+
+    def _unlock(fd: int) -> None:
+        fcntl.flock(fd, fcntl.LOCK_UN)
 
 
 def append_jsonl(filepath: str, json_line: str) -> None:
-    """Append a single JSON line to a JSONL file with exclusive file lock.
+    """排他ファイルロック付きで JSONL ファイルに1行追記する。
 
-    Uses fcntl.flock(LOCK_EX) to prevent concurrent write corruption.
-    Ensures data is flushed and synced to disk before releasing the lock.
+    fcntl.flock (Unix) または msvcrt.locking (Windows) を使用して
+    並行書き込みによるデータ破損を防止する。ロック解除前にデータを
+    ディスクにフラッシュ・同期する。
 
     Parameters
     ----------
     filepath : str
-        Path to the JSONL file. Parent directories are created if needed.
+        JSONL ファイルのパス。親ディレクトリは必要に応じて作成される。
     json_line : str
-        A single JSON string to append (newline is added automatically).
+        追記する JSON 文字列（改行は自動付与）。
     """
     path = Path(filepath)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644)
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX)
+        _lock(fd)
         line = json_line.rstrip("\n") + "\n"
         os.write(fd, line.encode("utf-8"))
         os.fsync(fd)
     finally:
-        fcntl.flock(fd, fcntl.LOCK_UN)
+        _unlock(fd)
         os.close(fd)
 
 
 def read_jsonl_safe(filepath: str) -> list[dict]:
-    """Read a JSONL file, isolating corrupt lines to a .corrupt file.
+    """JSONL ファイルを読み込み、破損行を .corrupt ファイルに隔離する。
 
-    Valid JSON lines are returned as a list of dicts.
-    Corrupt lines (including empty lines) are written to {filepath}.corrupt.
+    有効な JSON 行は dict のリストとして返される。
+    破損行（空行含む）は {filepath}.corrupt に書き出される。
 
     Parameters
     ----------
     filepath : str
-        Path to the JSONL file to read.
+        読み込む JSONL ファイルのパス。
 
     Returns
     -------
     list[dict]
-        List of parsed JSON objects from valid lines.
+        有効行からパースされた JSON オブジェクトのリスト。
     """
     path = Path(filepath)
     if not path.is_file():

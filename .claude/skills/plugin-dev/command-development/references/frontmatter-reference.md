@@ -1,10 +1,10 @@
-# Command Frontmatter Reference
+# コマンドフロントマターリファレンス
 
-Complete reference for YAML frontmatter fields in slash commands.
+スラッシュコマンドの YAML フロントマターフィールドの完全なリファレンス。
 
-## Frontmatter Overview
+## フロントマター概要
 
-YAML frontmatter is optional metadata at the start of command files:
+YAML フロントマターはコマンドファイルの先頭にあるオプションのメタデータ:
 
 ```markdown
 ---
@@ -17,20 +17,20 @@ argument-hint: [arg1] [arg2]
 Command prompt content here...
 ```
 
-All fields are optional. Commands work without any frontmatter.
+すべてのフィールドはオプション。フロントマターなしでもコマンドは動作する。
 
-## Field Specifications
+## フィールド仕様
 
 ### description
 
-**Type:** String
-**Required:** No
-**Default:** First line of command prompt
-**Max Length:** ~60 characters recommended for `/help` display
+**型:** String
+**必須:** いいえ
+**デフォルト:** コマンドプロンプトの最初の行
+**最大長:** `/help` 表示のため 約60文字推奨
 
-**Purpose:** Describes what the command does, shown in `/help` output
+**目的:** コマンドの動作を説明し、`/help` の出力に表示される
 
-**Examples:**
+**例:**
 ```yaml
 description: Review code for security issues
 ```
@@ -41,43 +41,43 @@ description: Deploy to staging environment
 description: Generate API documentation
 ```
 
-**Best practices:**
-- Keep under 60 characters for clean display
-- Start with verb (Review, Deploy, Generate)
-- Be specific about what command does
-- Avoid redundant "command" or "slash command"
+**ベストプラクティス:**
+- 60文字以内で表示をクリーンに保つ
+- 動詞で始める（Review, Deploy, Generate）
+- コマンドの動作を具体的に記述
+- "command" や "slash command" の冗長な記述を避ける
 
-**Good:**
+**良い例:**
 - ✅ "Review PR for code quality and security"
 - ✅ "Deploy application to specified environment"
 - ✅ "Generate comprehensive API documentation"
 
-**Bad:**
-- ❌ "This command reviews PRs" (unnecessary "This command")
-- ❌ "Review" (too vague)
-- ❌ "A command that reviews pull requests for code quality, security issues, and best practices" (too long)
+**悪い例:**
+- ❌ "This command reviews PRs"（不要な "This command"）
+- ❌ "Review"（曖昧すぎる）
+- ❌ "A command that reviews pull requests for code quality, security issues, and best practices"（長すぎる）
 
 ### allowed-tools
 
-**Type:** String or Array of strings
-**Required:** No
-**Default:** Inherits from conversation permissions
+**型:** String または String の配列
+**必須:** いいえ
+**デフォルト:** 会話の権限を継承
 
-**Purpose:** Restrict or specify which tools command can use
+**目的:** コマンドが使用できるツールを制限または指定する
 
-**Formats:**
+**フォーマット:**
 
-**Single tool:**
+**単一ツール:**
 ```yaml
 allowed-tools: Read
 ```
 
-**Multiple tools (comma-separated):**
+**複数ツール（カンマ区切り）:**
 ```yaml
 allowed-tools: Read, Write, Edit
 ```
 
-**Multiple tools (array):**
+**複数ツール（配列）:**
 ```yaml
 allowed-tools:
   - Read
@@ -85,75 +85,75 @@ allowed-tools:
   - Bash(git:*)
 ```
 
-**Tool Patterns:**
+**ツールパターン:**
 
-**Specific tools:**
+**特定のツール:**
 ```yaml
 allowed-tools: Read, Grep, Edit
 ```
 
-**Bash with command filter:**
+**Bash コマンドフィルター付き:**
 ```yaml
-allowed-tools: Bash(git:*)           # Only git commands
-allowed-tools: Bash(npm:*)           # Only npm commands
-allowed-tools: Bash(docker:*)        # Only docker commands
+allowed-tools: Bash(git:*)           # git コマンドのみ
+allowed-tools: Bash(npm:*)           # npm コマンドのみ
+allowed-tools: Bash(docker:*)        # docker コマンドのみ
 ```
 
-**All tools (not recommended):**
+**すべてのツール（非推奨）:**
 ```yaml
 allowed-tools: "*"
 ```
 
-**When to use:**
+**使用タイミング:**
 
-1. **Security:** Restrict command to safe operations
+1. **セキュリティ:** コマンドを安全な操作に制限
    ```yaml
-   allowed-tools: Read, Grep  # Read-only command
+   allowed-tools: Read, Grep  # 読み取り専用コマンド
    ```
 
-2. **Clarity:** Document required tools
+2. **明確さ:** 必要なツールをドキュメント化
    ```yaml
    allowed-tools: Bash(git:*), Read
    ```
 
-3. **Bash execution:** Enable bash command output
+3. **Bash 実行:** bash コマンド出力を有効化
    ```yaml
    allowed-tools: Bash(git status:*), Bash(git diff:*)
    ```
 
-**Best practices:**
-- Be as restrictive as possible
-- Use command filters for Bash (e.g., `git:*` not `*`)
-- Only specify when different from conversation permissions
-- Document why specific tools are needed
+**ベストプラクティス:**
+- できるだけ制限的にする
+- Bash にはコマンドフィルターを使用（例: `*` ではなく `git:*`）
+- 会話の権限と異なる場合のみ指定
+- 特定のツールが必要な理由をドキュメント化
 
 ### model
 
-**Type:** String
-**Required:** No
-**Default:** Inherits from conversation
-**Values:** `sonnet`, `opus`, `haiku`
+**型:** String
+**必須:** いいえ
+**デフォルト:** 会話から継承
+**値:** `sonnet`, `opus`, `haiku`
 
-**Purpose:** Specify which Claude model executes the command
+**目的:** コマンドを実行する Claude モデルを指定する
 
-**Examples:**
+**例:**
 ```yaml
-model: haiku    # Fast, efficient for simple tasks
+model: haiku    # 高速、シンプルなタスクに効率的
 ```
 ```yaml
-model: sonnet   # Balanced performance (default)
+model: sonnet   # バランスの取れたパフォーマンス（デフォルト）
 ```
 ```yaml
-model: opus     # Maximum capability for complex tasks
+model: opus     # 複雑なタスクに最大の能力
 ```
 
-**When to use:**
+**使用タイミング:**
 
-**Use `haiku` for:**
-- Simple, formulaic commands
-- Fast execution needed
-- Low complexity tasks
-- Frequent invocations
+**`haiku` を使う場合:**
+- シンプルで定型的なコマンド
+- 高速実行が必要
+- 低複雑度タスク
+- 頻繁な呼び出し
 
 ```yaml
 ---
@@ -162,10 +162,10 @@ model: haiku
 ---
 ```
 
-**Use `sonnet` for:**
-- Standard commands (default)
-- Balanced speed/quality
-- Most common use cases
+**`sonnet` を使う場合:**
+- 標準的なコマンド（デフォルト）
+- 速度と品質のバランス
+- 最も一般的なユースケース
 
 ```yaml
 ---
@@ -174,11 +174,11 @@ model: sonnet
 ---
 ```
 
-**Use `opus` for:**
-- Complex analysis
-- Architectural decisions
-- Deep code understanding
-- Critical tasks
+**`opus` を使う場合:**
+- 複雑な分析
+- アーキテクチャの判断
+- 深いコード理解
+- 重要なタスク
 
 ```yaml
 ---
@@ -187,57 +187,57 @@ model: opus
 ---
 ```
 
-**Best practices:**
-- Omit unless specific need
-- Use `haiku` for speed when possible
-- Reserve `opus` for genuinely complex tasks
-- Test with different models to find right balance
+**ベストプラクティス:**
+- 特定の必要がない限り省略
+- 速度が必要な場合は `haiku` を使用
+- `opus` は本当に複雑なタスクに限定
+- 異なるモデルでテストして適切なバランスを見つける
 
 ### argument-hint
 
-**Type:** String
-**Required:** No
-**Default:** None
+**型:** String
+**必須:** いいえ
+**デフォルト:** なし
 
-**Purpose:** Document expected arguments for users and autocomplete
+**目的:** ユーザーとオートコンプリートのために期待される引数をドキュメント化
 
-**Format:**
+**フォーマット:**
 ```yaml
 argument-hint: [arg1] [arg2] [optional-arg]
 ```
 
-**Examples:**
+**例:**
 
-**Single argument:**
+**単一引数:**
 ```yaml
 argument-hint: [pr-number]
 ```
 
-**Multiple required arguments:**
+**複数の必須引数:**
 ```yaml
 argument-hint: [environment] [version]
 ```
 
-**Optional arguments:**
+**オプション引数:**
 ```yaml
 argument-hint: [file-path] [options]
 ```
 
-**Descriptive names:**
+**説明的な名前:**
 ```yaml
 argument-hint: [source-branch] [target-branch] [commit-message]
 ```
 
-**Best practices:**
-- Use square brackets `[]` for each argument
-- Use descriptive names (not `arg1`, `arg2`)
-- Indicate optional vs required in description
-- Match order to positional arguments in command
-- Keep concise but clear
+**ベストプラクティス:**
+- 各引数に角括弧 `[]` を使用
+- 説明的な名前を使用（`arg1`, `arg2` ではなく）
+- 説明でオプションか必須かを示す
+- コマンド内の位置引数と順序を合わせる
+- 簡潔だが明確に保つ
 
-**Examples by pattern:**
+**パターン別の例:**
 
-**Simple command:**
+**シンプルなコマンド:**
 ```yaml
 ---
 description: Fix issue by number
@@ -247,7 +247,7 @@ argument-hint: [issue-number]
 Fix issue #$1...
 ```
 
-**Multi-argument:**
+**複数引数:**
 ```yaml
 ---
 description: Deploy to environment
@@ -257,7 +257,7 @@ argument-hint: [app-name] [environment] [version]
 Deploy $1 to $2 using version $3...
 ```
 
-**With options:**
+**オプション付き:**
 ```yaml
 ---
 description: Run tests with options
@@ -269,20 +269,20 @@ Run tests matching $1 with options: $2
 
 ### disable-model-invocation
 
-**Type:** Boolean
-**Required:** No
-**Default:** false
+**型:** Boolean
+**必須:** いいえ
+**デフォルト:** false
 
-**Purpose:** Prevent SlashCommand tool from programmatically invoking command
+**目的:** SlashCommand ツールによるプログラム的なコマンド呼び出しを防止する
 
-**Examples:**
+**例:**
 ```yaml
 disable-model-invocation: true
 ```
 
-**When to use:**
+**使用タイミング:**
 
-1. **Manual-only commands:** Commands requiring user judgment
+1. **手動専用コマンド:** ユーザーの判断が必要なコマンド
    ```yaml
    ---
    description: Approve deployment to production
@@ -290,7 +290,7 @@ disable-model-invocation: true
    ---
    ```
 
-2. **Destructive operations:** Commands with irreversible effects
+2. **破壊的操作:** 不可逆的な影響を持つコマンド
    ```yaml
    ---
    description: Delete all test data
@@ -298,7 +298,7 @@ disable-model-invocation: true
    ---
    ```
 
-3. **Interactive workflows:** Commands needing user input
+3. **インタラクティブワークフロー:** ユーザー入力が必要なコマンド
    ```yaml
    ---
    description: Walk through setup wizard
@@ -306,34 +306,34 @@ disable-model-invocation: true
    ---
    ```
 
-**Default behavior (false):**
-- Command available to SlashCommand tool
-- Claude can invoke programmatically
-- Still available for manual invocation
+**デフォルト動作 (false):**
+- コマンドは SlashCommand ツールから利用可能
+- Claude がプログラム的に呼び出し可能
+- 手動呼び出しも引き続き可能
 
-**When true:**
-- Command only invokable by user typing `/command`
-- Not available to SlashCommand tool
-- Safer for sensitive operations
+**true の場合:**
+- ユーザーが `/command` と入力した場合のみ呼び出し可能
+- SlashCommand ツールからは利用不可
+- センシティブな操作により安全
 
-**Best practices:**
-- Use sparingly (limits Claude's autonomy)
-- Document why in command comments
-- Consider if command should exist if always manual
+**ベストプラクティス:**
+- 控えめに使用（Claude の自律性を制限する）
+- コマンドコメントに理由をドキュメント化
+- 常に手動であるべきならコマンドとして存在すべきか検討
 
-## Complete Examples
+## 完全な例
 
-### Minimal Command
+### 最小限のコマンド
 
-No frontmatter needed:
+フロントマター不要:
 
 ```markdown
 Review this code for common issues and suggest improvements.
 ```
 
-### Simple Command
+### シンプルなコマンド
 
-Just description:
+description のみ:
 
 ```markdown
 ---
@@ -343,9 +343,9 @@ description: Review code for issues
 Review this code for common issues and suggest improvements.
 ```
 
-### Standard Command
+### 標準的なコマンド
 
-Description and tools:
+description とツール:
 
 ```markdown
 ---
@@ -361,9 +361,9 @@ Review each changed file for:
 - Best practices
 ```
 
-### Complex Command
+### 複雑なコマンド
 
-All common fields:
+すべてのよく使うフィールド:
 
 ```markdown
 ---
@@ -383,9 +383,9 @@ Pre-deployment checks:
 Proceed with deployment following deployment runbook.
 ```
 
-### Manual-Only Command
+### 手動専用コマンド
 
-Restricted invocation:
+呼び出し制限付き:
 
 ```markdown
 ---
@@ -396,8 +396,8 @@ allowed-tools: Bash(gh:*)
 ---
 
 <!--
-MANUAL APPROVAL REQUIRED
-This command requires human judgment and cannot be automated.
+手動承認が必要
+このコマンドは人間の判断が必要で、自動化できない。
 -->
 
 Review deployment $1 for production approval:
@@ -413,51 +413,51 @@ Verify:
 Type "APPROVED" to confirm deployment.
 ```
 
-## Validation
+## バリデーション
 
-### Common Errors
+### よくあるエラー
 
-**Invalid YAML syntax:**
+**無効な YAML 構文:**
 ```yaml
 ---
 description: Missing quote
 allowed-tools: Read, Write
 model: sonnet
----  # ❌ Missing closing quote above
+---  # ❌ 上のクォートが欠落
 ```
 
-**Fix:** Validate YAML syntax
+**修正:** YAML 構文を検証
 
-**Incorrect tool specification:**
+**不正なツール指定:**
 ```yaml
-allowed-tools: Bash  # ❌ Missing command filter
+allowed-tools: Bash  # ❌ コマンドフィルターが欠落
 ```
 
-**Fix:** Use `Bash(git:*)` format
+**修正:** `Bash(git:*)` フォーマットを使用
 
-**Invalid model name:**
+**無効なモデル名:**
 ```yaml
-model: gpt4  # ❌ Not a valid Claude model
+model: gpt4  # ❌ 有効な Claude モデルではない
 ```
 
-**Fix:** Use `sonnet`, `opus`, or `haiku`
+**修正:** `sonnet`, `opus`, または `haiku` を使用
 
-### Validation Checklist
+### バリデーションチェックリスト
 
-Before committing command:
-- [ ] YAML syntax valid (no errors)
-- [ ] Description under 60 characters
-- [ ] allowed-tools uses proper format
-- [ ] model is valid value if specified
-- [ ] argument-hint matches positional arguments
-- [ ] disable-model-invocation used appropriately
+コマンドをコミットする前に:
+- [ ] YAML 構文が有効（エラーなし）
+- [ ] description が 60 文字以内
+- [ ] allowed-tools が適切なフォーマットを使用
+- [ ] model が指定されている場合は有効な値
+- [ ] argument-hint が位置引数と一致
+- [ ] disable-model-invocation が適切に使用されている
 
-## Best Practices Summary
+## ベストプラクティスのまとめ
 
-1. **Start minimal:** Add frontmatter only when needed
-2. **Document arguments:** Always use argument-hint with arguments
-3. **Restrict tools:** Use most restrictive allowed-tools that works
-4. **Choose right model:** Use haiku for speed, opus for complexity
-5. **Manual-only sparingly:** Only use disable-model-invocation when necessary
-6. **Clear descriptions:** Make commands discoverable in `/help`
-7. **Test thoroughly:** Verify frontmatter works as expected
+1. **最小限から始める:** 必要な場合のみフロントマターを追加
+2. **引数をドキュメント化:** 引数がある場合は常に argument-hint を使用
+3. **ツールを制限:** 動作する最も制限的な allowed-tools を使用
+4. **適切なモデルを選択:** 速度には haiku、複雑さには opus
+5. **手動専用は控えめに:** disable-model-invocation は必要な場合のみ
+6. **明確な説明:** `/help` でコマンドを見つけやすくする
+7. **徹底的にテスト:** フロントマターが期待通り動作するか確認

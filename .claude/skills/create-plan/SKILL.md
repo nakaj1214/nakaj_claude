@@ -1,23 +1,23 @@
 ---
 name: create-plan
 description: |
-  Reads docs/implement/proposal.md and creates docs/implement/plan.md.
-  Then runs a Codex review loop (via codex-review skill) until APPROVED or max iterations reached.
+  docs/implement/prompt.md（ユーザーの依頼文）を読み込み、構造化した docs/implement/proposal.md を生成し、
+  そこから docs/implement/plan.md を作成する。plan.md 作成後に停止する。
 metadata:
-  short-description: Proposal → Plan with Codex review loop
+  short-description: Prompt → Proposal → Plan
   dependencies:
-    - codex-review
+    - proposal-quality-gate
 ---
 
 # Create Plan
 
-`docs/implement/proposal.md` を読み込み、`docs/implement/plan.md` を作成する。
-その後 `codex-review` スキルを呼び出してレビューループを実行し、APPROVED になるまで plan.md を更新し続ける。
+`docs/implement/prompt.md`（ユーザーの依頼文）を読み込み、構造化した `docs/implement/proposal.md` を生成し、
+そこから `docs/implement/plan.md` を作成する。plan.md 作成後に停止する。
 
 詳細な手順: [INSTRUCTIONS.md](INSTRUCTIONS.md)
 
 ## リソース
 
-- [INSTRUCTIONS.md](INSTRUCTIONS.md) — 5ステップワークフロー（Read → Investigate → Create → Review Loop → Done）
-- [codex-review](../codex-review/SKILL.md) — Codex レビューループスキル（Step 4 で使用）
+- [INSTRUCTIONS.md](INSTRUCTIONS.md) — Prompt → Proposal → Plan ワークフロー
+- [proposal-quality-gate](../proposal-quality-gate/SKILL.md) — proposal.md の品質チェック（Step 0 で使用）
 - [evaluations/evals.json](evaluations/evals.json) — テストケース（作成推奨）

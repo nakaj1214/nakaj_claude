@@ -1,32 +1,32 @@
 #!/usr/bin/env python3
 """
-Slack Socket Mode Daemon for real-time Bash command approval.
+Slack Socket Mode デーモン: リアルタイム Bash コマンド承認用。
 
-Connects to Slack via WebSocket (Socket Mode) and handles Block Kit button
-interactions from slack_approval.py, writing decisions to file-based IPC.
+WebSocket（Socket Mode）で Slack に接続し、slack_approval.py からの
+Block Kit ボタン操作を処理し、ファイルベース IPC で判定結果を書き込む。
 
-Required environment variables:
+必須環境変数:
   SLACK_APP_TOKEN        - App-Level Token (xapp-...)
   SLACK_BOT_TOKEN        - Bot Token (xoxb-...)
-  SLACK_APPROVER_USER_ID - Approver's Slack user ID (U0XXXXXXX)
+  SLACK_APPROVER_USER_ID - 承認者の Slack ユーザー ID (U0XXXXXXX)
 
-Optional:
-  CLAUDE_PROJECT_DIR     - Project root (defaults to current directory)
+オプション:
+  CLAUDE_PROJECT_DIR     - プロジェクトルート（デフォルト: カレントディレクトリ）
 
-Setup:
-  1. Enable Socket Mode in your Slack App settings
-  2. Generate an App-Level Token (xapp-...) with connections:write scope
-  3. Set SLACK_APP_TOKEN in .claude/settings.json env section
+セットアップ:
+  1. Slack App 設定で Socket Mode を有効にする
+  2. connections:write スコープ付きの App-Level Token (xapp-...) を生成する
+  3. .claude/settings.json の env セクションに SLACK_APP_TOKEN を設定する
 
-Usage:
+使い方:
   python3 .claude/hooks/slack_socket_daemon.py
 
-  # Or run in background via systemd / launchd / screen:
+  # バックグラウンド実行（systemd / launchd / screen 等）:
   nohup python3 .claude/hooks/slack_socket_daemon.py &
 
-Exit codes:
-  0: Clean shutdown (SIGTERM / SIGINT)
-  1: Missing required environment variables or slack_sdk not installed
+終了コード:
+  0: 正常終了（SIGTERM / SIGINT）
+  1: 必須環境変数の不足または slack_sdk 未インストール
 """
 
 import os
@@ -48,7 +48,8 @@ except ImportError:
     sys.exit(1)
 
 # --- Load env with settings.json fallback ---
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.env import get as _env
 
 # --- Environment variables ---
@@ -58,7 +59,7 @@ APPROVER_USER_ID = _env("SLACK_APPROVER_USER_ID")
 
 # --- File paths ---
 PROJECT_DIR = _env("CLAUDE_PROJECT_DIR")
-_BASE = Path(PROJECT_DIR) if PROJECT_DIR else Path(__file__).resolve().parent.parent.parent
+_BASE = Path(PROJECT_DIR) if PROJECT_DIR else _HOOKS_DIR.parent.parent
 IPC_DIR = _BASE / ".claude/hooks/ipc"
 DAEMON_PID_FILE = IPC_DIR / "daemon.pid"
 

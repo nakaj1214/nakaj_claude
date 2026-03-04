@@ -24,7 +24,7 @@ SCRIPT_DIR = Path(__file__).parent
 SHARED_DIR = SCRIPT_DIR.parent
 SKILLS_DIR = SHARED_DIR / "skills"
 REGISTRY_PATH = SHARED_DIR / "registry" / "skills.yaml"
-MEMORY_DIR = Path(".claude/docs/memory")
+MEMORY_DIR = SHARED_DIR / "docs" / "memory"
 
 SKILL_MD_LINE_LIMIT = 30
 

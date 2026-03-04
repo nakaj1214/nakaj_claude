@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: Track edits, validate syntax, and log to JSONL.
+PostToolUse フック: 編集を追跡し、構文を検証し、JSONL にログ記録する。
 
-Records Edit/Write operations with syntax checking, sensitive data masking,
-and affected file estimation. Outputs additionalContext for Claude feedback.
+Edit/Write 操作を構文チェック・機密データマスキング・影響ファイル推定付きで記録する。
+Claude へのフィードバック用に additionalContext を出力する。
 """
 
 import fnmatch
@@ -12,19 +12,24 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Add hooks dir to path for lib imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# lib インポート用に hooks ディレクトリをパスに追加
+_HOOKS_DIR = Path(__file__).resolve().parent.parent  # .claude/hooks/
+sys.path.insert(0, str(_HOOKS_DIR))
 from lib.jsonl_io import append_jsonl
 
-# --- Constants ---
+# --- パス解決（プロジェクト間でポータブル）---
+_PROJECT_ROOT = _HOOKS_DIR.parent.parent  # project root
 
-LOG_DIR = ".claude/logs"
+# --- 定数 ---
+
+LOG_DIR = str(_PROJECT_ROOT / ".claude" / "logs")
 LOG_FILE = os.path.join(LOG_DIR, "edit-history.jsonl")
-SESSION_STATE_FILE = "/tmp/claude-edit-tracker-session.json"
+SESSION_STATE_FILE = os.path.join(tempfile.gettempdir(), "claude-edit-tracker-session.json")
 MAX_STRING_LENGTH = 200
 SYNTAX_CHECK_TIMEOUT = 3
 AFFECTED_FILES_TIMEOUT = 3
@@ -58,11 +63,11 @@ MASKING_PATTERNS = [
 ]
 
 
-# --- Sensitive data protection ---
+# --- 機密データ保護 ---
 
 
 def is_sensitive_path(file_path: str) -> bool:
-    """Check if file path matches sensitive path patterns."""
+    """ファイルパスが機密パスパターンに一致するか判定する。"""
     basename = os.path.basename(file_path)
     for pattern in SENSITIVE_PATH_PATTERNS:
         if fnmatch.fnmatch(basename, pattern) or fnmatch.fnmatch(file_path, pattern):
@@ -71,17 +76,17 @@ def is_sensitive_path(file_path: str) -> bool:
 
 
 def mask_sensitive(text: str) -> str:
-    """Mask sensitive values in text before logging."""
+    """ログ記録前にテキスト内の機密値をマスクする。"""
     for pattern, replacement in MASKING_PATTERNS:
         text = re.sub(pattern, replacement, text)
     return text
 
 
-# --- Session state ---
+# --- セッション状態 ---
 
 
 def load_session() -> dict:
-    """Load or create session state from /tmp."""
+    """一時ディレクトリからセッション状態を読み込むか新規作成する。"""
     try:
         if os.path.exists(SESSION_STATE_FILE):
             with open(SESSION_STATE_FILE) as f:
@@ -95,7 +100,7 @@ def load_session() -> dict:
 
 
 def save_session(state: dict) -> None:
-    """Save session state to /tmp."""
+    """セッション状態を一時ディレクトリに保存する。"""
     try:
         with open(SESSION_STATE_FILE, "w") as f:
             json.dump(state, f)
@@ -103,13 +108,13 @@ def save_session(state: dict) -> None:
         pass
 
 
-# --- Syntax checking ---
+# --- 構文チェック ---
 
 
 def check_syntax(file_path: str, ext: str) -> tuple[bool | None, str]:
-    """Run language-specific syntax check. Returns (ok, error_message).
+    """言語固有の構文チェックを実行する。(ok, error_message) を返す。
 
-    Returns None for ok if check timed out or language is unsupported.
+    タイムアウトまたは未対応言語の場合は ok に None を返す。
     """
     commands: dict[str, list[str]] = {
         ".py": ["python3", "-c", f"import ast; ast.parse(open('{file_path}').read())"],
@@ -141,11 +146,11 @@ def check_syntax(file_path: str, ext: str) -> tuple[bool | None, str]:
         return None, str(e)[:200]
 
 
-# --- Affected files estimation ---
+# --- 影響ファイルの推定 ---
 
 
 def estimate_affected_files(file_path: str) -> list[str]:
-    """Estimate affected files by basename glob (lightweight, no grep)."""
+    """ベースネームの glob で影響ファイルを推定する（軽量、grep 不使用）。"""
     basename = Path(file_path).stem
     if not basename or len(basename) < 3:
         return []
@@ -174,11 +179,11 @@ def estimate_affected_files(file_path: str) -> list[str]:
     return affected[:5]
 
 
-# --- Line counting ---
+# --- 行数カウント ---
 
 
 def count_lines_changed(old_string: str, new_string: str) -> tuple[int, int]:
-    """Count lines added and removed."""
+    """追加行数と削除行数をカウントする。"""
     old_lines = old_string.count("\n") + (1 if old_string else 0) if old_string else 0
     new_lines = new_string.count("\n") + (1 if new_string else 0) if new_string else 0
     added = max(0, new_lines - old_lines)

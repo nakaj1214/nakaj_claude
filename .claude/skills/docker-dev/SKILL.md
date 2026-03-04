@@ -1,9 +1,9 @@
 ---
 name: docker-dev
 description: >
-  Guides Docker Compose-based development workflows for Laravel/PHP and Python projects.
-  Use when running commands inside containers, debugging container issues, managing
-  services, or when the user mentions docker compose, artisan in Docker, or container logs.
+  Laravel/PHP および Python プロジェクト向けの Docker Compose ベース開発ワークフローをガイドする。
+  コンテナ内でのコマンド実行、コンテナの問題デバッグ、サービス管理、
+  docker compose・Docker 内の artisan・コンテナログに言及した際に使用する。
 ---
 
 # Docker 開発ワークフロー

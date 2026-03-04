@@ -1,45 +1,45 @@
-# Semgrep Rulesets Reference
+# Semgrep ルールセットリファレンス
 
-## Complete Ruleset Catalog
+## 全ルールセットカタログ
 
-### Security-Focused Rulesets
+### セキュリティ重視のルールセット
 
-| Ruleset | Description | Use Case |
+| ルールセット | 説明 | 使用ケース |
 |---------|-------------|----------|
-| `p/security-audit` | Comprehensive vulnerability detection, higher false positives | Manual audits, security reviews |
-| `p/secrets` | Hardcoded credentials, API keys, tokens | Always include |
-| `p/owasp-top-ten` | OWASP Top 10 web application vulnerabilities | Web app security |
-| `p/cwe-top-25` | CWE Top 25 most dangerous software weaknesses | General security |
-| `p/sql-injection` | SQL injection patterns and tainted data flows | Database security |
-| `p/insecure-transport` | Ensures code uses encrypted channels | Network security |
-| `p/gitleaks` | Hard-coded credentials detection (gitleaks port) | Secrets scanning |
-| `p/findsecbugs` | FindSecBugs rule pack for Java | Java security |
-| `p/phpcs-security-audit` | PHP security audit rules | PHP security |
+| `p/security-audit` | 包括的な脆弱性検出、偽陽性が多め | 手動監査、セキュリティレビュー |
+| `p/secrets` | ハードコードされた認証情報、API キー、トークン | 常に含める |
+| `p/owasp-top-ten` | OWASP Top 10 Web アプリケーション脆弱性 | Web アプリセキュリティ |
+| `p/cwe-top-25` | CWE Top 25 最も危険なソフトウェア脆弱性 | 一般的なセキュリティ |
+| `p/sql-injection` | SQL インジェクションパターンと汚染データフロー | データベースセキュリティ |
+| `p/insecure-transport` | コードが暗号化チャネルを使用しているか確認 | ネットワークセキュリティ |
+| `p/gitleaks` | ハードコードされた認証情報の検出（gitleaks 移植版） | シークレットスキャン |
+| `p/findsecbugs` | Java 向け FindSecBugs ルールパック | Java セキュリティ |
+| `p/phpcs-security-audit` | PHP セキュリティ監査ルール | PHP セキュリティ |
 
-### CI/CD Rulesets
+### CI/CD ルールセット
 
-| Ruleset | Description | Use Case |
+| ルールセット | 説明 | 使用ケース |
 |---------|-------------|----------|
-| `p/default` | Default ruleset, balanced coverage | First-time users |
-| `p/ci` | High-confidence security + logic bugs, low FP | CI pipelines |
-| `p/r2c-ci` | Low false positives, CI-safe | CI/CD blocking |
-| `p/r2c` | Community favorite, curated by Semgrep (618k+ downloads) | General scanning |
-| `p/auto` | Auto-selects rules based on detected languages/frameworks | Quick scans |
-| `p/comment` | Comment-related rules | Code review |
+| `p/default` | デフォルトルールセット、バランスの取れたカバレッジ | 初回ユーザー |
+| `p/ci` | 高信頼性のセキュリティ + ロジックバグ、低偽陽性 | CI パイプライン |
+| `p/r2c-ci` | 低偽陽性、CI セーフ | CI/CD ブロッキング |
+| `p/r2c` | コミュニティ人気、Semgrep キュレーション（618k+ ダウンロード） | 一般的なスキャン |
+| `p/auto` | 検出された言語/フレームワークに基づいてルールを自動選択 | クイックスキャン |
+| `p/comment` | コメント関連ルール | コードレビュー |
 
-### Third-Party Rulesets
+### サードパーティルールセット
 
-| Ruleset | Description | Maintainer |
+| ルールセット | 説明 | メンテナー |
 |---------|-------------|------------|
-| `p/gitlab` | GitLab-maintained security rules | GitLab |
+| `p/gitlab` | GitLab メンテナンスのセキュリティルール | GitLab |
 
 ---
 
-## Ruleset Selection Algorithm
+## ルールセット選択アルゴリズム
 
-Follow this algorithm to select rulesets based on detected languages and frameworks.
+検出された言語とフレームワークに基づいてルールセットを選択するアルゴリズム。
 
-### Step 1: Always Include Security Baseline
+### ステップ 1: セキュリティベースラインを常に含める
 
 ```json
 {
@@ -47,21 +47,21 @@ Follow this algorithm to select rulesets based on detected languages and framewo
 }
 ```
 
-- `p/security-audit` - Comprehensive vulnerability detection (always include)
-- `p/secrets` - Hardcoded credentials, API keys, tokens (always include)
+- `p/security-audit` - 包括的な脆弱性検出（常に含める）
+- `p/secrets` - ハードコードされた認証情報、API キー、トークン（常に含める）
 
-### Step 2: Add Language-Specific Rulesets
+### ステップ 2: 言語固有のルールセットを追加
 
-For each detected language, add the primary ruleset. If a framework is detected, add its ruleset too.
+検出された各言語に対してプライマリルールセットを追加する。フレームワークが検出された場合は、そのルールセットも追加する。
 
-**GA Languages (production-ready):**
+**GA 言語（本番対応済み）:**
 
-| Detection | Primary Ruleset | Framework Rulesets | Pro Rule Count |
+| 検出条件 | プライマリルールセット | フレームワークルールセット | Pro ルール数 |
 |-----------|-----------------|-------------------|----------------|
 | `.py` | `p/python` | `p/django`, `p/flask`, `p/fastapi` | 710+ |
 | `.js`, `.jsx` | `p/javascript` | `p/react`, `p/nodejs`, `p/express`, `p/nextjs`, `p/angular` | 250+ (JS), 70+ (JSX) |
 | `.ts`, `.tsx` | `p/typescript` | `p/react`, `p/nodejs`, `p/express`, `p/nextjs`, `p/angular` | 230+ |
-| `.go` | `p/golang` | `p/go` (alias) | 80+ |
+| `.go` | `p/golang` | `p/go` (エイリアス) | 80+ |
 | `.java` | `p/java` | `p/spring`, `p/findsecbugs` | 190+ |
 | `.kt` | `p/kotlin` | `p/spring` | 60+ |
 | `.rb` | `p/ruby` | `p/rails` | 40+ |
@@ -69,87 +69,87 @@ For each detected language, add the primary ruleset. If a framework is detected,
 | `.c`, `.cpp`, `.h` | `p/c` | - | 150+ |
 | `.rs` | `p/rust` | - | 40+ |
 | `.cs` | `p/csharp` | - | 170+ |
-| `.scala` | `p/scala` | - | Community |
+| `.scala` | `p/scala` | - | コミュニティ |
 | `.swift` | `p/swift` | - | 60+ |
 
-**Beta Languages (Pro recommended):**
+**ベータ言語（Pro 推奨）:**
 
-| Detection | Primary Ruleset | Notes |
+| 検出条件 | プライマリルールセット | 備考 |
 |-----------|-----------------|-------|
-| `.ex`, `.exs` | `p/elixir` | Requires Pro for best coverage |
-| `.cls`, `.trigger` | `p/apex` | Salesforce; requires Pro |
+| `.ex`, `.exs` | `p/elixir` | 最適なカバレッジには Pro が必要 |
+| `.cls`, `.trigger` | `p/apex` | Salesforce; Pro が必要 |
 
-**Experimental Languages:**
+**実験的言語:**
 
-| Detection | Primary Ruleset | Notes |
+| 検出条件 | プライマリルールセット | 備考 |
 |-----------|-----------------|-------|
-| `.sol` | No official ruleset | Use Decurity third-party rules |
-| `Dockerfile` | `p/dockerfile` | Limited rules |
-| `.yaml`, `.yml` | `p/yaml` | K8s, GitHub Actions, docker-compose patterns |
-| `.json` | `r/json.aws` | AWS IAM policies; use `r/json.*` for specific rules |
-| Bash scripts | - | Community support |
-| Cairo, Circom | - | Experimental, smart contracts |
+| `.sol` | 公式ルールセットなし | Decurity サードパーティルールを使用 |
+| `Dockerfile` | `p/dockerfile` | ルール数が限定的 |
+| `.yaml`, `.yml` | `p/yaml` | K8s、GitHub Actions、docker-compose パターン |
+| `.json` | `r/json.aws` | AWS IAM ポリシー; 特定ルールには `r/json.*` を使用 |
+| Bash スクリプト | - | コミュニティサポート |
+| Cairo, Circom | - | 実験的、スマートコントラクト |
 
-**Framework detection hints:**
+**フレームワーク検出のヒント:**
 
-| Framework | Detection Signals | Ruleset |
+| フレームワーク | 検出シグナル | ルールセット |
 |-----------|------------------|---------|
-| Django | `settings.py`, `urls.py`, `django` in requirements | `p/django` |
-| Flask | `flask` in requirements, `@app.route` | `p/flask` |
-| FastAPI | `fastapi` in requirements, `@app.get/post` | `p/fastapi` |
-| React | `package.json` with react dependency, `.jsx`/`.tsx` files | `p/react` |
-| Next.js | `next.config.js`, `pages/` or `app/` directory | `p/nextjs` |
-| Angular | `angular.json`, `@angular/` dependencies | `p/angular` |
-| Express | `express` in package.json, `app.use()` patterns | `p/express` |
-| NestJS | `@nestjs/` dependencies, `@Controller` decorators | `p/nodejs` |
-| Spring | `pom.xml` with spring, `@SpringBootApplication` | `p/spring` |
-| Rails | `Gemfile` with rails, `config/routes.rb` | `p/rails` |
-| Laravel | `composer.json` with laravel, `artisan` | `p/laravel` |
-| Symfony | `composer.json` with symfony, `config/packages/` | `p/symfony` |
+| Django | `settings.py`, `urls.py`, requirements 内の `django` | `p/django` |
+| Flask | requirements 内の `flask`, `@app.route` | `p/flask` |
+| FastAPI | requirements 内の `fastapi`, `@app.get/post` | `p/fastapi` |
+| React | react 依存の `package.json`, `.jsx`/`.tsx` ファイル | `p/react` |
+| Next.js | `next.config.js`, `pages/` または `app/` ディレクトリ | `p/nextjs` |
+| Angular | `angular.json`, `@angular/` 依存 | `p/angular` |
+| Express | package.json 内の `express`, `app.use()` パターン | `p/express` |
+| NestJS | `@nestjs/` 依存, `@Controller` デコレーター | `p/nodejs` |
+| Spring | spring 含む `pom.xml`, `@SpringBootApplication` | `p/spring` |
+| Rails | rails 含む `Gemfile`, `config/routes.rb` | `p/rails` |
+| Laravel | laravel 含む `composer.json`, `artisan` | `p/laravel` |
+| Symfony | symfony 含む `composer.json`, `config/packages/` | `p/symfony` |
 
-### Step 3: Add Infrastructure Rulesets
+### ステップ 3: インフラストラクチャルールセットを追加
 
-| Detection | Ruleset | Description |
+| 検出条件 | ルールセット | 説明 |
 |-----------|---------|-------------|
-| `Dockerfile` | `p/dockerfile` | Container security, best practices |
-| `.tf`, `.hcl` | `p/terraform` | IaC misconfigurations, CIS benchmarks, AWS/Azure/GCP |
-| k8s manifests | `p/kubernetes` | K8s security, RBAC issues |
-| CloudFormation | `p/cloudformation` | AWS infrastructure security |
-| GitHub Actions | `p/github-actions` | CI/CD security, secrets exposure |
-| `.yaml`, `.yml` | `p/yaml` | Generic YAML patterns (K8s, docker-compose) |
-| AWS IAM JSON | `r/json.aws` | IAM policy misconfigurations (use `--config r/json.aws`) |
+| `Dockerfile` | `p/dockerfile` | コンテナセキュリティ、ベストプラクティス |
+| `.tf`, `.hcl` | `p/terraform` | IaC 設定ミス、CIS ベンチマーク、AWS/Azure/GCP |
+| k8s マニフェスト | `p/kubernetes` | K8s セキュリティ、RBAC 問題 |
+| CloudFormation | `p/cloudformation` | AWS インフラセキュリティ |
+| GitHub Actions | `p/github-actions` | CI/CD セキュリティ、シークレット漏洩 |
+| `.yaml`, `.yml` | `p/yaml` | 汎用 YAML パターン（K8s、docker-compose） |
+| AWS IAM JSON | `r/json.aws` | IAM ポリシー設定ミス（`--config r/json.aws` を使用） |
 
-### Step 4: Add Third-Party Rulesets
+### ステップ 4: サードパーティルールセットを追加
 
-These are **NOT optional**. Include automatically when language matches:
+これらは**オプションではない**。言語が一致した場合は自動的に含める:
 
-| Languages | Source | Why Required |
+| 言語 | ソース | 必須の理由 |
 |-----------|--------|--------------|
-| Python, Go, Ruby, JS/TS, Terraform, HCL | [Trail of Bits](https://github.com/trailofbits/semgrep-rules) | Security audit patterns from real engagements (AGPLv3) |
-| C, C++ | [0xdea](https://github.com/0xdea/semgrep-rules) | Memory safety, low-level vulnerabilities |
-| Solidity, Cairo, Rust | [Decurity](https://github.com/Decurity/semgrep-smart-contracts) | Smart contract vulnerabilities, DeFi exploits |
-| Go | [dgryski](https://github.com/dgryski/semgrep-go) | Additional Go-specific patterns |
-| Android (Java/Kotlin) | [MindedSecurity](https://github.com/mindedsecurity/semgrep-rules-android-security) | OWASP MASTG-derived mobile security rules |
-| Java, Go, JS/TS, C#, Python, PHP | [elttam](https://github.com/elttam/semgrep-rules) | Security consulting patterns |
-| Dockerfile, PHP, Go, Java | [kondukto](https://github.com/kondukto-io/semgrep-rules) | Container and web app security |
-| PHP, Kotlin, Java | [dotta](https://github.com/federicodotta/semgrep-rules) | Pentest-derived web/mobile app rules |
-| Terraform, HCL | [HashiCorp](https://github.com/hashicorp-forge/semgrep-rules) | HashiCorp infrastructure patterns |
-| Swift, Java, Cobol | [akabe1](https://github.com/akabe1/akabe1-semgrep-rules) | iOS and legacy system patterns |
-| Java | [Atlassian Labs](https://github.com/atlassian-labs/atlassian-sast-ruleset) | Atlassian-maintained Java rules |
-| Python, JS/TS, Java, Ruby, Go, PHP | [Apiiro](https://github.com/apiiro/malicious-code-ruleset) | Malicious code detection, supply chain |
+| Python, Go, Ruby, JS/TS, Terraform, HCL | [Trail of Bits](https://github.com/trailofbits/semgrep-rules) | 実際のエンゲージメントに基づくセキュリティ監査パターン（AGPLv3） |
+| C, C++ | [0xdea](https://github.com/0xdea/semgrep-rules) | メモリ安全性、低レベル脆弱性 |
+| Solidity, Cairo, Rust | [Decurity](https://github.com/Decurity/semgrep-smart-contracts) | スマートコントラクト脆弱性、DeFi エクスプロイト |
+| Go | [dgryski](https://github.com/dgryski/semgrep-go) | 追加の Go 固有パターン |
+| Android (Java/Kotlin) | [MindedSecurity](https://github.com/mindedsecurity/semgrep-rules-android-security) | OWASP MASTG 由来のモバイルセキュリティルール |
+| Java, Go, JS/TS, C#, Python, PHP | [elttam](https://github.com/elttam/semgrep-rules) | セキュリティコンサルティングパターン |
+| Dockerfile, PHP, Go, Java | [kondukto](https://github.com/kondukto-io/semgrep-rules) | コンテナと Web アプリセキュリティ |
+| PHP, Kotlin, Java | [dotta](https://github.com/federicodotta/semgrep-rules) | ペンテスト由来の Web/モバイルアプリルール |
+| Terraform, HCL | [HashiCorp](https://github.com/hashicorp-forge/semgrep-rules) | HashiCorp インフラパターン |
+| Swift, Java, Cobol | [akabe1](https://github.com/akabe1/akabe1-semgrep-rules) | iOS とレガシーシステムパターン |
+| Java | [Atlassian Labs](https://github.com/atlassian-labs/atlassian-sast-ruleset) | Atlassian メンテナンスの Java ルール |
+| Python, JS/TS, Java, Ruby, Go, PHP | [Apiiro](https://github.com/apiiro/malicious-code-ruleset) | 悪意のあるコード検出、サプライチェーン |
 
-### Step 5: Verify Rulesets
+### ステップ 5: ルールセットの検証
 
-Before finalizing, verify official rulesets load:
+最終決定前に、公式ルールセットが読み込まれるか検証する:
 
 ```bash
-# Quick validation (exits 0 if valid)
+# クイックバリデーション（有効なら exit 0）
 semgrep --config p/python --validate --metrics=off 2>&1 | head -3
 ```
 
-Or browse the [Semgrep Registry](https://semgrep.dev/explore).
+または [Semgrep Registry](https://semgrep.dev/explore) を参照。
 
-### Output Format
+### 出力形式
 
 ```json
 {

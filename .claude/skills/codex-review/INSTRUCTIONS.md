@@ -1,35 +1,34 @@
-# Codex Review — Detailed Instructions
+# Codex Review — 詳細手順
 
-## Input Parameters
+## 入力パラメータ
 
-The caller specifies these when invoking the skill.
-Parse them from the user's message or skill arguments.
+呼び出し側がスキル起動時に指定する。ユーザーのメッセージまたはスキル引数から解析する。
 
-| Parameter | Required | Default | Description |
-|-----------|----------|---------|-------------|
-| `target_file` | Yes | — | Path to the file to review |
-| `review_file` | No | `{target_file dir}/review.md` | Path for the review output |
-| `max_iterations` | No | 5 | Maximum review loop iterations |
-| `checklist` | No | (built-in default) | Custom review checklist — inline text, or path to a `.md` file |
-| `slack_notify` | No | true | Whether to send Slack notifications |
+| パラメータ | 必須 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `target_file` | Yes | — | レビュー対象のファイルパス |
+| `review_file` | No | `{target_file dir}/review.md` | レビュー結果の出力パス |
+| `max_iterations` | No | 5 | レビューループの最大反復回数 |
+| `checklist` | No | (組み込みデフォルト) | カスタムレビューチェックリスト — インラインテキストまたは `.md` ファイルパス |
+| `slack_notify` | No | true | Slack 通知を送信するか |
 
 ---
 
-## Step 1: Initialize
+## Step 1: 初期化
 
-1. Verify `target_file` exists. If not, stop and tell the user:
+1. `target_file` の存在を確認する。存在しない場合はユーザーに通知して停止:
    > `{target_file}` が見つかりません。ファイルパスを確認してください。
 
-2. Resolve `review_file` default:
-   - If not specified, use the same directory as `target_file` with filename `review.md`
-   - Example: `docs/design.md` → `docs/review.md`
+2. `review_file` のデフォルトを解決する:
+   - 未指定の場合は `target_file` と同じディレクトリにファイル名 `review.md` を使用
+   - 例: `docs/design.md` → `docs/review.md`
 
-3. Resolve `checklist`:
-   - If a file path is given (ends with `.md`), read that file and use its content
-   - If inline text is given, use it directly
-   - If not specified, use the **Default Checklist** below
+3. `checklist` を解決する:
+   - ファイルパス（`.md` で終わる）が指定された場合、そのファイルを読み取って内容を使用
+   - インラインテキストが指定された場合、そのまま使用
+   - 未指定の場合は、以下の **デフォルトチェックリスト** を使用
 
-4. If `slack_notify` is true, send a start notification:
+4. `slack_notify` が true の場合、開始通知を送信:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
@@ -39,22 +38,22 @@ python3 .claude/hooks/notify-slack.py \
 
 ---
 
-## Step 2: Review Loop
+## Step 2: レビューループ
 
-Repeat up to `max_iterations` times.
+最大 `max_iterations` 回繰り返す。
 
-### 2-1. Launch Codex Review (subagent)
+### 2-1. Codex レビューの起動（サブエージェント）
 
 ```
-Task tool parameters:
+Task ツールのパラメータ:
 - subagent_type: "general-purpose"
 - run_in_background: false
 - prompt: |
-    Review a document file using Codex CLI.
+    Codex CLI を使用してドキュメントファイルをレビューする。
 
-    Steps:
-    1. Read the file: {target_file}
-    2. Run Codex CLI:
+    手順:
+    1. ファイルを読み込む: {target_file}
+    2. Codex CLI を実行:
 
     codex exec --model gpt-5.3-codex -c model_reasoning_effort="high" --sandbox workspace-write --full-auto "
     You are a senior engineer reviewing a document.
@@ -94,19 +93,19 @@ Task tool parameters:
     APPROVED or CHANGES_REQUIRED
     " 2>/dev/null
 
-    3. Read {review_file} and return:
-       - The verdict (APPROVED or CHANGES_REQUIRED)
-       - Blocking issues (if any)
-       - Non-blocking recommendations (if any)
+    3. {review_file} を読み取って以下を返す:
+       - 判定（APPROVED または CHANGES_REQUIRED）
+       - ブロッキング問題（あれば）
+       - 非ブロッキング推奨事項（あれば）
 ```
 
-### 2-2. Read Verdict
+### 2-2. 判定の確認
 
-Check the last non-empty line of `{review_file}`:
-- `APPROVED` → go to Step 3 (done)
-- `CHANGES_REQUIRED` → go to 2-3
+`{review_file}` の最後の非空行を確認:
+- `APPROVED` → Step 3（完了）へ
+- `CHANGES_REQUIRED` → 2-3 へ
 
-If `slack_notify` is true, send a notification:
+`slack_notify` が true の場合、通知を送信:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
@@ -114,14 +113,14 @@ python3 .claude/hooks/notify-slack.py \
   --message "判定: {verdict}\n{blocking issues summary, if any}"
 ```
 
-### 2-3. Fix Target File (Claude)
+### 2-3. 対象ファイルの修正（Claude）
 
-Read `{review_file}` and update `{target_file}`:
-- Fix all **Blocking** issues
-- Apply **Non-blocking** recommendations if reasonable
-- Do NOT change the overall structure unless required
+`{review_file}` を読み取り、`{target_file}` を更新する:
+- すべての **Blocking** 問題を修正
+- 妥当であれば **Non-blocking** 推奨事項も適用
+- 必要でない限り全体の構造は変更しない
 
-If `slack_notify` is true, send a notification:
+`slack_notify` が true の場合、通知を送信:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
@@ -129,11 +128,11 @@ python3 .claude/hooks/notify-slack.py \
   --message "レビュー指摘に基づき {target_file} を更新しました。次のレビューを開始します。"
 ```
 
-Go back to 2-1 (next iteration).
+2-1 に戻る（次のイテレーション）。
 
-### Iteration Limit
+### イテレーション上限
 
-If `max_iterations` reached without `APPROVED`:
+`max_iterations` に達しても `APPROVED` にならない場合:
 
 **Claude は自分で APPROVED 判定を行ってはならない。**
 ユーザーに以下を報告し、判断を仰ぐこと:
@@ -143,11 +142,11 @@ If `max_iterations` reached without `APPROVED`:
 3. 次のアクションの選択肢を提示:
    - blocking issues を手動で解決してから再実行
    - 現状のまま APPROVED として進める（ユーザーの明示的な承認が必要）
-   - proposal.md を見直して要件を修正する
+   - prompt.md を見直して要件を修正する
 
 > :warning: レビューループが{max_iterations}回を超えました。以下の blocking issues が残っています。
 
-If `slack_notify` is true:
+`slack_notify` が true の場合:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
@@ -155,13 +154,13 @@ python3 .claude/hooks/notify-slack.py \
   --message "{max_iterations}回のレビューループで APPROVED になりませんでした。ユーザー判断が必要です。\n{review_file} を確認してください。"
 ```
 
-Stop the loop and **wait for user decision**. Do NOT proceed automatically.
+ループを停止し、**ユーザーの判断を待つ**。自動的に進めてはならない。
 
 ---
 
-## Step 3: Done
+## Step 3: 完了
 
-If `slack_notify` is true:
+`slack_notify` が true の場合:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
@@ -169,7 +168,7 @@ python3 .claude/hooks/notify-slack.py \
   --message "{target_file} が APPROVED されました（{N}回目で承認）。\n• {target_file}\n• {review_file}"
 ```
 
-Report to user (in Japanese):
+ユーザーに報告（日本語で）:
 
 ```
 ## Codex レビュー完了
@@ -186,24 +185,24 @@ Report to user (in Japanese):
 
 ---
 
-## Default Checklist
+## デフォルトチェックリスト
 
-Used when `checklist` parameter is not specified:
+`checklist` パラメータが未指定の場合に使用:
 
 ```
-1. Scope clarity - Is the purpose/non-purpose clear? Are there vague expressions?
-2. Completeness - Are all affected files/components/routes/validation/authorization/DB/frontend/config listed?
-3. Implementation order - Are dependencies in the correct order?
-4. Test/verification specificity - Are test commands and manual check points concrete?
-5. Risks and mitigations - Are at least 3 risks listed with concrete mitigations?
-6. Completion criteria - Is the acceptance condition clear and measurable?
+1. スコープの明確さ - 目的/非目的は明確か？曖昧な表現はないか？
+2. 完全性 - 影響するファイル/コンポーネント/ルート/バリデーション/認可/DB/フロントエンド/設定がすべて列挙されているか？
+3. 実装順序 - 依存関係が正しい順序になっているか？
+4. テスト/検証の具体性 - テストコマンドと手動確認ポイントは具体的か？
+5. リスクと軽減策 - 少なくとも3つのリスクが具体的な軽減策と共に記載されているか？
+6. 完了基準 - 受け入れ条件は明確で測定可能か？
 ```
 
 ---
 
-## Notes
+## 注意事項
 
-- Codex is called via subagent to preserve main context window
-- Codex cannot access Claude's file context — target_file content is read by Codex directly from the workspace
+- Codex はメインのコンテキストウィンドウを保持するためサブエージェント経由で呼び出される
+- Codex は Claude のファイルコンテキストにアクセスできない — target_file の内容は Codex がワークスペースから直接読み取る
 - **Claude は APPROVED / CHANGES_REQUIRED の判定を自分で行ってはならない。** 判定は Codex のみが行う。Codex が APPROVED を出さずにループ上限に達した場合は、ユーザーに報告して判断を仰ぐこと
-- The max_iterations limit is a hard cap to prevent infinite loops
+- max_iterations の制限は無限ループを防ぐためのハードキャップ

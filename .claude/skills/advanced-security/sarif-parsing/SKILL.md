@@ -1,6 +1,9 @@
 ---
 name: sarif-parsing
-description: Parse, analyze, and process SARIF (Static Analysis Results Interchange Format) files. Use when reading security scan results, aggregating findings from multiple tools, deduplicating alerts, extracting specific vulnerabilities, or integrating SARIF data into CI/CD pipelines.
+description: >
+  SARIF（静的解析結果交換フォーマット）ファイルのパース・分析・処理を行う。
+  セキュリティスキャン結果の読み取り、複数ツールからの検出結果の集約、
+  アラートの重複排除、特定の脆弱性の抽出、CI/CD パイプラインへの SARIF データ統合に使用する。
 allowed-tools:
   - Bash
   - Read

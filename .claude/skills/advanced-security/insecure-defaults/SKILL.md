@@ -1,6 +1,6 @@
 ---
 name: insecure-defaults
-description: "Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Use when auditing security, reviewing config management, or analyzing environment variable handling."
+description: "本番環境でアプリを安全でない状態で動作させる fail-open な危険デフォルト値（ハードコードされたシークレット、弱い認証、緩いセキュリティ設定）を検出する。セキュリティ監査、設定管理のレビュー、環境変数の取り扱い分析に使用する。"
 allowed-tools:
   - Read
   - Grep

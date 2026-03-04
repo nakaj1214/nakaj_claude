@@ -1,16 +1,16 @@
-# Marketplace Considerations for Commands
+# マーケットプレイスのためのコマンド設計
 
-Guidelines for creating commands designed for distribution and marketplace success.
+配布とマーケットプレイスでの成功を目的としたコマンド作成のガイドライン。
 
-## Overview
+## 概要
 
-Commands distributed through marketplaces need additional consideration beyond personal use commands. They must work across environments, handle diverse use cases, and provide excellent user experience for unknown users.
+マーケットプレイスを通じて配布されるコマンドは、個人使用のコマンド以上の考慮が必要。異なる環境で動作し、多様なユースケースを処理し、未知のユーザーに優れたユーザー体験を提供しなければならない。
 
-## Design for Distribution
+## 配布のための設計
 
-### Universal Compatibility
+### ユニバーサル互換性
 
-**Cross-platform considerations:**
+**クロスプラットフォームの考慮事項:**
 
 ```markdown
 ---
@@ -31,13 +31,13 @@ esac
 
 Platform: $PLATFORM
 
-<!-- Adjust behavior based on platform -->
+<!-- プラットフォームに基づいて動作を調整 -->
 if [ "$PLATFORM" = "Windows" ]; then
-  # Windows-specific handling
+  # Windows 固有の処理
   PATH_SEP="\\"
   NULL_DEVICE="NUL"
 else
-  # Unix-like handling
+  # Unix 系の処理
   PATH_SEP="/"
   NULL_DEVICE="/dev/null"
 fi
@@ -45,13 +45,13 @@ fi
 [Platform-appropriate implementation...]
 ```
 
-**Avoid platform-specific commands:**
+**プラットフォーム固有のコマンドを避ける:**
 
 ```markdown
-<!-- BAD: macOS-specific -->
+<!-- 悪い例: macOS 固有 -->
 !`pbcopy < file.txt`
 
-<!-- GOOD: Platform detection -->
+<!-- 良い例: プラットフォーム検出 -->
 if command -v pbcopy > /dev/null; then
   pbcopy < file.txt
 elif command -v xclip > /dev/null; then
@@ -63,9 +63,9 @@ else
 fi
 ```
 
-### Minimal Dependencies
+### 最小限の依存関係
 
-**Check for required tools:**
+**必要なツールのチェック:**
 
 ```markdown
 ---
@@ -108,26 +108,26 @@ fi
 [Continue with command...]
 ```
 
-**Document optional dependencies:**
+**オプション依存関係のドキュメント:**
 
 ```markdown
 <!--
 DEPENDENCIES:
-  Required:
-  - git 2.0+: Version control
-  - jq 1.6+: JSON processing
+  必須:
+  - git 2.0+: バージョン管理
+  - jq 1.6+: JSON 処理
 
-  Optional:
-  - gh: GitHub CLI (for PR operations)
-  - docker: Container operations (for containerized tests)
+  オプション:
+  - gh: GitHub CLI（PR 操作用）
+  - docker: コンテナ操作（コンテナ化テスト用）
 
-  Feature availability depends on installed tools.
+  機能の利用可能性はインストール済みツールに依存する。
 -->
 ```
 
-### Graceful Degradation
+### グレースフルデグラデーション
 
-**Handle missing features:**
+**機能の欠如を処理する:**
 
 ```markdown
 ---
@@ -151,10 +151,10 @@ fi
 Available features: $FEATURES
 
 if echo "$FEATURES" | grep -q "github"; then
-  # Full functionality with GitHub integration
+  # GitHub 統合付きのフル機能
   echo "✓ GitHub integration available"
 else
-  # Reduced functionality without GitHub
+  # GitHub なしの縮小機能
   echo "⚠ Limited functionality: GitHub CLI not installed"
   echo "  Install 'gh' for full features"
 fi
@@ -162,11 +162,11 @@ fi
 [Adapt behavior based on available features...]
 ```
 
-## User Experience for Unknown Users
+## 未知のユーザーのためのユーザー体験
 
-### Clear Onboarding
+### 明確なオンボーディング
 
-**First-run experience:**
+**初回実行体験:**
 
 ```markdown
 ---
@@ -202,7 +202,7 @@ fi
 [Normal command execution...]
 ```
 
-**Progressive feature discovery:**
+**段階的な機能の発見:**
 
 ```markdown
 ---
@@ -223,9 +223,9 @@ You can speed up this command with the --fast flag:
 For more tips: /command tips
 ```
 
-### Comprehensive Error Handling
+### 包括的なエラーハンドリング
 
-**Anticipate user mistakes:**
+**ユーザーのミスを予測する:**
 
 ```markdown
 ---
@@ -236,7 +236,7 @@ description: Forgiving command
 
 Argument: "$1"
 
-<!-- Check for common typos -->
+<!-- よくあるタイプミスのチェック -->
 if [ "$1" = "hlep" ] || [ "$1" = "hepl" ]; then
   Did you mean: help?
 
@@ -246,7 +246,7 @@ if [ "$1" = "hlep" ] || [ "$1" = "hepl" ]; then
   Exit.
 fi
 
-<!-- Suggest similar commands if not found -->
+<!-- 見つからない場合に類似コマンドを提案 -->
 if [ "$1" != "valid-option1" ] && [ "$1" != "valid-option2" ]; then
   ❌ Unknown option: $1
 
@@ -262,7 +262,7 @@ fi
 [Command continues...]
 ```
 
-**Helpful diagnostics:**
+**有用な診断情報:**
 
 ```markdown
 ---
@@ -291,11 +291,11 @@ This information helps debug the issue.
 For support, include the above diagnostics.
 ```
 
-## Distribution Best Practices
+## 配布のベストプラクティス
 
-### Namespace Awareness
+### 名前空間の意識
 
-**Avoid name collisions:**
+**名前の衝突を避ける:**
 
 ```markdown
 ---
@@ -305,16 +305,16 @@ description: Namespaced command
 <!--
 COMMAND NAME: plugin-name-command
 
-This command is namespaced with the plugin name to avoid
-conflicts with commands from other plugins.
+このコマンドはプラグイン名で名前空間化されており、
+他のプラグインのコマンドとの衝突を避けている。
 
-Alternative naming approaches:
-- Use plugin prefix: /plugin-command
-- Use category: /category-command
-- Use verb-noun: /verb-noun
+代替の命名アプローチ:
+- プラグインプレフィックス: /plugin-command
+- カテゴリ: /category-command
+- 動詞-名詞: /verb-noun
 
-Chosen approach: plugin-name prefix
-Reasoning: Clearest ownership, least likely to conflict
+選択したアプローチ: plugin-name プレフィックス
+理由: 所有権が最も明確で、衝突の可能性が最も低い
 -->
 
 # Plugin Name Command
@@ -322,29 +322,29 @@ Reasoning: Clearest ownership, least likely to conflict
 [Implementation...]
 ```
 
-**Document naming rationale:**
+**命名の根拠をドキュメント化:**
 
 ```markdown
 <!--
 NAMING DECISION:
 
-Command name: /deploy-app
+コマンド名: /deploy-app
 
-Alternatives considered:
-- /deploy: Too generic, likely conflicts
-- /app-deploy: Less intuitive ordering
-- /my-plugin-deploy: Too verbose
+検討した代替案:
+- /deploy: 汎用すぎる、衝突の可能性が高い
+- /app-deploy: 直感的でない順序
+- /my-plugin-deploy: 冗長すぎる
 
-Final choice balances:
-- Discoverability (clear purpose)
-- Brevity (easy to type)
-- Uniqueness (unlikely conflicts)
+最終選択のバランス:
+- 発見しやすさ（目的が明確）
+- 簡潔さ（入力しやすい）
+- 一意性（衝突の可能性が低い）
 -->
 ```
 
-### Configurability
+### 設定可能性
 
-**User preferences:**
+**ユーザープリファレンス:**
 
 ```markdown
 ---
@@ -362,7 +362,7 @@ Default configuration:
 Checking for user config: .claude/plugin-name.local.md
 
 if [ -f ".claude/plugin-name.local.md" ]; then
-  # Parse YAML frontmatter for settings
+  # YAML フロントマターから設定を解析
   VERBOSE=$(grep "^verbose:" .claude/plugin-name.local.md | cut -d: -f2 | tr -d ' ')
   COLOR=$(grep "^color:" .claude/plugin-name.local.md | cut -d: -f2 | tr -d ' ')
   MAX_RESULTS=$(grep "^max_results:" .claude/plugin-name.local.md | cut -d: -f2 | tr -d ' ')
@@ -376,7 +376,7 @@ fi
 [Use configuration in command...]
 ```
 
-**Sensible defaults:**
+**賢いデフォルト値:**
 
 ```markdown
 ---
@@ -386,9 +386,9 @@ description: Command with smart defaults
 # Smart Defaults
 
 Configuration:
-- Format: ${FORMAT:-json}  # Defaults to json
-- Output: ${OUTPUT:-stdout}  # Defaults to stdout
-- Verbose: ${VERBOSE:-false}  # Defaults to false
+- Format: ${FORMAT:-json}  # デフォルトは json
+- Output: ${OUTPUT:-stdout}  # デフォルトは stdout
+- Verbose: ${VERBOSE:-false}  # デフォルトは false
 
 These defaults work for 80% of use cases.
 
@@ -405,9 +405,9 @@ verbose: true
 \`\`\`
 ```
 
-### Version Compatibility
+### バージョン互換性
 
-**Version checking:**
+**バージョンチェック:**
 
 ```markdown
 ---
@@ -418,13 +418,13 @@ description: Version-aware command
 COMMAND VERSION: 2.1.0
 
 COMPATIBILITY:
-- Requires plugin version: >= 2.0.0
-- Breaking changes from v1.x documented in MIGRATION.md
+- プラグインバージョン >= 2.0.0 が必要
+- v1.x からの破壊的変更は MIGRATION.md に記載
 
 VERSION HISTORY:
-- v2.1.0: Added --new-feature flag
-- v2.0.0: BREAKING: Changed argument order
-- v1.0.0: Initial release
+- v2.1.0: --new-feature フラグを追加
+- v2.0.0: 破壊的変更: 引数の順序を変更
+- v1.0.0: 初回リリース
 -->
 
 # Version Check
@@ -449,7 +449,7 @@ fi
 [Command continues...]
 ```
 
-**Deprecation warnings:**
+**非推奨警告:**
 
 ```markdown
 ---
@@ -478,18 +478,18 @@ fi
 [Handle both old and new flags during deprecation period...]
 ```
 
-## Marketplace Presentation
+## マーケットプレイスでの表示
 
-### Command Discovery
+### コマンドの発見
 
-**Descriptive naming:**
+**説明的な命名:**
 
 ```markdown
 ---
 description: Review pull request with security and quality checks
 ---
 
-<!-- GOOD: Descriptive name and description -->
+<!-- 良い例: 説明的な名前と description -->
 ```
 
 ```markdown
@@ -497,23 +497,23 @@ description: Review pull request with security and quality checks
 description: Do the thing
 ---
 
-<!-- BAD: Vague description -->
+<!-- 悪い例: 曖昧な description -->
 ```
 
-**Searchable keywords:**
+**検索可能なキーワード:**
 
 ```markdown
 <!--
 KEYWORDS: security, code-review, quality, validation, audit
 
-These keywords help users discover this command when searching
-for related functionality in the marketplace.
+これらのキーワードは、ユーザーがマーケットプレイスで
+関連機能を検索する際にこのコマンドを発見するのに役立つ。
 -->
 ```
 
-### Showcase Examples
+### ショーケース例
 
-**Compelling demonstrations:**
+**説得力のあるデモンストレーション:**
 
 ```markdown
 ---
@@ -563,9 +563,9 @@ Ready to analyze your code...
 [Command implementation...]
 ```
 
-### User Reviews and Feedback
+### ユーザーレビューとフィードバック
 
-**Feedback mechanism:**
+**フィードバックメカニズム:**
 
 ```markdown
 ---
@@ -594,30 +594,30 @@ Reply with an emoji or:
 Your feedback matters!
 ```
 
-**Usage analytics preparation:**
+**使用分析の準備:**
 
 ```markdown
 <!--
 ANALYTICS NOTES:
 
-Track for improvement:
-- Most common arguments
-- Failure rates
-- Average execution time
-- User satisfaction scores
+改善のために追跡するもの:
+- よく使われる引数
+- 失敗率
+- 平均実行時間
+- ユーザー満足度スコア
 
-Privacy-preserving:
-- No personally identifiable information
-- Aggregate statistics only
-- User opt-out respected
+プライバシー保護:
+- 個人を特定できる情報なし
+- 集計統計のみ
+- ユーザーのオプトアウトを尊重
 -->
 ```
 
-## Quality Standards
+## 品質基準
 
-### Professional Polish
+### プロフェッショナルな仕上げ
 
-**Consistent branding:**
+**一貫したブランディング:**
 
 ```markdown
 ---
@@ -640,23 +640,23 @@ Part of the [Plugin Name] suite
 Powered by Plugin Name v2.1.0
 ```
 
-**Attention to detail:**
+**ディテールへの注意:**
 
 ```markdown
-<!-- Details that matter -->
+<!-- 重要なディテール -->
 
-✓ Use proper emoji/symbols consistently
-✓ Align output columns neatly
-✓ Format numbers with thousands separators
-✓ Use color/formatting appropriately
-✓ Provide progress indicators
-✓ Show estimated time remaining
-✓ Confirm successful operations
+✓ 絵文字/記号を一貫して使用
+✓ 出力カラムを整列
+✓ 数値に桁区切りを使用
+✓ カラー/フォーマットを適切に使用
+✓ 進捗インジケーターを提供
+✓ 推定残り時間を表示
+✓ 成功した操作を確認
 ```
 
-### Reliability
+### 信頼性
 
-**Idempotency:**
+**冪等性:**
 
 ```markdown
 ---
@@ -689,7 +689,7 @@ Marking complete...
 echo "$(date)" > .claude/operation-completed.flag
 ```
 
-**Atomic operations:**
+**アトミック操作:**
 
 ```markdown
 ---
@@ -723,55 +723,55 @@ else
 fi
 ```
 
-## Testing for Distribution
+## 配布のためのテスト
 
-### Pre-Release Checklist
+### リリース前チェックリスト
 
 ```markdown
 <!--
 PRE-RELEASE CHECKLIST:
 
-Functionality:
-- [ ] Works on macOS
-- [ ] Works on Linux
-- [ ] Works on Windows (WSL)
-- [ ] All arguments tested
-- [ ] Error cases handled
-- [ ] Edge cases covered
+機能:
+- [ ] macOS で動作する
+- [ ] Linux で動作する
+- [ ] Windows (WSL) で動作する
+- [ ] すべての引数がテスト済み
+- [ ] エラーケースが処理されている
+- [ ] エッジケースがカバーされている
 
-User Experience:
-- [ ] Clear description
-- [ ] Helpful error messages
-- [ ] Examples provided
-- [ ] First-run experience good
-- [ ] Documentation complete
+ユーザー体験:
+- [ ] 明確な description
+- [ ] 有用なエラーメッセージ
+- [ ] 例が提供されている
+- [ ] 初回実行体験が良い
+- [ ] ドキュメントが完備
 
-Distribution:
-- [ ] No hardcoded paths
-- [ ] Dependencies documented
-- [ ] Configuration options clear
-- [ ] Version number set
-- [ ] Changelog updated
+配布:
+- [ ] ハードコードされたパスがない
+- [ ] 依存関係がドキュメント化されている
+- [ ] 設定オプションが明確
+- [ ] バージョン番号が設定済み
+- [ ] 変更ログが更新済み
 
-Quality:
-- [ ] No TODO comments
-- [ ] No debug code
-- [ ] Performance acceptable
-- [ ] Security reviewed
-- [ ] Privacy considered
+品質:
+- [ ] TODO コメントがない
+- [ ] デバッグコードがない
+- [ ] パフォーマンスが許容範囲
+- [ ] セキュリティがレビュー済み
+- [ ] プライバシーが考慮されている
 
-Support:
-- [ ] README complete
-- [ ] Troubleshooting guide
-- [ ] Support contact provided
-- [ ] Feedback mechanism
-- [ ] License specified
+サポート:
+- [ ] README が完備
+- [ ] トラブルシューティングガイド
+- [ ] サポート連絡先が提供されている
+- [ ] フィードバックメカニズム
+- [ ] ライセンスが指定されている
 -->
 ```
 
-### Beta Testing
+### ベータテスト
 
-**Beta release approach:**
+**ベータリリースアプローチ:**
 
 ```markdown
 ---
@@ -811,39 +811,39 @@ Help improve this command:
 Your feedback helps make this command better.
 ```
 
-## Maintenance and Updates
+## メンテナンスと更新
 
-### Update Strategy
+### 更新戦略
 
-**Versioned commands:**
+**バージョン管理されたコマンド:**
 
 ```markdown
 <!--
 VERSION STRATEGY:
 
-Major (X.0.0): Breaking changes
-- Document all breaking changes
-- Provide migration guide
-- Support old version briefly
+メジャー (X.0.0): 破壊的変更
+- すべての破壊的変更をドキュメント化
+- 移行ガイドを提供
+- 旧バージョンを短期間サポート
 
-Minor (x.Y.0): New features
-- Backward compatible
-- Announce new features
-- Update examples
+マイナー (x.Y.0): 新機能
+- 後方互換
+- 新機能をアナウンス
+- 例を更新
 
-Patch (x.y.Z): Bug fixes
-- No user-facing changes
-- Update changelog
-- Security fixes prioritized
+パッチ (x.y.Z): バグ修正
+- ユーザー向けの変更なし
+- 変更ログを更新
+- セキュリティ修正を優先
 
-Release schedule:
-- Patches: As needed
-- Minors: Monthly
-- Majors: Annually or as needed
+リリーススケジュール:
+- パッチ: 必要に応じて
+- マイナー: 月次
+- メジャー: 年次または必要に応じて
 -->
 ```
 
-**Update notifications:**
+**更新通知:**
 
 ```markdown
 ---
@@ -875,30 +875,30 @@ fi
 [Command continues...]
 ```
 
-## Best Practices Summary
+## ベストプラクティスのまとめ
 
-### Distribution Design
+### 配布設計
 
-1. **Universal**: Works across platforms and environments
-2. **Self-contained**: Minimal dependencies, clear requirements
-3. **Graceful**: Degrades gracefully when features unavailable
-4. **Forgiving**: Anticipates and handles user mistakes
-5. **Helpful**: Clear errors, good defaults, excellent docs
+1. **ユニバーサル:** プラットフォームや環境を問わず動作
+2. **自己完結:** 最小限の依存関係、明確な要件
+3. **グレースフル:** 機能が利用できない場合も優雅に劣化
+4. **寛容:** ユーザーのミスを予測して処理
+5. **有用:** 明確なエラー、良いデフォルト、優れたドキュメント
 
-### Marketplace Success
+### マーケットプレイスでの成功
 
-1. **Discoverable**: Clear name, good description, searchable keywords
-2. **Professional**: Polished presentation, consistent branding
-3. **Reliable**: Tested thoroughly, handles edge cases
-4. **Maintainable**: Versioned, updated regularly, supported
-5. **User-focused**: Great UX, responsive to feedback
+1. **発見しやすい:** 明確な名前、良い description、検索可能なキーワード
+2. **プロフェッショナル:** 洗練された表示、一貫したブランディング
+3. **信頼できる:** 徹底的にテスト、エッジケースを処理
+4. **保守しやすい:** バージョン管理、定期的に更新、サポート付き
+5. **ユーザー中心:** 優れた UX、フィードバックに応答
 
-### Quality Standards
+### 品質基準
 
-1. **Complete**: Fully documented, all features working
-2. **Tested**: Works in real environments, edge cases handled
-3. **Secure**: No vulnerabilities, safe operations
-4. **Performant**: Reasonable speed, resource-efficient
-5. **Ethical**: Privacy-respecting, user consent
+1. **完全:** 完全にドキュメント化、すべての機能が動作
+2. **テスト済み:** 実環境で動作、エッジケースを処理
+3. **安全:** 脆弱性なし、安全な操作
+4. **高パフォーマンス:** 合理的な速度、リソース効率的
+5. **倫理的:** プライバシーを尊重、ユーザーの同意
 
-With these considerations, commands become marketplace-ready and delight users across diverse environments and use cases.
+これらの考慮事項により、コマンドはマーケットプレイス対応となり、多様な環境とユースケースのユーザーを満足させる。
