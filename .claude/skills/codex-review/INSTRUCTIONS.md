@@ -135,17 +135,27 @@ Go back to 2-1 (next iteration).
 
 If `max_iterations` reached without `APPROVED`:
 
-> :warning: レビューループが{max_iterations}回を超えました。`{review_file}` を確認し、手動で対応してください。
+**Claude は自分で APPROVED 判定を行ってはならない。**
+ユーザーに以下を報告し、判断を仰ぐこと:
+
+1. 残っている blocking issues の一覧
+2. これまでの修正履歴の要約
+3. 次のアクションの選択肢を提示:
+   - blocking issues を手動で解決してから再実行
+   - 現状のまま APPROVED として進める（ユーザーの明示的な承認が必要）
+   - proposal.md を見直して要件を修正する
+
+> :warning: レビューループが{max_iterations}回を超えました。以下の blocking issues が残っています。
 
 If `slack_notify` is true:
 
 ```bash
 python3 .claude/hooks/notify-slack.py \
   --title ":warning: codex-review レビュー上限到達" \
-  --message "{max_iterations}回のレビューループで APPROVED になりませんでした。手動確認が必要です。\n{review_file} を確認してください。"
+  --message "{max_iterations}回のレビューループで APPROVED になりませんでした。ユーザー判断が必要です。\n{review_file} を確認してください。"
 ```
 
-Stop the loop and report remaining blocking issues to the user.
+Stop the loop and **wait for user decision**. Do NOT proceed automatically.
 
 ---
 
@@ -195,5 +205,5 @@ Used when `checklist` parameter is not specified:
 
 - Codex is called via subagent to preserve main context window
 - Codex cannot access Claude's file context — target_file content is read by Codex directly from the workspace
-- Claude has final authority; if Codex APPROVED but Claude sees a critical issue, Claude may request another iteration
+- **Claude は APPROVED / CHANGES_REQUIRED の判定を自分で行ってはならない。** 判定は Codex のみが行う。Codex が APPROVED を出さずにループ上限に達した場合は、ユーザーに報告して判断を仰ぐこと
 - The max_iterations limit is a hard cap to prevent infinite loops

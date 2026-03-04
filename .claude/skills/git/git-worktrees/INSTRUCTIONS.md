@@ -252,5 +252,5 @@ git rebase --continue
 ## 関連スキル
 
 - [writing-plans](writing-plans.md): 進行計画の作成
-- [executing-plans](executing-plans.md): 実行と検証
+- [implement-plans](implement-plans.md): 実行と検証
 - [ai-cli-selector](ai-cli-selector.md): ツール選定

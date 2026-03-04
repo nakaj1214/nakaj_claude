@@ -207,7 +207,7 @@
     ├── design-tracker/              # 設計変更の追跡 (+手動更新モード)
     ├── docker-dev/                  # Docker Compose ベースの開発フロー
     ├── esp32/                       # ESP32 開発ガイド（PlatformIO・WiFi・FreeRTOS・OTA）
-    ├── executing-plans/             # 計画を実行に移すときの手順
+    ├── implement-plans/             # 計画を実行に移すときの手順
     ├── frontend-design/             # フロントエンド設計 (+UI/UX 設計原則)
     ├── git/                         # Git 操作
     │   ├── finishing-a-development-branch/ # 開発ブランチの完了処理

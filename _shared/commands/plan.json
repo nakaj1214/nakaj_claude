@@ -1,7 +1,0 @@
-{
-  "name": "plan",
-  "description": "Create detailed implementation plan for a feature",
-  "instruction": "Create a detailed implementation plan by investigating the codebase, evaluating different approaches, and proposing a step-by-step implementation strategy. Ask clarifying questions if requirements are unclear. Present multiple options if applicable and recommend the best approach.",
-  "agents": ["planner"],
-  "prompt": "What feature or change would you like me to plan?"
-}

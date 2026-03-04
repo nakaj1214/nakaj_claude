@@ -56,7 +56,7 @@ TRIGGER_MAP = {
     "css-layout":                 ["CSSレイアウト", "Grid", "Flexbox", "レスポンシブ"],
     "css-organization":           ["CSS設計", "BEM", "デザインシステム", "CSS変数"],
     "design-tracker":             ["設計記録", "アーキテクチャ記録", "DESIGN.md記録", "DESIGN.md更新", "設計ドキュメント更新"],
-    "executing-plans":            ["計画実行", "計画に従って"],
+    "implement-plans":            ["計画実行", "計画に従って"],
     "frontend-design":            ["フロントエンド設計", "UIデザイン", "コンポーネント設計", "UI/UX", "モバイルファースト"],
     "debug":                      ["デバッグ", "バグ修正", "エラー調査"],
     "git":                        ["git", "コミット", "ブランチ", "プルリクエスト", "PR"],

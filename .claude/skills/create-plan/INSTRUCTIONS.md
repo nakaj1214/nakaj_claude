@@ -10,6 +10,18 @@
 
 ---
 
+## Step 0: Proposal Quality Gate（前提チェック）
+
+**plan 作成の前に、必ず `proposal-quality-gate` スキルの INSTRUCTIONS.md を読み、品質チェックを実行すること。**
+
+品質チェックの結果:
+- **PASS** → Step 1 に進む
+- **FAIL** → proposal.md のリライトを実施し、ユーザー承認後に Step 1 に進む
+
+詳細: [proposal-quality-gate INSTRUCTIONS.md](../proposal-quality-gate/INSTRUCTIONS.md)
+
+---
+
 ## Step 1: Read Proposal
 
 Read `docs/implement/proposal.md`.
@@ -133,5 +145,6 @@ Report to user (in Japanese):
 
 - Codex is called via subagent to preserve main context window
 - Codex cannot access Claude's file context — plan.md content must be passed explicitly in the prompt
-- Claude has final authority; if Codex APPROVED but Claude sees a critical issue, Claude may request another iteration
+- **Claude は APPROVED 判定を自分で行ってはならない。** Codex が APPROVED を出さなかった場合、ユーザーに状況を報告して判断を仰ぐこと
 - Max 5 iterations is a hard limit to prevent infinite loops
+- 5回のループで APPROVED にならなかった場合、Claude が勝手に APPROVED とせず、残っている blocking issues をユーザーに提示して次のアクションを確認すること

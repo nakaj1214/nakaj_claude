@@ -189,7 +189,7 @@ git worktree remove <ワークツリーパス>
 
 **呼び出し元:**
 - **subagent-driven-development**（ステップ7）- 全タスク完了後
-- **executing-plans**（ステップ5）- 全バッチ完了後
+- **implement-plans**（ステップ5）- 全バッチ完了後
 
 **連携スキル:**
 - **using-git-worktrees** - そのスキルで作成されたワークツリーのクリーンアップ

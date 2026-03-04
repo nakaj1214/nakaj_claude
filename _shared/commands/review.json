@@ -1,7 +1,0 @@
-{
-  "name": "review",
-  "description": "Comprehensive code review of specified files",
-  "instruction": "Perform a comprehensive code review using the code-review skill. Check for security vulnerabilities, code quality, performance issues, and best practices. Provide detailed feedback with specific file locations and actionable suggestions.",
-  "skills": ["code-review"],
-  "prompt": "Which files or directories would you like me to review?"
-}

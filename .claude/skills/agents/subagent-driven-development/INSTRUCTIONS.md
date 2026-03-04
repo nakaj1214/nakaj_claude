@@ -226,4 +226,4 @@ digraph process {
 - **test-driven-development** - サブエージェントが各タスクでTDDに従う
 
 **代替ワークフロー:**
-- **executing-plans** - 同じセッション実行の代わりに並列セッションを使用
+- **implement-plans** - 同じセッション実行の代わりに並列セッションを使用

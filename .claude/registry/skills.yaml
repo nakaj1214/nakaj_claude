@@ -234,14 +234,6 @@ skills:
       - "IoT"
       - "マイコン"
 
-  - name: executing-plans
-    path: skills/executing-plans/SKILL.md
-    description: "レビューチェックポイントを持つ別セッションで実行する書かれた実装計画がある際に使用"
-    tags: [planning]
-    triggers:
-      - "計画実行"
-      - "計画に従って"
-
   - name: frontend-design
     path: skills/frontend-design/SKILL.md
     description: "高い設計品質を持つ独自性のあるプロダクショングレードのフロントエンドインターフェースを作成する。ユーザーがWebコンポーネント、ページ、アプリケーションの構築を依頼した際に使用する。汎用的なAI的美学を避けたクリエイティブで洗練されたコードを生成する。"
@@ -287,6 +279,14 @@ skills:
       - "hookify"
       - "フックルール"
       - "hookify作成"
+
+  - name: implement-plans
+    path: skills/implement-plans/SKILL.md
+    description: "書かれた実装計画を中断なしで連続実行する。ブロッカー発生時のみ停止し、完了後にまとめて報告する。"
+    tags: [planning]
+    triggers:
+      - "計画実行"
+      - "計画に従って"
 
   - name: init
     path: skills/init/SKILL.md
@@ -361,6 +361,12 @@ skills:
     triggers:
       - "プラグイン構造"
       - "ディレクトリ構成"
+
+  - name: proposal-quality-gate
+    path: skills/proposal-quality-gate/SKILL.md
+    description: "create-plan 実行前に docs/implement/proposal.md の品質をチェックし、 曖昧な記述・繰り返し失敗パターン・具体性不足を検出した場合は 計画作成ではなく proposal.md の構造化リライトを行うゲートスキル。 「create-plan」「計画を作成」「plan作成」と言われたときに自動トリガーする。"
+    tags: []
+    triggers: []
 
   - name: raspberry-pi
     path: skills/raspberry-pi/SKILL.md
