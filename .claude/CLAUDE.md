@@ -53,6 +53,19 @@
 
 ---
 
+## スキル設計原則
+
+参考: [skill-creatorとOrchestration Skillsの設計パターン](https://nyosegawa.github.io/posts/skill-creator-and-orchestration-skill/)
+
+1. **SKILL.md はフロー制御に徹する**: 専門処理は `agents/` サブプロンプトに分離。Progressive Disclosure
+2. **確定的処理 → スクリプト**: ループ・計算・ファイル操作は `scripts/`、判断・分析・生成は Agent
+3. **スキーマ契約を先に設計**: `references/schemas.md` に JSON スキーマを定義
+4. **Why-driven なプロンプト**: 理由を説明して柔軟性確保。クリティカルな箇所のみ Must-driven
+5. **description 最適化に注力**: システムプロンプトに注入されるのは name + description のみ。押し強めに
+6. **オーケストレーション選択**: 並列性 → Sub-agent 型、順序性 → Skill Chain 型
+
+---
+
 ## 定期メンテナンス（月次）
 
 ルール/スキルの肥大化を防ぐため、月1回の棚卸しを行う:
