@@ -1,3 +1,11 @@
+---
+paths:
+  - "**/*.php"
+  - "**/routes/**"
+  - "**/app/**"
+  - "**/resources/views/**"
+---
+
 # Laravel 規約・ベストプラクティス
 
 Laravel 10/11/12 プロジェクト向けルール。

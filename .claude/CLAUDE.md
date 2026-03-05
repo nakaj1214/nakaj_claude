@@ -2,55 +2,34 @@
 
 `.claude/rules/` 内の `.md` ファイルは Claude Code が自動検出しセッションに注入する。
 パス指定ルール（`paths:` フロントマター）を使えばファイル種別ごとの条件付きロードも可能。
-詳細: `.claude/rules/_PATH_RULES_GUIDE.md`
+詳細: `.claude/docs/path-rules-guide.md`
 
 ### 現在のルール構成
 
-- **共通**: coding-principles, language, security-rules, common/ (coding-style, git-workflow, testing)
-- **Python**: python/ (coding-style, dev-environment, testing)
-- **PHP/Laravel**: php/coding-style, laravel/conventions
-- **JavaScript**: javascript/jquery-style
-- **Hardware**: hardware/ (embedded-c-style, raspberry-pi, esp32)
+- **常時ロード（共通）**: coding-principles, language, security-rules, skill-execution, work-modes, common/ (coding-style, git-workflow, testing)
+- **条件付きロード（`paths:` 指定）**:
+  - Python (`**/*.py`): python/ (coding-style, dev-environment, testing)
+  - PHP/Laravel (`**/*.php`): php/coding-style, laravel/conventions
+  - JavaScript (`**/*.js,*.ts`): javascript/jquery-style
+  - Hardware (`**/*.ino,*.c,*.cpp`): hardware/ (embedded-c-style, raspberry-pi, esp32)
+  - Frontend (`**/*.js,*.css,*.html,*.blade.php`): ui-fix-verification
 
 ---
 
 ## ワークフロー設計
 
-### 1. Planモードを基本とする
-- 3ステップ以上 or アーキテクチャに関わるタスクは必ずPlanモードで開始する
-- 途中でうまくいかなくなったら、無理に進めずすぐに立ち止まって再計画する
-- 構築だけでなく、検証ステップにもPlanモードを使う
-- 曖昧さを減らすため、実装前に詳細な仕様を書く
+詳細: `.claude/docs/workflow-guide.md`
 
-### 2. サブエージェント戦略
-- メインのコンテキストウィンドウをクリーンに保つためにサブエージェントを積極的に活用する
-- リサーチ・調査・並列分析はサブエージェントに任せる
-- 複雑な問題には、サブエージェントを使ってより多くの計算リソースを投入する
-- 集中して実行するために、サブエージェント1つにつき1タスクを割り当てる
-
-### 3. 自己改善ループ
-- ユーザーから修正を受けたら必ず `.claude/docs/lessons.md` にそのパターンを記録する
-- 同じミスを繰り返さないように、自分へのルールを書く
-- ミス率が下がるまで、ルールを徹底的に改善し続ける
-- セッション開始時に、そのプロジェクトに関連するlessonsをレビューする
-
-### 4. 完了前に必ず検証する
-- 動作を証明できるまで、タスクを完了とマークしない
-- 必要に応じてmainブランチと自分の変更の差分を確認する
-- 「スタッフエンジニアはこれを承認するか？」と自問する
-- テストを実行し、ログを確認し、正しく動作することを示す
-
-### 5. エレガントさを追求する（バランスよく）
-- 重要な変更をする前に「もっとエレガントな方法はないか？」と一度立ち止まる
-- ハック的な修正に感じたら「今知っていることをすべて踏まえて、エレガントな解決策を実装する」
-- シンプルで明白な修正にはこのプロセスをスキップする（過剰設計しない）
-- 提示する前に自分の作業に自問自答する
-
-### 6. 自律的なバグ修正
-- バグレポートを受けたら、手取り足取り教えてもらわずにそのまま修正する
-- ログ・エラー・失敗しているテストを見て、自分で解決する
-- ユーザーのコンテキスト切り替えをゼロにする
-- 言われなくても、失敗しているCIテストを修正しに行く
+1. **Planモード基本**: 3ステップ以上のタスクは必ずPlanモード。行き詰まったら再計画
+2. **サブエージェント活用**: リサーチ・並列分析はサブエージェントに委譲。1エージェント=1タスク
+3. **自己改善ループ**: 修正 → `lessons.md` に記録 → ルール改善
+4. **完了前検証**: 動作証明まで完了としない。テスト実行・ログ確認
+5. **エレガントさ**: 重要な変更前に「もっと良い方法は？」。シンプルな修正は過剰設計しない
+6. **自律バグ修正**: バグレポートを受けたら自分で解決。ユーザーのコンテキスト切替ゼロ
+7. **研究と実装分離**: 調査で方針確定 → 新コンテキストで実装。混ぜない
+8. **セッション分割**: 1セッション = 1コントラクト。終了時 `/handover`
+9. **完了契約**: `docs/contracts/` に完了条件を事前定義。全条件達成まで未完了
+10. **挙動改善**: 気に入らない挙動 → `rules/`、繰り返し手順 → `skills/`
 
 ---
 
@@ -70,11 +49,41 @@
 - **シンプル第一**：すべての変更をできる限りシンプルにする。影響するコードを最小限にする。
 - **手を抜かない**：根本原因を見つける。一時的な修正は避ける。シニアエンジニアの水準を保つ。
 - **影響を最小化する**：変更は必要な箇所のみにとどめる。バグを新たに引き込まない。
+- **人間が最終責任者**：エージェントの成果物はすべて人間がレビュー・承認する。完璧なエージェントは存在しない。
+
+---
+
+## 定期メンテナンス（月次）
+
+ルール/スキルの肥大化を防ぐため、月1回の棚卸しを行う:
+
+- [ ] 矛盾するルールがないか
+- [ ] 重複するスキル/ルールがないか
+- [ ] 使われていないスキル/エージェントがないか
+- [ ] 常時ロードのルール行数が1,000行以内か
+- [ ] `paths:` 指定で条件付きロードにできるルールがないか
 
 ---
 
 ## セッション開始チェック
 
-- `.claude/docs/memory/AUTO-MATERIALIZE-QUEUE.jsonl` に `status: "pending"` のエントリがあれば通知:
-  「前セッションから N 件の skill/hook 候補があります。`/materialize` で staging に生成できます」
-- QUEUE ファイルが存在しない場合は何もしない
+以下の順序で確認する（Read のみ、全文注入しない）:
+
+1. `.claude/docs/PROJECT-PROFILE.md` — プロジェクト全体像の把握
+2. `.claude/docs/user-preferences.md` — ユーザースタイルの確認
+3. `.claude/docs/memory/HANDOVER-*.md`（最新）— 前セッションの状態把握
+4. `.claude/docs/lessons.md`（直近3件）— 同じミスの防止
+5. `.claude/docs/memory/AUTO-MATERIALIZE-QUEUE.jsonl` — pending があれば通知:
+   「前セッションから N 件の skill/hook 候補があります。`/materialize` で staging に生成できます」
+6. QUEUE ファイルが存在しない場合は何もしない
+
+---
+
+## フィードバック記録
+
+ユーザーから修正を受けたら feedback-loop スキルの手順に従い3ファイルを更新する。
+同一カテゴリ3件で自動対策候補を QUEUE に追加。詳細: `.claude/skills/feedback-loop/INSTRUCTIONS.md`
+
+## トラブルシューティング
+
+問題に遭遇したら `.claude/docs/playbooks.md` を参照。

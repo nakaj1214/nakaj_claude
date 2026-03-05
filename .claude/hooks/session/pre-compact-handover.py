@@ -190,9 +190,13 @@ def generate_edit_analysis(edit_log_content: str) -> str | None:
     return content
 
 
-def save_doc(content: str, filename: str) -> str:
+def save_doc(content: str, filename: str, tags: list[str] | None = None) -> str:
     Path(MEMORY_DIR).mkdir(parents=True, exist_ok=True)
     output_path = os.path.join(MEMORY_DIR, filename)
+    if tags:
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        frontmatter = f"---\ntags: {tags}\nscope: session\ndate: {date_str}\n---\n\n"
+        content = frontmatter + content
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
     return output_path
@@ -217,8 +221,8 @@ def main() -> None:
     date_str = datetime.now().strftime("%Y-%m-%d-%H%M")
 
     tasks = {
-        "handover":    (generate_handover,    f"HANDOVER-{date_str}.md"),
-        "suggestions": (generate_suggestions, f"SKILL-SUGGESTIONS-{date_str}.md"),
+        "handover":    (generate_handover,    f"HANDOVER-{date_str}.md",           ["session", "handover"]),
+        "suggestions": (generate_suggestions, f"SKILL-SUGGESTIONS-{date_str}.md",  ["session", "automation"]),
     }
 
     # Check if edit history has enough entries for analysis
@@ -236,21 +240,24 @@ def main() -> None:
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(fn, transcript): filename
-            for fn, filename in tasks.values()
+            executor.submit(fn, transcript): (filename, tags)
+            for fn, filename, tags in tasks.values()
         }
 
         # Add edit analysis task if enough data
         if edit_log_content and edit_analysis_filename:
-            futures[executor.submit(generate_edit_analysis, edit_log_content)] = edit_analysis_filename
+            futures[executor.submit(generate_edit_analysis, edit_log_content)] = (
+                edit_analysis_filename,
+                ["session", "edit-patterns"],
+            )
 
         for future in as_completed(futures):
-            filename = futures[future]
+            filename, tags = futures[future]
             try:
                 content = future.result()
                 if content is None:
                     continue
-                path = save_doc(content, filename)
+                path = save_doc(content, filename, tags=tags)
                 print(f"[pre-compact-handover] Saved: {path}", file=sys.stderr)
 
                 # Add to materialize queue for edit patterns

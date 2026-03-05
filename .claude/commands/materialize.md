@@ -39,6 +39,15 @@ Task (general-purpose) で以下を依頼:
 - `settings.json` に追加する hook エントリの JSON を生成
 - 既存の hook ファイル名と照合し、重複する場合はスキップ
 
+**feedback-pattern の場合** (`type: "feedback-pattern"`):
+- `category` と `suggested_action` フィールドを読み取る
+- `.claude/docs/feedback-log.md` から該当カテゴリの全エントリを抽出
+- `suggested_action` に基づいてドラフトを生成:
+  - Rule → `.claude/staging/{name}.md` (ルールファイル)
+  - Hook → `.claude/staging/{name}/` (Python スクリプト + settings.json エントリ)
+  - Skill → `.claude/staging/{name}/` (SKILL.md + INSTRUCTIONS.md + evals.json)
+  - MCP → `.claude/staging/{name}/` (MCP 設定 JSON)
+
 #### c. staging/ に配置
 - `.claude/staging/{name}/` にファイルを配置
 - ディレクトリが既に存在する場合は上書き警告を表示

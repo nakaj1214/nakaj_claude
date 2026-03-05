@@ -1,6 +1,8 @@
 # Lessons Learned
 
 ## [2026-03-02] スキル指示のコマンド・モデル名を勝手に変えてはいけない
+<!-- classification: 規約違反 -->
+<!-- severity: Must -->
 
 ### 何が起きたか
 `create-plan` スキルの INSTRUCTIONS.md に `--model gpt-5.3-codex` と明記されていたのに、
@@ -16,6 +18,8 @@
 - 「動かないかもしれない」という推測だけで指示を改変しない
 
 ## [2026-03-04] 無効化されたフックのコマンドをスキルから実行してはいけない
+<!-- classification: 規約違反 -->
+<!-- severity: High -->
 
 ### 何が起きたか
 `create-plan` スキルの INSTRUCTIONS.md に `python3 .claude/hooks/notify-slack.py` でSlack通知を送る手順が書かれていた。
@@ -32,6 +36,8 @@
 - スキルの手順は「実行可能な環境であること」を前提としている。環境が変わればスキップすべきステップがある
 
 ## [2026-03-04] コード変更後に「改善されていない」と報告されたら実行パスを検証する
+<!-- classification: 手順漏れ -->
+<!-- severity: High -->
 
 ### 何が起きたか
 3回にわたりUI改善を実装したが、ユーザーから毎回「改善されていない」と報告された。
@@ -70,6 +76,8 @@
 - **カスタム UI コンポーネント（Bootstrap 以外のタブ等）を使っているプロジェクトでは、Bootstrap のイベント名・セレクタを使わない**
 
 ## [2026-03-04] prompt.md / proposal.md の日本語を文字通り読む
+<!-- classification: 過剰解釈 -->
+<!-- severity: High -->
 
 ### 何が起きたか
 依頼文（prompt.md）に「laravel breezeデフォルトの『ログイン状態を保持する』がすでに存在している」と明記されていたのに、localStorageのロジック修正に時間を費やした。
@@ -87,6 +95,8 @@
 - **修正に5分以上かかりそうなら、問題の解釈が間違っている可能性を疑う**
 
 ## [2026-03-04] Claude は APPROVED 判定を自分で行ってはならない
+<!-- classification: 前提違い -->
+<!-- severity: Must -->
 
 ### 何が起きたか
 create-plan の Codex レビューループが5回の上限に達した後、

@@ -1,3 +1,11 @@
+---
+paths:
+  - "**/raspberry-pi/**"
+  - "**/raspi/**"
+  - "**/rpi/**"
+  - "**/*.service"
+---
+
 # Raspberry Pi 開発規約
 
 Raspberry Pi OS（Debian ベース）上での Python / C++ 開発ルール。
