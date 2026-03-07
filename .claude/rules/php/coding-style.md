@@ -67,13 +67,17 @@ $lengths = array_map(strlen(...), $strings);
 
 ## 命名規則
 
+> **このプロジェクトでは `project-conventions.md` に従い snake_case を採用。**
+> 標準 Laravel (camelCase) とは異なるため注意。
+
 | 対象 | 規則 | 例 |
 |------|------|-----|
 | クラス | PascalCase | `UserRepository` |
-| メソッド・関数 | camelCase | `getUserById()` |
-| 変数 | camelCase | `$userId` |
+| メソッド・関数 | snake_case | `get_user_by_id()` |
+| 変数 | snake_case | `$user_id` |
 | 定数 | UPPER_SNAKE | `MAX_RETRY_COUNT` |
 | Enum ケース | PascalCase | `Status::Active` |
+| プロパティ（DI） | `_` プレフィックス | `$_userService` |
 
 ## 配列・コレクション
 

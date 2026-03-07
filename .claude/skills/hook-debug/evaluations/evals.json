@@ -1,0 +1,50 @@
+{
+  "skill_name": "hook-debug",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "edit-tracker フックが動いていないみたい。デバッグして",
+      "expected_output": "settings.json 確認 → echo テストで単体実行 → import チェック → 出力フォーマット確認",
+      "files": [".claude/settings.json", ".claude/hooks/quality/edit-tracker.py"],
+      "assertions": [
+        "settings.json でフックの登録状態を確認している",
+        "echo でテスト JSON を pipe してスクリプトを単体実行している",
+        "Python の import エラーがないか確認している",
+        "stdout の出力が valid JSON か確認している"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "新しいフックを作ったけどエラーが出る。settings.json を確認して",
+      "expected_output": "settings.json のフック登録を確認し、matcher・command パス・timeout を検証",
+      "files": [".claude/settings.json"],
+      "assertions": [
+        "settings.json を読んでフック一覧を表示している",
+        "command のパスが存在するか確認している",
+        "matcher が正しいツール名か確認している"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "フックがタイムアウトしている",
+      "expected_output": "スクリプトの実行時間を計測し、timeout 値との比較を行う",
+      "files": [],
+      "assertions": [
+        "time コマンドでスクリプトの実行時間を計測している",
+        "settings.json の timeout 値と比較している",
+        "timeout を増やすか処理を高速化する提案をしている"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "PostToolUse フックの additionalContext が Claude に反映されない",
+      "expected_output": "出力 JSON のフォーマットを確認し、hookEventName と additionalContext の構造を検証",
+      "files": [],
+      "assertions": [
+        "echo テストでフックの stdout を確認している",
+        "JSON フォーマットが正しい構造か検証している",
+        "stdout に JSON 以外の出力が混ざっていないか確認している"
+      ]
+    }
+  ]
+}

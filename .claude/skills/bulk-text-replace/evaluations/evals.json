@@ -1,0 +1,47 @@
+{
+  "skill_name": "bulk-text-replace",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": ".claude/以下の全MDファイルで「antigravity」を「ブラウザエージェント」に一括置換して",
+      "expected_output": "grep で対象ファイルを特定 → 件数提示 → sed で一括置換 → git diff で確認",
+      "files": [],
+      "assertions": [
+        "grep -rl で対象ファイルを事前に検索している",
+        "置換前にファイル一覧と件数をユーザーに提示している",
+        "sed または Python で一括置換を実行している",
+        "git diff で置換結果を確認している"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "ポート番号 8080 を 28001 に全ファイルで変更して",
+      "expected_output": ".md, .json, .yaml など複数拡張子を対象に grep → 一括置換",
+      "files": [],
+      "assertions": [
+        "複数の拡張子を --include で絞り込んでいる",
+        "置換結果を差分で確認している"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "rules/とskills/の全ファイルで「Playwright CLI」「Playwright」という文字列を削除して",
+      "expected_output": "特殊文字に注意し、Python スクリプトか適切にエスケープした sed で実行",
+      "files": [],
+      "assertions": [
+        "スラッシュなどの特殊文字のエスケープを考慮している",
+        "100ファイルを超えない場合はそのまま実行している"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "src/以下の全PHPファイルで $this->_deviceService を $this->deviceService に変更して",
+      "expected_output": "grep → sed（エスケープ必要）→ diff 確認",
+      "files": [],
+      "assertions": [
+        "$ と _ の特殊文字をエスケープして sed を実行している",
+        "PHP ファイルのみ対象にしている（--include='*.php'）"
+      ]
+    }
+  ]
+}

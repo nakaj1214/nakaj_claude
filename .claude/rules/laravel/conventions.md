@@ -14,14 +14,17 @@ Laravel 10/11/12 プロジェクト向けルール。
 
 ## 命名規則
 
+> **このプロジェクトではメソッド名に snake_case を採用（`project-conventions.md` 参照）。**
+
 | 対象 | 規則 | 例 |
 |------|------|-----|
 | Model | 単数形 PascalCase | `User`, `BlogPost` |
-| Controller | 複数形 + Controller | `UsersController`, `BlogPostsController` |
+| Controller | 単数形 + Controller | `StockController`, `OrderController` |
+| メソッド | snake_case | `fetch_stock_json()`, `store_order()` |
 | Migration | snake_case + 動詞 | `create_users_table`, `add_email_to_users_table` |
-| テーブル | 複数形 snake_case | `users`, `blog_posts` |
+| テーブル | `{department_id}_{entity}` or snake_case | `5_stock`, `product_number` |
 | FK | `{model}_id` | `user_id`, `blog_post_id` |
-| Route name | ドット区切り | `users.index`, `users.show` |
+| Route name | ドット区切り | `ajax.fetch_stock_json`, `manager.confirm` |
 | Job | 動作+名詞 | `SendWelcomeEmail`, `ProcessPayment` |
 | Event | 過去形 | `UserRegistered`, `OrderPlaced` |
 | Listener | 動作で始まる | `SendWelcomeEmailNotification` |

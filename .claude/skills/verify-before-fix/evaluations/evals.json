@@ -1,0 +1,33 @@
+{
+  "skill_name": "verify-before-fix",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "ダブルクリックすると日付が勝手に入力される問題を直して",
+      "expected_behavior": "Phase 1〜3 を実行し、antigravity でDOM/コンソールログを確認してから修正に着手する。推測で opacity や pointer-events を変えない",
+      "pass_criteria": "コード修正の前に証拠収集（antigravity または DevTools 確認依頼）が行われている",
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "在庫の合計値が合わない。DBの値がおかしい気がする",
+      "expected_behavior": "Phase 1 で現象を記録後、Phase 3 で実際の DB データを SELECT で確認してから原因を特定する",
+      "pass_criteria": "docker compose exec で DB の実データを確認してから修正方針を提示している",
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "改善されていない（3回目）。まだセルの色が青いまま",
+      "expected_behavior": "過去の修正が効かなかった事実を認識し、推測で CSS を変えずに antigravity でスクリーンショット + DOM キャプチャで実際の状態を確認する",
+      "pass_criteria": "停止条件（2回以上の修正失敗）を検出し、Phase 3 に戻って証拠収集を行っている",
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "Python スクリプトの出力ファイルが空になる",
+      "expected_behavior": "Phase 3 で pytest または logging.debug() で中間値を確認し、どの時点でデータが消失しているか特定する",
+      "pass_criteria": "テスト実行またはログ出力で証拠を収集してから修正に着手している",
+      "assertions": []
+    }
+  ]
+}
