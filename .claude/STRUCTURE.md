@@ -84,13 +84,6 @@
 │   ├── update-docs.md       # /update-docs       → ドキュメントの更新
 │   └── verify.md            # /verify            → 実装の検証
 │
-│  # ===== contexts/ =====
-│  # 作業内容に合わせて最適なコンテキストウィンドウの出力を提供することで最適化する
-├── contexts/
-│   ├── dev.md               # 開発モード用コンテキスト設定
-│   ├── research.md          # 調査モード用コンテキスト設定
-│   └── review.md            # レビューモード用コンテキスト設定
-│
 │  # ===== docs/ =====
 │  # プロジェクト共通の設計ドキュメント・運用情報
 ├── docs/
@@ -105,10 +98,16 @@
 │   ├── path-rules-guide.md      # パス指定ルールの使い方ガイド
 │   ├── libraries/               # ライブラリ調査ドキュメント
 │   │   └── _TEMPLATE.md         #   調査テンプレート
-│   └── memory/                  # コンテキスト圧縮時の引き継ぎ情報
-│       ├── HANDOVER-*.md        #   セッション引き継ぎドキュメント
-│       ├── SKILL-SUGGESTIONS-*.md #  スキル提案
-│       ├── EDIT-PATTERNS-*.md   #   編集パターン記録
+│   ├── references/                # スキルから移動したリファレンス資料
+│   │   ├── advanced-security/     #   CodeQL/Semgrep/SARIF
+│   │   ├── agents/                #   サブエージェント活用パターン
+│   │   ├── git/                   #   Git Worktree・ブランチ完了処理
+│   │   ├── plugin-dev/            #   プラグイン開発ガイド
+│   │   └── security/              #   OWASP・環境変数保護
+│   └── memory/                    # コンテキスト圧縮時の引き継ぎ情報
+│       ├── HANDOVER-*.md          #   セッション引き継ぎドキュメント
+│       ├── SKILL-SUGGESTIONS-*.md #   スキル提案
+│       ├── EDIT-PATTERNS-*.md     #   編集パターン記録
 │       └── AUTO-MATERIALIZE-QUEUE.jsonl # 自動生成候補キュー
 │
 │  # ===== hooks/ =====
@@ -119,6 +118,8 @@
 │   ├── lint-on-save.py               # 保存時の自動 Lint フック
 │   ├── post-implementation-review.py # 実装後レビューフック
 │   ├── post-test-analysis.py         # テスト後分析フック
+│   ├── edit-tracker.py               # 編集ログ蓄積フック
+│   ├── fix-escalation-detector.py    # 失敗パターン検知フック
 │   ├── notify-slack.py               # Slack通知フック
 │   ├── slack_approval.py             # Slack経由の承認フック
 │   ├── slack_socket_daemon.py        # Slackソケット接続デーモン
@@ -162,38 +163,45 @@
 ├── resources/
 │   └── awesome-claude-code.md   # Claude Code の便利ツール・リソース集
 │
-│  # ===== rules/ (19 files) =====
+│  # ===== rules/ (26 files) =====
 │  # Claudeが従うべきルール定義
-│  # paths: フロントマターなし → 常時ロード
-│  # paths: フロントマターあり → 対象ファイル操作時のみロード
+│  # paths: フロントマターなし → 常時ロード（9ファイル・約430行）
+│  # paths: フロントマターあり → 対象ファイル操作時のみロード（17ファイル）
 ├── rules/
-│   ├── coding-principles.md   # [常時] コーディング原則 (汎用)
-│   ├── language.md            # [常時] 言語・コミュニケーションルール
-│   ├── security-rules.md      # [常時] セキュリティルール (XSS・SQLi・認証等)
-│   ├── neutral-analysis.md    # [常時] 中立的分析ルール（迎合対策・三者構造）
-│   ├── skill-execution.md     # [常時] スキル/フック実行ルール
-│   ├── work-modes.md          # [常時] 作業モード切替（開発・調査・レビュー）
-│   ├── ui-fix-verification.md # [条件] UI修正検証ルール (*.js,*.css,*.html,*.blade.php)
-│   ├── common/                # [常時] 言語共通ルール
-│   │   ├── coding-style.md    #   コーディングスタイル（不変性・ファイル構成・エラー処理）
-│   │   ├── git-workflow.md    #   Git ワークフロー（コミット・PR・ブランチ命名）
-│   │   └── testing.md         #   テストルール（TDD・カバレッジ80%+）
-│   ├── python/                # [条件: **/*.py] Python 固有ルール
-│   │   ├── coding-style.md    #   Python コーディングスタイル（PEP 8・型注釈）
-│   │   ├── dev-environment.md #   Python 開発環境設定（uv・ruff・ty・marimo）
-│   │   └── testing.md         #   Python テストルール（pytest・AAA・fixtures）
-│   ├── php/                   # [条件: **/*.php] PHP 固有ルール
-│   │   └── coding-style.md    #   PHP コーディングスタイル（PHP 8.x・PSR-12）
-│   ├── laravel/               # [条件: **/*.php] Laravel 固有ルール
-│   │   └── conventions.md     #   Laravel 命名規則・Eloquent・Controller 規約
-│   ├── javascript/            # [条件: **/*.js,*.ts] JavaScript 固有ルール
-│   │   └── jquery-style.md    #   jQuery コーディングスタイル
-│   └── hardware/              # [条件: **/*.ino,*.c,*.cpp] ハードウェア開発ルール
-│       ├── embedded-c-style.md  # 組み込み C/C++ スタイル
-│       ├── raspberry-pi.md      # Raspberry Pi 開発規約
-│       └── esp32.md             # ESP32 開発規約
+│   ├── coding-principles.md      # [常時] コーディング原則 (汎用)
+│   ├── language.md               # [常時] 言語・コミュニケーションルール
+│   ├── security-rules.md         # [常時] セキュリティルール (XSS・SQLi・認証等)
+│   ├── neutral-analysis.md       # [常時] 中立的分析ルール（迎合対策・三者構造）
+│   ├── skill-execution.md        # [常時] スキル/フック実行ルール
+│   ├── work-modes.md             # [常時] 作業モード切替（開発・調査・レビュー）
+│   ├── _PATH_RULES_GUIDE.md      # [条件] パス指定ルールの書き方ガイド
+│   ├── project-conventions.md    # [条件: **/*.php,*.js] プロジェクト固有規約
+│   ├── ui-fix-verification.md    # [条件: *.js,*.css,*.html] UI修正検証ルール
+│   ├── common/                   # [常時] 言語共通ルール
+│   │   ├── coding-style.md       #   コーディングスタイル（不変性・ファイル構成・エラー処理）
+│   │   ├── git-workflow.md       #   Git ワークフロー（コミット・PR・ブランチ命名）
+│   │   └── testing.md            #   テストルール（TDD・カバレッジ80%+）
+│   ├── python/                   # [条件: **/*.py] Python 固有ルール
+│   │   ├── coding-style.md       #   Python コーディングスタイル（PEP 8・型注釈）
+│   │   ├── dev-environment.md    #   Python 開発環境設定（uv・ruff・ty・marimo）
+│   │   └── testing.md            #   Python テストルール（pytest・AAA・fixtures）
+│   ├── php/                      # [条件: **/*.php] PHP 固有ルール
+│   │   ├── coding-style.md       #   PHP コーディングスタイル（PHP 8.x・PSR-12）
+│   │   └── comments.md           #   PHP コメント規約
+│   ├── laravel/                  # [条件: **/*.php] Laravel 固有ルール
+│   │   ├── conventions.md        #   Laravel 命名規則・Eloquent・Controller 規約
+│   │   ├── architecture.md       #   Laravel アーキテクチャ設計
+│   │   ├── database.md           #   Laravel データベース規約
+│   │   └── frontend-integration.md # Laravel+jQuery フロントエンド統合
+│   ├── javascript/               # [条件: **/*.js,*.ts] JavaScript 固有ルール
+│   │   ├── jquery-style.md       #   jQuery コーディングスタイル
+│   │   └── naming-and-comments.md #  JS 命名規則・コメント規約
+│   └── hardware/                 # [条件: **/*.ino,*.c,*.cpp] ハードウェア開発ルール
+│       ├── embedded-c-style.md   #   組み込み C/C++ スタイル
+│       ├── raspberry-pi.md       #   Raspberry Pi 開発規約
+│       └── esp32.md              #   ESP32 開発規約
 │
-│  # ===== skills/ (42 dirs, 55 SKILL.md) =====
+│  # ===== skills/ (42 dirs) =====
 │  # /スキル名 で呼び出せる作業手順書
 │  # 構成: SKILL.md (概要+description) + INSTRUCTIONS.md (詳細手順)
 │  # 高度なスキルは agents/, references/, scripts/ を持つ
@@ -207,29 +215,11 @@
 └── skills/
     ├── SKILL_TEMPLATE.md            # スキル定義のテンプレート
     │
-    │  # --- セキュリティ ---
-    ├── security/                    # セキュリティ
-    │   ├── owasp-security/          #   OWASP セキュリティチェック
-    │   └── varlock/                 #   変数・シークレット保護
-    ├── advanced-security/           # 高度なセキュリティ分析
-    │   ├── codeql/                  #   CodeQL による静的解析
-    │   ├── insecure-defaults/       #   安全でないデフォルト設定の検出
-    │   ├── sarif-parsing/           #   SARIF 結果の解析
-    │   └── semgrep/                 #   Semgrep による静的解析
-    │
-    │  # --- エージェント活用 ---
-    ├── agents/                      # エージェント活用パターン
-    │   ├── dispatching-parallel-agents/    # 並列エージェント実行
-    │   ├── receiving-code-review/          # コードレビューの受け取り方
-    │   ├── requesting-code-review/         # コードレビューの依頼方法
-    │   ├── subagent-driven-development/    # サブエージェント駆動開発
-    │   ├── using-superpowers/              # Claudeの高度機能活用
-    │   ├── verification-before-completion/ # 完了前の検証
-    │   └── writing-skills/                 # スキル定義の書き方
-    │
     │  # --- 計画・レビュー ---
-    ├── create-plan/                 # 実装計画の作成
-    ├── proposal-quality-gate/       # 計画の品質チェック
+    ├── create-proposal/             # 依頼文→構造化要件書（proposal.md）
+    ├── create-plan/                 # 要件書→実装計画（plan.md）
+    ├── proposal-quality-gate/       # 計画前の品質チェック
+    ├── propose-one/                 # 1課題ずつ proposal→plan を実行
     ├── writing-plans/               # 実装計画ドキュメントの書き方
     ├── planning-with-files/         # ファイルに計画を書きながら進める実装フロー
     ├── implement-plans/             # 計画を実行に移すときの手順
@@ -243,7 +233,10 @@
     ├── claude-md-management/        # CLAUDE.md の管理・改訂
     ├── design-tracker/              # 設計変更の追跡
     ├── feedback-loop/               # フィードバック分類・記録・自動対策提案
+    ├── fix-escalation/              # 2回失敗でエスカレーション調査を強制
+    ├── verify-before-fix/           # 修正前の証拠収集ゲート
     ├── handover/                    # セッション引き継ぎドキュメントの手動生成
+    ├── claude-template-sync/        # .claude_remote → .claude の安全な同期
     ├── init/                        # プロジェクト初期化
     ├── simplify/                    # コード簡素化
     ├── systematic-debugging/        # 体系的なデバッグ手順
@@ -252,13 +245,6 @@
     │  # --- スキル・プラグイン開発 ---
     ├── skill-creator/               # スキル定義の作成・評価・最適化
     ├── hookify/                     # フック設定の自動生成
-    ├── plugin-dev/                  # プラグイン開発
-    │   ├── agent-development/       #   エージェント開発
-    │   ├── command-development/     #   コマンド開発
-    │   ├── hook-development/        #   フック開発
-    │   ├── mcp-integration/        #   MCP 統合
-    │   ├── plugin-settings/         #   プラグイン設定管理
-    │   └── plugin-structure/        #   プラグイン構造設計
     │
     │  # --- フロントエンド ---
     ├── accessibility/               # アクセシビリティ対応
@@ -271,11 +257,6 @@
     │  # --- バックエンド・インフラ ---
     ├── docker-dev/                  # Docker Compose ベースの開発フロー
     ├── mcp-builder/                 # MCP サーバーの構築
-    │
-    │  # --- Git ---
-    ├── git/                         # Git 操作
-    │   ├── finishing-a-development-branch/ # 開発ブランチの完了処理
-    │   └── git-worktrees/                  # Git Worktree の活用
     │
     │  # --- ハードウェア ---
     ├── esp32/                       # ESP32 開発ガイド（PlatformIO・WiFi・FreeRTOS・OTA）
@@ -300,15 +281,15 @@
 | `CLAUDE.md`        | Claude Code に読み込ませるメイン指示ファイル |
 | `agents/` (22)     | 専門作業を担う名前付きエージェント |
 | `commands/` (26)   | スラッシュコマンドのショートカット定義 |
-| `contexts/`        | 作業モード別のコンテキスト切り替え設定 |
 | `docs/`            | 設計ドキュメント・メモリ・運用情報 |
+| `docs/references/` | スキルから移動したリファレンス資料（セキュリティ・Git・プラグイン等） |
 | `hooks/`           | Pre/Post ToolUse 等で自動実行されるスクリプト |
 | `hooks/lib/`       | フック共通ライブラリ（transcript 解析・claude -p 呼び出し） |
 | `mcp/`             | 外部ツール連携 (DB・ブラウザ・ファイル等) の設定テンプレ |
 | `meta/`            | .claude 自体の品質管理・自動生成スクリプト |
 | `registry/`        | スキルルーティングインデックス（generate-registry.py が生成） |
 | `resources/`       | 外部参考資料・便利ツール集 |
-| `rules/` (19)      | 常時/条件付きルール (セキュリティ・コーディング規約等) |
+| `rules/` (26)      | 常時ロード(9)+条件付き(17)ルール (セキュリティ・コーディング規約等) |
 | `skills/` (42)     | 作業手順のレシピ集 (呼び出して使う) |
 | `settings.json`    | フック・パーミッション設定 |
 | `.claudeignore`    | Claude に読ませないファイルのパターン |
@@ -319,8 +300,8 @@
 
 | 方式 | ルール | 説明 |
 |------|--------|------|
-| **常時ロード** | coding-principles, language, security-rules, neutral-analysis, skill-execution, work-modes, common/* | セッション開始時に必ず注入 |
-| **条件付き** | python/*, php/*, laravel/*, javascript/*, hardware/*, ui-fix-verification | `paths:` フロントマターで対象ファイル操作時のみ注入 |
+| **常時ロード** (9) | coding-principles, language, security-rules, neutral-analysis, skill-execution, work-modes, common/* | セッション開始時に必ず注入（約430行） |
+| **条件付き** (17) | python/*, php/*, laravel/*, javascript/*, hardware/*, project-conventions, ui-fix-verification, _PATH_RULES_GUIDE | `paths:` フロントマターで対象ファイル操作時のみ注入 |
 
 ---
 
@@ -329,5 +310,20 @@
 | パターン | 用途 | 例 |
 |---------|------|-----|
 | **Sub-agent 型** | 並列実行・文脈継承・Human-in-the-Loop | skill-creator（grader/comparator を並列 spawn） |
-| **Skill Chain 型** | 順序実行・各スキル独立利用可 | create-plan → implement-plans |
+| **Skill Chain 型** | 順序実行・各スキル独立利用可 | create-proposal → create-plan → implement-plans |
 | **シンプル型** | SKILL.md + INSTRUCTIONS.md のみ | tdd-workflow, brainstorming |
+
+---
+
+## ローカル CLAUDE.md
+
+プロジェクト内のリスクが高いディレクトリに小さな CLAUDE.md を配置できる。
+Claude がそのディレクトリ内のファイルを操作する時、自動的にローカル CLAUDE.md が読み込まれる。
+
+```
+src/auth/CLAUDE.md              # 認証・認可の落とし穴
+database/migrations/CLAUDE.md   # マイグレーション規約
+app/Services/Payment/CLAUDE.md  # 決済ロジック固有の制約
+```
+
+配置基準とテンプレートは GUIDE.md のセクション10を参照。

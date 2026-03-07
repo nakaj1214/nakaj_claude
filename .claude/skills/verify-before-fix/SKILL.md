@@ -22,4 +22,5 @@ description: >
 ## 関連スキル
 
 - [systematic-debugging](../systematic-debugging/SKILL.md): 4段階デバッグプロセス（本スキルで原因特定後に使用）
+- [fix-escalation](../fix-escalation/SKILL.md): 2回失敗時の方針転換強制（本スキルの停止条件と連動）
 - [code-review](../code-review/SKILL.md): コード品質レビュー

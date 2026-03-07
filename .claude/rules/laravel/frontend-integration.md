@@ -1,3 +1,12 @@
+---
+paths:
+  - "**/*.php"
+  - "**/*.blade.php"
+  - "**/*.js"
+  - "**/routes/**"
+  - "**/app/**"
+---
+
 # Laravel + jQuery フロントエンド統合
 
 Laravel バックエンドと jQuery フロントエンドの統合パターン。

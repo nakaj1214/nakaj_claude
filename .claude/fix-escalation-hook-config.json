@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "user-prompt-submit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/fix-escalation-detector.py"
+          }
+        ]
+      }
+    ]
+  }
+}

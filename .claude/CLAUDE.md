@@ -1,3 +1,10 @@
+## プロジェクト概要
+
+Claude Code の設定・自動化ツールキット。skills, hooks, rules, agents を集約し、どのプロジェクトにもデプロイ可能なメタリポジトリ。
+対象技術: Python / Laravel+jQuery / ESP32 / Raspberry Pi / VBA
+
+---
+
 ## ルール自動ロード
 
 `.claude/rules/` 内の `.md` ファイルは Claude Code が自動検出しセッションに注入する。
@@ -9,10 +16,11 @@
 - **常時ロード（共通）**: coding-principles, language, security-rules, skill-execution, work-modes, common/ (coding-style, git-workflow, testing)
 - **条件付きロード（`paths:` 指定）**:
   - Python (`**/*.py`): python/ (coding-style, dev-environment, testing)
-  - PHP/Laravel (`**/*.php`): php/coding-style, laravel/conventions
-  - JavaScript (`**/*.js,*.ts`): javascript/jquery-style
+  - PHP/Laravel (`**/*.php`): php/ (coding-style, comments), laravel/ (conventions, architecture, database, frontend-integration)
+  - JavaScript (`**/*.js,*.ts`): javascript/ (jquery-style, naming-and-comments)
   - Hardware (`**/*.ino,*.c,*.cpp`): hardware/ (embedded-c-style, raspberry-pi, esp32)
   - Frontend (`**/*.js,*.css,*.html,*.blade.php`): ui-fix-verification
+  - プロジェクト固有 (`**/*.php,*.js`): project-conventions
 
 ---
 
@@ -96,6 +104,12 @@
 
 ユーザーから修正を受けたら feedback-loop スキルの手順に従い3ファイルを更新する。
 同一カテゴリ3件で自動対策候補を QUEUE に追加。詳細: `.claude/skills/feedback-loop/INSTRUCTIONS.md`
+
+## ローカル CLAUDE.md
+
+リスクの高いディレクトリ（認証・決済・マイグレーション等）には小さな CLAUDE.md を配置する。
+そのディレクトリのファイル操作時に自動ロードされ、モジュール固有の制約が即座にコンテキストに入る。
+配置基準とテンプレート: `GUIDE.md` セクション10
 
 ## トラブルシューティング
 

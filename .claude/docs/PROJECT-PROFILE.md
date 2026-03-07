@@ -27,16 +27,15 @@
 ├── commands/        # 26 slash commands (/commit, /review-pr, etc.)
 ├── docs/            # Knowledge base + memory
 │   ├── memory/      # HANDOVER, EDIT-PATTERNS, SKILL-SUGGESTIONS
+│   ├── references/  # Security, agents, git, plugin-dev references
 │   ├── lessons.md   # Captured mistakes & rules
 │   └── playbooks.md # Structured troubleshooting
-├── hooks/           # Event-driven automation
-│   ├── session/     # pre-compact-handover.py
-│   ├── quality/     # edit-tracker, lint-on-save
-│   └── lib/         # Shared utilities (transcript, claude_p, jsonl_io)
+├── hooks/           # Event-driven automation (6 active hooks)
+│   └── lib/         # Shared utilities (transcript, claude_p)
 ├── meta/            # Self-maintenance (generate-registry.py, health-check.py)
 ├── registry/        # skills.yaml (auto-generated index)
-├── rules/           # 16+ coding rules (auto-loaded)
-├── skills/          # 38+ workflow recipes
+├── rules/           # 26 coding rules (9 always-loaded + 17 conditional)
+├── skills/          # 42 workflow recipes
 └── staging/         # Pipeline staging area + STAGING-MANIFEST.json
 ```
 
