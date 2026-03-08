@@ -126,6 +126,38 @@ Claude は以下の順序でパッケージマネージャーを検出します:
 echo '{"packageManager":"pnpm"}' > .claude/package-manager.json
 ```
 
+## トークンコスト削減設定
+
+出典: [everything-claude-code](https://github.com/affaan-m/everything-claude-code) `docs/token-optimization.md`
+
+### 推奨設定値
+
+`~/.claude/settings.json` に以下を設定:
+
+| 設定 | 推奨値 | デフォルト | 効果 |
+|------|--------|-----------|------|
+| `MAX_THINKING_TOKENS` | 10,000 | 31,999 | 隠れコストを約70%削減 |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | 50% | 95% | 品質低下前に自動圧縮 |
+
+```bash
+# 環境変数で設定
+export MAX_THINKING_TOKENS=10000
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
+```
+
+### モデル別コスト戦略
+
+- **メイン作業**: Sonnet（タスクの80%を処理、Opus 比60%コスト削減）
+- **サブエージェント**: Haiku（約80%安価、探索・ファイル読み込み・テスト実行に十分）
+- **複雑な推論**: Opus（セッション中に `/model opus` で切替）
+
+### その他の最適化
+
+- `/clear` で無関係なタスク間を切替
+- `/compact` で論理的なブレークポイント（計画後、デバッグ後）に圧縮
+- `/cost` で支出を監視
+- MCP サーバーはプロジェクトあたり10未満に抑える
+
 ## コンテキスト最適化戦略
 
 ### 1. ファイル読み込みを最小化する

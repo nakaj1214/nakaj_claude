@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Claude Code Hooks Configuration",
+  "description": "Claude Code フックの設定。イベントタイプはランタイムで検証され、PreToolUse, PostToolUse, PreCompact, SessionStart, SessionEnd, Stop, Notification, SubagentStop のいずれかである必要がある。出典: everything-claude-code",
+  "$defs": {
+    "hookItem": {
+      "type": "object",
+      "required": [
+        "type",
+        "command"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PreToolUse",
+            "PostToolUse",
+            "PreCompact",
+            "SessionStart",
+            "SessionEnd",
+            "Stop",
+            "Notification",
+            "SubagentStop"
+          ],
+          "description": "このフックをトリガーするフックイベントタイプ"
+        },
+        "command": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "async": {
+          "type": "boolean",
+          "description": "ブロッキングせずにバックグラウンドで非同期実行する"
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 0,
+          "description": "非同期フックのタイムアウト（秒）"
+        }
+      }
+    },
+    "matcherEntry": {
+      "type": "object",
+      "required": [
+        "matcher",
+        "hooks"
+      ],
+      "properties": {
+        "matcher": {
+          "type": "string"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hookItem"
+          }
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "hooks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/matcherEntry"
+            }
+          }
+        }
+      },
+      "required": [
+        "hooks"
+      ]
+    },
+    {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/matcherEntry"
+      }
+    }
+  ]
+}

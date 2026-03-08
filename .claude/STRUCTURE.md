@@ -96,6 +96,7 @@
 │   ├── feedback-log.md          # フィードバック記録ログ
 │   ├── improvement-tracker.md   # 改善トラッカー
 │   ├── path-rules-guide.md      # パス指定ルールの使い方ガイド
+│   ├── maintenance-cheatsheet.md # .claude メンテナンスチートシート
 │   ├── libraries/               # ライブラリ調査ドキュメント
 │   │   └── _TEMPLATE.md         #   調査テンプレート
 │   ├── references/                # スキルから移動したリファレンス資料
@@ -113,23 +114,29 @@
 │  # ===== hooks/ =====
 │  # 特定のイベントで自動実行されるフックスクリプト
 ├── hooks/
-│   ├── pre-compact-handover.py       # コンパクト前に HANDOVER + SKILL-SUGGESTIONS を生成
-│   ├── edit-approval.py              # ファイル編集時の承認フック
-│   ├── lint-on-save.py               # 保存時の自動 Lint フック
-│   ├── post-implementation-review.py # 実装後レビューフック
-│   ├── post-test-analysis.py         # テスト後分析フック
-│   ├── edit-tracker.py               # 編集ログ蓄積フック
-│   ├── fix-escalation-detector.py    # 失敗パターン検知フック
-│   ├── notify-slack.py               # Slack通知フック
-│   ├── slack_approval.py             # Slack経由の承認フック
-│   ├── slack_socket_daemon.py        # Slackソケット接続デーモン
-│   ├── stop-notify.py                # 停止通知フック
-│   ├── approval_skip_patterns.txt    # 承認スキップ対象パターン一覧
-│   ├── lib/                          # フック共通ライブラリ（複数フックで再利用）
-│   │   ├── transcript.py             # JSONLトランスクリプト読み込み・テキスト変換
-│   │   └── claude_p.py               # claude -p 呼び出しユーティリティ
+│   ├── fix-escalation-detector.py       # 失敗パターン検知フック（ルート配置）
+│   ├── session/                         # セッション管理
+│   │   └── pre-compact-handover.py      #   コンパクト前に HANDOVER + SKILL-SUGGESTIONS を生成
+│   ├── quality/                         # コード品質
+│   │   ├── edit-tracker.py              #   編集ログ蓄積フック
+│   │   ├── lint-on-save.py              #   保存時の自動 Lint フック
+│   │   ├── post-implementation-review.py #  実装後レビューフック
+│   │   ├── post-test-analysis.py        #   テスト後分析フック
+│   │   └── same-file-edit-warn.py       #   同一ファイル頻回編集の警告
+│   ├── slack/                           # Slack 連携
+│   │   ├── edit-approval.py             #   ファイル編集時の承認フック
+│   │   ├── notify-slack.py              #   Slack通知フック
+│   │   ├── slack_approval.py            #   Slack経由の承認フック
+│   │   ├── slack_socket_daemon.py       #   Slackソケット接続デーモン
+│   │   ├── stop-notify.py               #   停止通知フック
+│   │   └── approval_skip_patterns.txt   #   承認スキップ対象パターン一覧
+│   ├── lib/                             # フック共通ライブラリ（複数フックで再利用）
+│   │   ├── transcript.py                #   JSONLトランスクリプト読み込み・テキスト変換
+│   │   ├── claude_p.py                  #   claude -p 呼び出しユーティリティ
+│   │   ├── env.py                       #   環境変数ユーティリティ
+│   │   └── jsonl_io.py                  #   JSONL ファイル読み書きユーティリティ
 │   └── tests/
-│       └── test_slack_approval.py    # slack_approval.pyのテスト
+│       └── test_slack_approval.py       # slack_approval.pyのテスト
 │
 │  # ===== meta/ =====
 │  # .claude自体の品質管理や自動生成を行うスクリプト

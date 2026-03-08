@@ -1,97 +1,34 @@
-<!-- https://nyosegawa.github.io/posts/skill-creator-and-orchestration-skill/
+<!-- https://github.com/affaan-m/everything-claude-code
 
-これを.claudeに反映した場合はどのような変更が必要か、またその変更によってどのような効果が期待できるか教えて -->
+最新のこのリポジトリを調査し、.claudeフォルダに活用できるファイルの一覧を作って -->
 
-If you want Claude Code to feel like a senior engineer living inside your repo, your project needs structure.
+<!-- 調査結果から必要のないもの、結合、統合すべきもの等整理したい
+・ユーザはPostgreSQL/Supabaseを使用せずmysql/mariadbを使用
+・自己学習はユーザがオリジナルで作成しているが統合すべきか？
+・Django は使用したことがないが必要か？
+・Claude Code 設定最適化は重複・競合しているか確認
+・OpenClaw は使用しない -->
 
-Claude needs 4 things at all times:
+<!-- ECCってECCサイトのECCですか？ -->
+<!-- ECCのままでいい
+重複・競合のものは推奨の対応
+取り込み推奨は取り込み
+選択的導入の基準はどうなる？ -->
 
-• the why → what the system does
-• the map → where things live
-• the rules → what’s allowed / not allowed
-• the workflows → how work gets done
+<!-- 投資分析のプロジェクトで使用可能？
+skills/investor-* (2件), market-research
 
-I call this:
+web開発でのUIとして使用可能？
+skills/liquid-glass-design
 
-The Anatomy of a Claude Code Project 👇
+取り込み希望
+agents/chief-of-staff.md
+schemas/hooks.schema.json -->
 
-━━━━━━━━━━━━━━━
+<!-- 移植する際は .claude\scripts\translate_to_japanese.py を参考に日本語に翻訳して -->
 
-1️⃣ CLAUDE.md = Repo Memory (keep it short)
+<!-- 調査結果から必要ないものを上記に書いたが他にある？
 
-This is the north star file.
+ -->
 
-Not a knowledge dump. Just:
-
-• Purpose (WHY)
-• Repo map (WHAT)
-• Rules + commands (HOW)
-
-If it gets too long, the model starts missing important context.
-
-━━━━━━━━━━━━━━━
-
-2️⃣ .claude/skills/ = Reusable Expert Modes
-
-Stop rewriting instructions.
-
-Turn common workflows into skills:
-
-• code review checklist
-• refactor playbook
-• release procedure
-• debugging flow
-
-Result:
-Consistency across sessions and teammates.
-
-━━━━━━━━━━━━━━━
-
-3️⃣ .claude/hooks/ = Guardrails
-
-Models forget.
-
-Hooks don’t.
-
-Use them for things that must be deterministic:
-
-• run formatter after edits
-• run tests on core changes
-• block unsafe directories (auth, billing, migrations)
-
-━━━━━━━━━━━━━━━
-
-4️⃣ docs/ = Progressive Context
-
-Don’t bloat prompts.
-
-Claude just needs to know where truth lives:
-
-• architecture overview
-• ADRs (engineering decisions)
-• operational runbooks
-
-━━━━━━━━━━━━━━━
-
-5️⃣ Local CLAUDE.md for risky modules
-
-Put small files near sharp edges:
-
-src/auth/CLAUDE.md
-src/persistence/CLAUDE.md
-infra/CLAUDE.md
-
-Now Claude sees the gotchas exactly when it works there.
-
-━━━━━━━━━━━━━━━
-
-Prompting is temporary.
-
-Structure is permanent.
-
-When your repo is organized this way, Claude stops behaving like a chatbot…
-
-…and starts acting like a project-native engineer.
-
-これらの説明とimage copy.png が共有されてましたが、どう思いますか？
-これの仕様にすることで.claudeフォルダが良くなるなら改善して
+このコンピュータ上にある私のClaudeのセッションをすべてスクレイピングしてください。私が行っているすべての作業を整理し、「スキル」にすべきもの、「プラグイン」にすべきもの、「エージェント」にすべきもの、そして「claude.md」にまとめるべきものに分類して提示してください。
