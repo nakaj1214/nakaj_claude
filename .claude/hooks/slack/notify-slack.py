@@ -402,6 +402,12 @@ def handle_hook() -> None:
         _log(f"skipping: tool_name={tool_name} not in target list")
         sys.exit(0)
 
+    # 勤務時間外はスキップ
+    from lib.work_hours import is_work_hours
+    if not is_work_hours():
+        _log("skip: off work hours")
+        sys.exit(0)
+
     # Credentials check: no BOT_TOKEN/CHANNEL_ID → skip (exit 0)
     if not BOT_TOKEN or not CHANNEL_ID:
         _log(f"no credentials: BOT_TOKEN={bool(BOT_TOKEN)}, CHANNEL_ID={bool(CHANNEL_ID)}")
@@ -423,8 +429,15 @@ def handle_hook() -> None:
             sys.exit(0)
         notification_text = build_ask_user_question_text(tool_input)
 
-    _log(f"starting approval flow, daemon_running={is_daemon_running()}")
-    run_approval_flow(notification_text)
+    if tool_name == "ExitPlanMode":
+        _log(f"starting approval flow, daemon_running={is_daemon_running()}")
+        run_approval_flow(notification_text)
+    else:
+        # AskUserQuestion: 通知のみ送信（ブロックしない）
+        # 端末に選択UIを表示させるため即座に exit 0
+        _log("AskUserQuestion: sending notification only (no approval)")
+        send_slack_simple(notification_text)
+        sys.exit(0)
 
 
 # ---------------------------------------------------------------------------

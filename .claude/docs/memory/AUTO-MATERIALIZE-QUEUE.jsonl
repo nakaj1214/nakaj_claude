@@ -1,8 +1,50 @@
-{"ts": "2026-03-03T16:26:47.923126", "source": "EDIT-PATTERNS-2026-03-03-1625.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-03T16:42:52.471673", "source": "EDIT-PATTERNS-2026-03-03-1641.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-03T16:53:52.842508", "source": "EDIT-PATTERNS-2026-03-03-1652.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-06T11:36:35.299217", "source": "EDIT-PATTERNS-2026-03-06-1135.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-06T12:04:48.841873", "source": "EDIT-PATTERNS-2026-03-06-1203.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-06T16:15:01.723277", "source": "EDIT-PATTERNS-2026-03-06-1613.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-06T16:51:19.720149", "source": "EDIT-PATTERNS-2026-03-06-1650.md", "status": "pending", "type": "edit-patterns"}
-{"ts": "2026-03-06T17:02:32.849288", "source": "EDIT-PATTERNS-2026-03-06-1701.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-03T16:26:47.923126", "source": "EDIT-PATTERNS-2026-03-03-1625.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-03T16:42:52.471673", "source": "EDIT-PATTERNS-2026-03-03-1641.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-03T16:53:52.842508", "source": "EDIT-PATTERNS-2026-03-03-1652.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-06T11:36:35.299217", "source": "EDIT-PATTERNS-2026-03-06-1135.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-06T12:04:48.841873", "source": "EDIT-PATTERNS-2026-03-06-1203.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-06T16:15:01.723277", "source": "EDIT-PATTERNS-2026-03-06-1613.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-06T16:51:19.720149", "source": "EDIT-PATTERNS-2026-03-06-1650.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-06T17:02:32.849288", "source": "EDIT-PATTERNS-2026-03-06-1701.md", "status": "skipped", "type": "edit-patterns", "note": "source file missing"}
+{"ts": "2026-03-09T11:06:38.727226", "source": "EDIT-PATTERNS-2026-03-09-1105.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-09T11:20:44.454295", "source": "EDIT-PATTERNS-2026-03-09-1119.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-09T11:35:48.995795", "source": "EDIT-PATTERNS-2026-03-09-1134.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-09T14:45:11.171093", "source": "EDIT-PATTERNS-2026-03-09-1444.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-09T16:09:57.436751", "source": "EDIT-PATTERNS-2026-03-09-1608.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-09T23:06:22.988302+00:00", "source": "EDIT-PATTERNS-2026-03-10-1200.md", "status": "staged", "type": "edit-patterns"}
+{"ts": "2026-03-10T08:33:57.473819", "source": "EDIT-PATTERNS-2026-03-10-0832.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-10T09:40:50.945465", "source": "EDIT-PATTERNS-2026-03-10-0939.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T01:58:35.111778", "source": "EDIT-PATTERNS-2026-03-11-0156.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T02:12:28.120967", "source": "EDIT-PATTERNS-2026-03-11-0211.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T08:57:35.958111", "source": "EDIT-PATTERNS-2026-03-11-0855.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T09:06:27.157268", "source": "EDIT-PATTERNS-2026-03-11-0904.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T09:45:06.113462", "source": "EDIT-PATTERNS-2026-03-11-0943.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T09:45:24.794097", "source": "EDIT-PATTERNS-2026-03-11-0943.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T09:45:32.908309", "source": "EDIT-PATTERNS-2026-03-11-0943.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T10:09:32.146139", "source": "EDIT-PATTERNS-2026-03-11-1007.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T10:56:51.776100", "source": "EDIT-PATTERNS-2026-03-11-1055.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T12:03:10.607736", "source": "EDIT-PATTERNS-2026-03-11-1201.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T14:29:25.542524", "source": "EDIT-PATTERNS-2026-03-11-1427.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T16:05:51.562429", "source": "EDIT-PATTERNS-2026-03-11-1604.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T16:59:43.281511", "source": "EDIT-PATTERNS-2026-03-11-1657.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T20:53:09.992630", "source": "EDIT-PATTERNS-2026-03-11-2051.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-11T22:45:17.507022", "source": "EDIT-PATTERNS-2026-03-11-2243.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T08:08:18.524750", "source": "EDIT-PATTERNS-2026-03-12-0806.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T11:50:34.414286", "source": "EDIT-PATTERNS-2026-03-12-1149.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T13:07:29.115454", "source": "EDIT-PATTERNS-2026-03-12-1306.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T13:12:12.064384", "source": "EDIT-PATTERNS-2026-03-12-1310.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T13:44:54.591140", "source": "EDIT-PATTERNS-2026-03-12-1343.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T15:31:26.071435", "source": "EDIT-PATTERNS-2026-03-12-1529.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-12T23:08:28.084573", "source": "EDIT-PATTERNS-2026-03-12-2306.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T00:24:59.175806", "source": "EDIT-PATTERNS-2026-03-13-0022.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T01:43:56.376192", "source": "EDIT-PATTERNS-2026-03-13-0141.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T02:19:26.836794", "source": "EDIT-PATTERNS-2026-03-13-0218.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T02:43:18.559730", "source": "EDIT-PATTERNS-2026-03-13-0243.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T02:43:43.169145", "source": "EDIT-PATTERNS-2026-03-13-0243.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T02:43:43.334396", "source": "EDIT-PATTERNS-2026-03-13-0243.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T03:22:41.310841", "source": "EDIT-PATTERNS-2026-03-13-0322.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T03:22:55.457792", "source": "EDIT-PATTERNS-2026-03-13-0322.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T03:22:56.898140", "source": "EDIT-PATTERNS-2026-03-13-0322.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T15:57:44.470311", "source": "EDIT-PATTERNS-2026-03-13-1557.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T15:57:58.650122", "source": "EDIT-PATTERNS-2026-03-13-1557.md", "status": "pending", "type": "edit-patterns"}
+{"ts": "2026-03-13T15:58:00.376932", "source": "EDIT-PATTERNS-2026-03-13-1557.md", "status": "pending", "type": "edit-patterns"}

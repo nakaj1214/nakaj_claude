@@ -1,0 +1,572 @@
+{
+  "generated_at": "2026-03-08T23:56:35.375998+00:00",
+  "root": "/home/nakashima/projects/blade_management",
+  "source_of_truth": ".claude",
+  "linked_skills": [
+    {
+      "name": "accessibility",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/accessibility"
+    },
+    {
+      "name": "analyze-project",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/analyze-project"
+    },
+    {
+      "name": "brainstorming",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/brainstorming"
+    },
+    {
+      "name": "bulk-text-replace",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/bulk-text-replace"
+    },
+    {
+      "name": "claude-code-setup",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/claude-code-setup"
+    },
+    {
+      "name": "claude-md-management",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/claude-md-management"
+    },
+    {
+      "name": "claude-template-sync",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/claude-template-sync"
+    },
+    {
+      "name": "code-review",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/code-review"
+    },
+    {
+      "name": "codex-review",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/codex-review"
+    },
+    {
+      "name": "create-plan",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/create-plan"
+    },
+    {
+      "name": "create-proposal",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/create-proposal"
+    },
+    {
+      "name": "css-features",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/css-features"
+    },
+    {
+      "name": "css-layout",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/css-layout"
+    },
+    {
+      "name": "css-organization",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/css-organization"
+    },
+    {
+      "name": "design-tracker",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/design-tracker"
+    },
+    {
+      "name": "docker-dev",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/docker-dev"
+    },
+    {
+      "name": "error-doc-fix",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/error-doc-fix"
+    },
+    {
+      "name": "esp32",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/esp32"
+    },
+    {
+      "name": "eval-harness",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/eval-harness"
+    },
+    {
+      "name": "feedback-loop",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/feedback-loop"
+    },
+    {
+      "name": "fix-escalation",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/fix-escalation"
+    },
+    {
+      "name": "frontend-design",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/frontend-design"
+    },
+    {
+      "name": "handover",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/handover"
+    },
+    {
+      "name": "hook-debug",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/hook-debug"
+    },
+    {
+      "name": "hookify",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/hookify"
+    },
+    {
+      "name": "implement-plans",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/implement-plans"
+    },
+    {
+      "name": "init",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/init"
+    },
+    {
+      "name": "jquery-interactions",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/jquery-interactions"
+    },
+    {
+      "name": "mcp-builder",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/mcp-builder"
+    },
+    {
+      "name": "planning-with-files",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/planning-with-files"
+    },
+    {
+      "name": "proposal-quality-gate",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/proposal-quality-gate"
+    },
+    {
+      "name": "propose-one",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/propose-one"
+    },
+    {
+      "name": "raspberry-pi",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/raspberry-pi"
+    },
+    {
+      "name": "research-lib",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/research-lib"
+    },
+    {
+      "name": "review-to-plan",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/review-to-plan"
+    },
+    {
+      "name": "simplify",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/simplify"
+    },
+    {
+      "name": "skill-stocktake",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/skill-stocktake"
+    },
+    {
+      "name": "systematic-debugging",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/systematic-debugging"
+    },
+    {
+      "name": "tdd-workflow",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/tdd-workflow"
+    },
+    {
+      "name": "vba-core",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/vba-core"
+    },
+    {
+      "name": "vba-excel",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/vba-excel"
+    },
+    {
+      "name": "vba-patterns",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/vba-patterns"
+    },
+    {
+      "name": "verify-before-fix",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/verify-before-fix"
+    },
+    {
+      "name": "wolfram-foundation-tool",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/wolfram-foundation-tool"
+    },
+    {
+      "name": "writing-plans",
+      "kind": "claude_skill",
+      "source_relpath": ".claude/skills/writing-plans"
+    },
+    {
+      "name": "codeql",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/advanced-security/codeql"
+    },
+    {
+      "name": "insecure-defaults",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/advanced-security/insecure-defaults"
+    },
+    {
+      "name": "sarif-parsing",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/advanced-security/sarif-parsing"
+    },
+    {
+      "name": "semgrep",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/advanced-security/semgrep"
+    },
+    {
+      "name": "dispatching-parallel-agents",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/dispatching-parallel-agents"
+    },
+    {
+      "name": "receiving-code-review",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/receiving-code-review"
+    },
+    {
+      "name": "requesting-code-review",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/requesting-code-review"
+    },
+    {
+      "name": "subagent-driven-development",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/subagent-driven-development"
+    },
+    {
+      "name": "using-superpowers",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/using-superpowers"
+    },
+    {
+      "name": "verification-before-completion",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/verification-before-completion"
+    },
+    {
+      "name": "writing-skills",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/agents/writing-skills"
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/git/finishing-a-development-branch"
+    },
+    {
+      "name": "git-worktrees",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/git/git-worktrees"
+    },
+    {
+      "name": "agent-development",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/plugin-dev/agent-development"
+    },
+    {
+      "name": "command-development",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/plugin-dev/command-development"
+    },
+    {
+      "name": "hook-development",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/plugin-dev/hook-development"
+    },
+    {
+      "name": "mcp-integration",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/plugin-dev/mcp-integration"
+    },
+    {
+      "name": "plugin-structure",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/plugin-dev/plugin-structure"
+    },
+    {
+      "name": "owasp-security",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/security/owasp-security"
+    },
+    {
+      "name": "varlock",
+      "kind": "reference_skill",
+      "source_relpath": ".claude/docs/references/security/varlock"
+    }
+  ],
+  "alias_skill_bridges": [
+    {
+      "skill_name": "claude-skill-creator",
+      "source_name": "skill-creator",
+      "source_relpath": ".claude/skills/skill-creator",
+      "description": "新しいスキルの作成、既存スキルの修正・改善、スキルのパフォーマンス測定を行う。ユーザーがスキルをゼロから作りたい場合、既存のスキルを更新・最適化したい場合、スキルをテストするためのevalを実行したい場合、分散分析付きのスキルパフォーマンスベンチマークを行いたい場合、またはトリガー精度を向上させるためにスキルのdescriptionを最適化したい場合に使用する。"
+    }
+  ],
+  "command_bridge": {
+    "skill_name": "claude-command-bridge",
+    "command_count": 26,
+    "commands": [
+      "build-fix",
+      "cancel-ralph",
+      "checkpoint",
+      "clean_gone",
+      "code-review",
+      "commit-push-pr",
+      "commit",
+      "create-plugin",
+      "e2e",
+      "feature-dev",
+      "hookify-configure",
+      "hookify-help",
+      "hookify-list",
+      "hookify",
+      "learn-edits",
+      "materialize",
+      "orchestrate",
+      "ralph-help",
+      "ralph-loop",
+      "refactor-clean",
+      "review-pr",
+      "review-staged",
+      "revise-claude-md",
+      "test-coverage",
+      "update-docs",
+      "verify"
+    ]
+  },
+  "agent_bridge": {
+    "router_skill_name": "claude-agent-router",
+    "agent_count": 23,
+    "agents": [
+      {
+        "skill_name": "chief-of-staff",
+        "agent_name": "chief-of-staff",
+        "category": "coordination",
+        "path": ".claude/agents/coordination/chief-of-staff.md"
+      },
+      {
+        "skill_name": "build-error-resolver",
+        "agent_name": "build-error-resolver",
+        "category": "debugging",
+        "path": ".claude/agents/debugging/build-error-resolver.md"
+      },
+      {
+        "skill_name": "debugger",
+        "agent_name": "debugger",
+        "category": "debugging",
+        "path": ".claude/agents/debugging/debugger.md"
+      },
+      {
+        "skill_name": "performance",
+        "agent_name": "performance",
+        "category": "debugging",
+        "path": ".claude/agents/debugging/performance.md"
+      },
+      {
+        "skill_name": "documenter",
+        "agent_name": "documenter",
+        "category": "documentation",
+        "path": ".claude/agents/documentation/documenter.md"
+      },
+      {
+        "skill_name": "code-explorer",
+        "agent_name": "code-explorer",
+        "category": "exploration",
+        "path": ".claude/agents/exploration/code-explorer.md"
+      },
+      {
+        "skill_name": "architect",
+        "agent_name": "architect",
+        "category": "planning",
+        "path": ".claude/agents/planning/architect.md"
+      },
+      {
+        "skill_name": "planner",
+        "agent_name": "planner",
+        "category": "planning",
+        "path": ".claude/agents/planning/planner.md"
+      },
+      {
+        "skill_name": "refactorer",
+        "agent_name": "refactorer",
+        "category": "refactoring",
+        "path": ".claude/agents/refactoring/refactorer.md"
+      },
+      {
+        "skill_name": "code-reviewer",
+        "agent_name": "code-reviewer",
+        "category": "review",
+        "path": ".claude/agents/review/code-reviewer.md"
+      },
+      {
+        "skill_name": "code-simplifier",
+        "agent_name": "code-simplifier",
+        "category": "review",
+        "path": ".claude/agents/review/code-simplifier.md"
+      },
+      {
+        "skill_name": "database-reviewer",
+        "agent_name": "database-reviewer",
+        "category": "review",
+        "path": ".claude/agents/review/database-reviewer.md"
+      },
+      {
+        "skill_name": "python-reviewer",
+        "agent_name": "python-reviewer",
+        "category": "review",
+        "path": ".claude/agents/review/python-reviewer.md"
+      },
+      {
+        "skill_name": "security-reviewer",
+        "agent_name": "security-reviewer",
+        "category": "review",
+        "path": ".claude/agents/review/security-reviewer.md"
+      },
+      {
+        "skill_name": "silent-failure-hunter",
+        "agent_name": "silent-failure-hunter",
+        "category": "review",
+        "path": ".claude/agents/review/silent-failure-hunter.md"
+      },
+      {
+        "skill_name": "type-design-analyzer",
+        "agent_name": "type-design-analyzer",
+        "category": "review",
+        "path": ".claude/agents/review/type-design-analyzer.md"
+      },
+      {
+        "skill_name": "e2e-runner",
+        "agent_name": "e2e-runner",
+        "category": "testing",
+        "path": ".claude/agents/testing/e2e-runner.md"
+      },
+      {
+        "skill_name": "pr-test-analyzer",
+        "agent_name": "pr-test-analyzer",
+        "category": "testing",
+        "path": ".claude/agents/testing/pr-test-analyzer.md"
+      },
+      {
+        "skill_name": "tdd-guide",
+        "agent_name": "tdd-guide",
+        "category": "testing",
+        "path": ".claude/agents/testing/tdd-guide.md"
+      },
+      {
+        "skill_name": "tester",
+        "agent_name": "tester",
+        "category": "testing",
+        "path": ".claude/agents/testing/tester.md"
+      },
+      {
+        "skill_name": "agent-creator",
+        "agent_name": "agent-creator",
+        "category": "tooling",
+        "path": ".claude/agents/tooling/agent-creator.md"
+      },
+      {
+        "skill_name": "plugin-validator",
+        "agent_name": "plugin-validator",
+        "category": "tooling",
+        "path": ".claude/agents/tooling/plugin-validator.md"
+      },
+      {
+        "skill_name": "skill-reviewer",
+        "agent_name": "skill-reviewer",
+        "category": "tooling",
+        "path": ".claude/agents/tooling/skill-reviewer.md"
+      }
+    ]
+  },
+  "session_context": {
+    "project_profile_bullets": [
+      "**Repository**: nakaj_claude",
+      "**Purpose**: Claude Code configuration and automation toolkit — skills, hooks, rules, agents を集約したメタプロジェクト",
+      "**Owner**: nakashima",
+      "**Windows**: `fcntl` unavailable — use `msvcrt` fallback",
+      "**Windows**: Command line length limit ~32KB — use stdin for large payloads",
+      "**Windows**: `claude -p` nesting — must unset `CLAUDECODE` env var"
+    ],
+    "user_preference_bullets": [
+      "**Language**: Japanese for all user-facing communication",
+      "**Detail level**: Concise — key points only, no verbose explanations",
+      "**Confirmation**: Minimal — work autonomously and report results",
+      "**Error reporting**: Always pair cause with proposed fix",
+      "**Tech choices**: Prefer proven, stable technologies over bleeding-edge",
+      "**Design approach**: Simplicity first — working solution before elegant solution",
+      "**Risk tolerance**: Low — confirm before destructive or hard-to-reverse changes",
+      "**Scope**: Do what was asked, no more — avoid over-engineering",
+      "**Implementation**: Plan mode first → implement in separate session",
+      "**Debugging**: Fix autonomously — no hand-holding needed",
+      "**Review**: Show diff and confirm before applying",
+      "**Session**: 1 session = 1 contract (clear completion condition)",
+      "**Code explanation**: Comments in code are sufficient — skip long prose",
+      "**Progress**: Summary on completion only — no mid-task updates unless blocked",
+      "**Options**: Present 1 recommendation + brief rationale for alternatives",
+      "**Questions**: Ask only when truly ambiguous — don't over-confirm",
+      "Read `prompt.md` / `proposal.md` literally — \"exists\" means \"remove it\"",
+      "\"Not improved (Nth time)\" = interpretation error, NOT complexity indicator",
+      "APPROVED judgments are made by Codex only — Claude never self-approves",
+      "Never change skill INSTRUCTIONS.md commands/models/params without asking"
+    ],
+    "recent_lessons": [
+      "[2026-03-02] スキル指示のコマンド・モデル名を勝手に変えてはいけない",
+      "[2026-03-04] 無効化されたフックのコマンドをスキルから実行してはいけない",
+      "[2026-03-04] コード変更後に「改善されていない」と報告されたら実行パスを検証する",
+      "[2026-03-04] prompt.md / proposal.md の日本語を文字通り読む"
+    ],
+    "latest_handover": {
+      "file": ".claude/docs/memory/HANDOVER-2026-03-06-1613.md",
+      "open_items": [
+        "**課題2** 列選択セル色分け / 修正済み、動作未確認 / ブラウザで列ヘッダークリックして `#e0e0e0` 確認",
+        "**課題6** 入力セル背景色透明 / 未着手 / `/create-plan 課題6`"
+      ]
+    },
+    "pending_materialize_count": 8
+  },
+  "mcp_servers": [
+    "context7",
+    "fetch",
+    "filesystem",
+    "git",
+    "memory",
+    "puppeteer",
+    "sequential-thinking",
+    "time"
+  ]
+}

@@ -126,7 +126,7 @@ Route::post('/store', 'store_order')->name('ajax.order.store');
 
 // 通常画面: {resource}.{action}
 Route::get('/confirm', 'index')->name('manager.confirm');
-Route::get('/monthly-suppliers', ...)->name('analytics.monthly_suppliers');
+Route::get('/suppliers', ...)->name('analytics.suppliers');
 ```
 
 ### テーブル名

@@ -168,34 +168,39 @@ def is_internal_hook_script(command: str) -> bool:
     return ".claude/hooks/" in command and command.strip().startswith("python3 ")
 
 
+def _strip_redirects(token: str) -> str:
+    """トークンからリダイレクト部分 (2>/dev/null, 2>&1 等) を除去して先頭コマンドを抽出する。"""
+    return REDIRECT_PATTERN.sub("", token).strip()
+
+
 def classify_command(command: str, patterns: list) -> str:
     """
     Classify full command as 'require' or 'skip'.
 
     Priority:
     0. Internal hook script auto-skip (prevents circular dependency)
-    1. Shell metachar / redirect detection → immediate require
-    2. Compound command expansion (&&, ||, ;, |)
-    3. Pattern prefix matching
-    4. Default: require (fail-safe)
+    1. Subshell detection ($(...), `...`) → immediate require
+    2. Compound command expansion (&&, ||, ;, |) + pattern prefix matching
+       - リダイレクトは除去してから先頭コマンドをマッチ
+    3. Default: require (fail-safe)
     """
     # Step 0: auto-skip internal hook scripts (prevents circular dependency)
     if is_internal_hook_script(command):
         return "skip"
 
-    # Step 1: shell metachar detection (highest priority)
-    if has_shell_metachar(command):
+    # Step 1: サブシェルのみ即 require（リダイレクトは許容）
+    if SUBSHELL_PATTERN.search(command):
         return "require"
 
-    # Step 2: compound command expansion
+    # Step 2: compound command expansion + pattern matching
     tokens = COMPOUND_SPLIT_PATTERN.split(command)
-    classifications = [classify_token(t, patterns) for t in tokens]
+    classifications = [classify_token(_strip_redirects(t), patterns) for t in tokens]
 
-    # If any token matches require → entire command is require
+    # 1つでも require → 全体が require
     if any(c == "require" for c in classifications):
         return "require"
 
-    # If all tokens match skip → entire command is skip
+    # 全トークンが skip → 全体が skip
     if all(c == "skip" for c in classifications):
         return "skip"
 
@@ -215,11 +220,14 @@ def is_daemon_running() -> bool:
     return DAEMON_PID_FILE.exists()
 
 
-def send_approval_request(command: str, extra_text: str = "") -> Optional[dict]:
+def send_approval_request(command: str, description: str = "", extra_text: str = "") -> Optional[dict]:
     """Send approval request as plain text (polling mode). Returns API response or None."""
     mention = f"<@{APPROVER_USER_ID}> " if APPROVER_USER_ID else ""
+    desc_line = f"*{description}*\n" if description else ""
     text = (
-        f"{mention}:bell: Bash コマンド承認待ち\n```{command}```\n"
+        f"{mention}:bell: *Bash コマンド承認待ち*\n"
+        f"{desc_line}"
+        f"```{command}```\n"
         f":white_check_mark: で承認 / :x: で拒否"
         f"（リアクション or スレッド返信: allow/deny）"
     )
@@ -232,14 +240,19 @@ def send_approval_request(command: str, extra_text: str = "") -> Optional[dict]:
     )
 
 
-def send_approval_request_blocks(command: str) -> Optional[dict]:
+def send_approval_request_blocks(command: str, description: str = "") -> Optional[dict]:
     """Send approval request with Block Kit buttons (Socket Mode IPC path).
 
     Returns API response or None. The daemon handles button interactions and
     writes the decision to an IPC file for wait_for_ipc_decision() to read.
     """
     mention = f"<@{APPROVER_USER_ID}> " if APPROVER_USER_ID else ""
-    text = f"{mention}:bell: Bash コマンド承認待ち\n```{command}```"
+    desc_line = f"*{description}*\n" if description else ""
+    text = (
+        f"{mention}:bell: *Bash コマンド承認待ち*\n"
+        f"{desc_line}"
+        f"```{command}```"
+    )
     blocks = [
         {
             "type": "section",
@@ -300,10 +313,15 @@ def wait_for_ipc_decision(message_ts: str) -> tuple:
         decision_file.unlink(missing_ok=True)
 
 
-def update_message_status(message_ts: str, command: str, status_text: str) -> None:
+def update_message_status(message_ts: str, command: str, status_text: str, description: str = "") -> None:
     """Update the original approval message to show the final status (no buttons)."""
     mention = f"<@{APPROVER_USER_ID}> " if APPROVER_USER_ID else ""
-    text = f"{mention}:bell: Bash コマンド承認待ち\n```{command}```"
+    desc_line = f"*{description}*\n" if description else ""
+    text = (
+        f"{mention}:bell: *Bash コマンド承認待ち*\n"
+        f"{desc_line}"
+        f"```{command}```"
+    )
     blocks = [
         {
             "type": "section",
@@ -396,12 +414,34 @@ def main() -> None:
     except json.JSONDecodeError:
         sys.exit(0)
 
-    if data.get("tool_name") != "Bash":
+    tool_name = data.get("tool_name", "")
+    tool_input = data.get("tool_input", {})
+
+    # MCP Codex ツール: 常に承認リクエスト（パターン分類なし）
+    if tool_name == "mcp__codex__codex":
+        prompt = tool_input.get("prompt", "")
+        if not prompt:
+            sys.exit(0)
+        model = tool_input.get("model", "default")
+        description = f"Codex MCP ({model})"
+        command = prompt  # 承認メッセージに prompt を表示
+        # 勤務時間外チェック
+        from lib.work_hours import is_work_hours
+        if not is_work_hours():
+            write_audit_log(command, "skip", "off_hours")
+            sys.exit(0)
+        # 以降は承認フローへ（classification = "require" と同等）
+        _run_approval_flow(command, description)
+        return
+
+    if tool_name != "Bash":
         sys.exit(0)
 
-    command = data.get("tool_input", {}).get("command", "")
+    command = tool_input.get("command", "")
     if not command:
         sys.exit(0)
+
+    description = tool_input.get("description", "")
 
     patterns = load_patterns()
     classification = classify_command(command, patterns)
@@ -411,6 +451,17 @@ def main() -> None:
         write_audit_log(command, "skip", "pattern")
         sys.exit(0)
 
+    # 勤務時間外はスキップ（skip 分類の後にチェックし、audit log の分類を正確に記録）
+    from lib.work_hours import is_work_hours
+    if not is_work_hours():
+        write_audit_log(command, "skip", "off_hours")
+        sys.exit(0)
+
+    _run_approval_flow(command, description)
+
+
+def _run_approval_flow(command: str, description: str = "") -> None:
+    """共通の承認フロー: Slack に承認リクエストを送信し、結果に応じて exit する。"""
     # Token/Channel not set: hook is disabled, delegate to permissions.allow
     if not BOT_TOKEN or not CHANNEL_ID:
         write_audit_log(command, "skip", "token_not_set")
@@ -429,9 +480,9 @@ def main() -> None:
     daemon_running = is_daemon_running()
 
     if daemon_running:
-        response = send_approval_request_blocks(command)
+        response = send_approval_request_blocks(command, description)
     else:
-        response = send_approval_request(command)
+        response = send_approval_request(command, description)
 
     if not response:
         # API error: fail-closed (block command)
@@ -451,16 +502,16 @@ def main() -> None:
         decision, approver_user, message_ts = poll_for_decision(thread_ts)
 
     if decision == "allow":
-        update_message_status(thread_ts, command, ":white_check_mark: 承認済み")
+        update_message_status(thread_ts, command, ":white_check_mark: 承認済み", description)
         write_audit_log(command, "allow", "slack", approver_user, thread_ts, message_ts)
         sys.exit(0)
     elif decision == "deny":
-        update_message_status(thread_ts, command, ":x: 拒否されました")
+        update_message_status(thread_ts, command, ":x: 拒否されました", description)
         write_audit_log(command, "deny", "slack", approver_user, thread_ts, message_ts)
         sys.exit(2)
     else:  # timeout
         update_message_status(
-            thread_ts, command, ":hourglass: タイムアウト（5分）: コマンドをブロックしました"
+            thread_ts, command, ":hourglass: タイムアウト（5分）: コマンドをブロックしました", description
         )
         write_audit_log(command, "timeout", "timeout", None, thread_ts, None)
         sys.exit(2)

@@ -1,0 +1,16 @@
+{
+  "_comment": "settings.json の hooks セクションに追加するエントリ",
+  "hooks": [
+    {
+      "type": "PostToolUse",
+      "matcher": "Write",
+      "hooks": [
+        {
+          "command": "python3 .claude/hooks/quality/plan-rewrite-alert.py",
+          "timeout": 5000
+        }
+      ]
+    }
+  ],
+  "_deploy_to": ".claude/hooks/quality/plan-rewrite-alert.py"
+}

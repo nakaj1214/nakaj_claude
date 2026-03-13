@@ -1,0 +1,23 @@
+[
+  {
+    "name": "plan-rewrite-alert",
+    "type": "hook",
+    "source": "EDIT-PATTERNS-2026-03-10-1200.md",
+    "status": "pending_review",
+    "created_at": "2026-03-10T14:06:00+00:00"
+  },
+  {
+    "name": "large-delete-guard",
+    "type": "hook",
+    "source": "EDIT-PATTERNS-2026-03-10-1200.md",
+    "status": "pending_review",
+    "created_at": "2026-03-10T14:06:00+00:00"
+  },
+  {
+    "name": "js-css-sync-check",
+    "type": "skill",
+    "source": "EDIT-PATTERNS-2026-03-10-1200.md",
+    "status": "pending_review",
+    "created_at": "2026-03-10T14:06:00+00:00"
+  }
+]

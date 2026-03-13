@@ -1,0 +1,45 @@
+# Generated from .claude by scripts/sync_claude_to_codex.py.
+# Re-run this script after editing .claude or moving the repository.
+
+developer_instructions = """
+Read AGENTS.md first.
+Then follow .codex/instructions.md for the .claude bridge.
+Use repo-scoped skills from .codex/skills.
+Check .codex/claude_manifest.json when you need a bridge inventory.
+Treat .claude as the source of truth for rules, commands, skills, agents, hooks, and MCP presets in this repository.
+"""
+model_instructions_file = "instructions.md"
+
+# MCP servers selected from .claude presets.
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/home/nakashima/projects/blade_management"]
+
+[mcp_servers.git]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-git"]
+
+[mcp_servers.fetch]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-fetch"]
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-memory"]
+
+[mcp_servers.sequential-thinking]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+
+[mcp_servers.puppeteer]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-puppeteer"]
+
+[mcp_servers.time]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-time"]

@@ -42,29 +42,25 @@ python3 .claude/hooks/notify-slack.py \
 
 最大 `max_iterations` 回繰り返す。
 
-### 2-1. Codex レビューの起動（サブエージェント）
+### 2-1. Codex MCP ツールによるレビュー実行
+
+**重要: Codex は MCP サーバー経由で呼び出す（`codex exec` Bash 実行は廃止）。**
+
+`.mcp.json` に登録された `codex` MCP サーバーの `codex` ツールを使用する。
+
+ToolSearch で `mcp__codex__codex` を検索・ロードしてから、以下のパラメータで呼び出す:
 
 ```
-Task ツールのパラメータ:
-- subagent_type: "general-purpose"
-- run_in_background: false
-- prompt: |
-    Codex CLI を使用してドキュメントファイルをレビューする。
-
-    手順:
-    1. ファイルを読み込む: {target_file}
-    2. Codex CLI を実行:
-
-    codex exec --model gpt-5.3-codex -c model_reasoning_effort="high" --sandbox workspace-write --full-auto "
+ツール: mcp__codex__codex
+パラメータ:
+  prompt: |
     You are a senior engineer reviewing a document.
-    Your ONLY allowed file operation is writing to {review_file}.
-    Do NOT create, modify, or delete any other files.
-    Read {target_file} and write a structured review to {review_file}.
+    Read {target_file} and provide a structured review.
 
     Review checklist:
     {resolved_checklist}
 
-    Output format for {review_file}:
+    Output format:
     # レビュー対象
     - {target_file}
 
@@ -91,19 +87,21 @@ Task ツールのパラメータ:
     -
 
     APPROVED or CHANGES_REQUIRED
-    " 2>/dev/null
 
-    3. {review_file} を読み取って以下を返す:
-       - 判定（APPROVED または CHANGES_REQUIRED）
-       - ブロッキング問題（あれば）
-       - 非ブロッキング推奨事項（あれば）
+  model: "gpt-5.4"
+  base-instructions: "You are a code review assistant. Focus only on the review task given. Do not read project instruction files. Only review what is specified in the prompt."
+  sandbox: "read-only"
+  approval-policy: "on-request"
 ```
 
-### 2-2. 判定の確認
+**`base-instructions` が最重要パラメータ。** これにより `.codex/instructions.md` や `.claude/CLAUDE.md` の自動読み込みをオーバーライドし、タイムアウトを防止する。
 
-`{review_file}` の最後の非空行を確認:
-- `APPROVED` → Step 3（完了）へ
-- `CHANGES_REQUIRED` → 2-3 へ
+### 2-2. レビュー結果の保存と判定確認
+
+1. MCP ツールのレスポンス（`content` フィールド）を `{review_file}` に Write ツールで書き込む
+2. レスポンス内容から判定を確認:
+   - `APPROVED` → Step 3（完了）へ
+   - `CHANGES_REQUIRED` → 2-3 へ
 
 `slack_notify` が true の場合、通知を送信:
 
@@ -202,7 +200,8 @@ python3 .claude/hooks/notify-slack.py \
 
 ## 注意事項
 
-- Codex はメインのコンテキストウィンドウを保持するためサブエージェント経由で呼び出される
-- Codex は Claude のファイルコンテキストにアクセスできない — target_file の内容は Codex がワークスペースから直接読み取る
+- **Codex は MCP ツール `mcp__codex__codex` で呼び出す**（`codex exec` Bash 実行は廃止）
+- **`base-instructions` パラメータ必須** — これがないと Codex が `.codex/instructions.md` や `.claude/CLAUDE.md` を自動読み込みし、コンテキストを圧迫してタイムアウトする
+- MCP ツールのレスポンスは `content` フィールドに文字列で返される。これを Claude が `{review_file}` に Write ツールで保存する
 - **Claude は APPROVED / CHANGES_REQUIRED の判定を自分で行ってはならない。** 判定は Codex のみが行う。Codex が APPROVED を出さずにループ上限に達した場合は、ユーザーに報告して判断を仰ぐこと
 - max_iterations の制限は無限ループを防ぐためのハードキャップ

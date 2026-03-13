@@ -124,10 +124,14 @@ python3 .claude/hooks/notify-slack.py \
   --message "実装計画が APPROVED されました（{N}回目で承認）。\n• docs/implement/plan.md\n• docs/implement/review.md"
 ```
 
-Report to user (in Japanese):
+### 5回以内で APPROVED → 自動実装
+
+Codex レビューが **5回以内（max_iterations 以内）で APPROVED** された場合:
+
+1. ユーザーに以下を報告する:
 
 ```
-## 計画作成完了
+## 計画作成完了 → 自動実装開始
 
 ✅ Codex レビュー: APPROVED（{N}回目で承認）
 
@@ -135,16 +139,39 @@ Report to user (in Japanese):
 - docs/implement/plan.md
 - docs/implement/review.md（最終レビュー）
 
+⚡ 5回以内で承認されたため、implement-plans を自動実行します。
+```
+
+2. **`implement-plans` スキルを自動的に発火する。** ユーザーの追加指示を待たずに実行を開始すること。
+
+### APPROVED にならなかった場合
+
+5回のループで APPROVED にならなかった場合は、自動実装を行わない。
+ユーザーに残っている blocking issues を提示して次のアクションを確認する:
+
+```
+## 計画作成 — レビュー未承認
+
+⚠️ Codex レビュー: 5回のループで APPROVED に至りませんでした。
+
+### 残っている問題
+- {blocking issue 1}
+- {blocking issue 2}
+
+### 作成ファイル
+- docs/implement/plan.md
+- docs/implement/review.md（最終レビュー）
+
 ### 次のステップ
-実装を開始する場合は実装タスクをお知らせください。
+手動で修正するか、再度レビューを実行するかお知らせください。
 ```
 
 ---
 
 ## Notes
 
-- Codex is called via subagent to preserve main context window
-- Codex cannot access Claude's file context — plan.md content must be passed explicitly in the prompt
+- **Codex は MCP ツール `mcp__codex__codex` で呼び出す**（`codex exec` Bash 実行は廃止 — instruction 自動読み込みによるタイムアウトを回避するため）
+- **`base-instructions` パラメータ必須** — これがないと Codex がプロジェクトの instruction ファイルを読み込み、コンテキストを圧迫してタイムアウトする
 - **Claude は APPROVED 判定を自分で行ってはならない。** Codex が APPROVED を出さなかった場合、ユーザーに状況を報告して判断を仰ぐこと
 - Max 5 iterations is a hard limit to prevent infinite loops
 - 5回のループで APPROVED にならなかった場合、Claude が勝手に APPROVED とせず、残っている blocking issues をユーザーに提示して次のアクションを確認すること

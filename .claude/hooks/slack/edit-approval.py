@@ -302,6 +302,11 @@ def main() -> None:
     if EDIT_APPROVAL_ENABLED != "1":
         sys.exit(0)
 
+    # 勤務時間外はスキップ
+    from lib.work_hours import is_work_hours
+    if not is_work_hours():
+        sys.exit(0)
+
     try:
         data = json.load(sys.stdin)
     except json.JSONDecodeError:

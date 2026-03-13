@@ -2,9 +2,10 @@
 name: create-plan
 description: |
   Reads docs/implement/proposal.md and creates docs/implement/plan.md.
-  Then runs a Codex review loop (via codex-review skill) until APPROVED or max iterations reached.
+  Then runs a Codex review loop (via codex-review skill, gpt-5.4 MCP) until APPROVED or max iterations reached.
+  5回以内で APPROVED の場合は implement-plans を自動発火する。
 metadata:
-  short-description: Proposal → Plan with Codex review loop
+  short-description: Proposal → Plan with Codex review loop (gpt-5.4 MCP)
   dependencies:
     - codex-review
 ---

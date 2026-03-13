@@ -21,6 +21,7 @@ Usage (direct — called from skills):
 
 import json
 import os
+import re
 import sys
 import urllib.request
 import urllib.error
@@ -77,6 +78,45 @@ def _send_via_webhook(text: str) -> bool:
         return False
 
 
+SUMMARY_MAX_CHARS = 400
+
+
+def extract_summary(text: str) -> str:
+    """last_assistant_message から Slack 通知用の要約を抽出する。
+
+    Markdown 記号やツール呼び出しタグを除去し、先頭 400 文字以内で
+    文境界（改行位置）に合わせて切り出す。
+    """
+    if not text:
+        return ""
+
+    # ツール呼び出し情報を除去（<function_calls>...</function_calls> 等）
+    cleaned = re.sub(r"<[^>]+>", "", text)
+    # Markdown 見出し記号を除去
+    cleaned = re.sub(r"^#{1,6}\s+", "", cleaned, flags=re.MULTILINE)
+    # Markdown 水平線を除去
+    cleaned = re.sub(r"^---+\s*$", "", cleaned, flags=re.MULTILINE)
+    # Markdown 太字記号を除去
+    cleaned = re.sub(r"\*\*([^*]*)\*\*", r"\1", cleaned)
+    # 連続する空行を1つに
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    cleaned = cleaned.strip()
+
+    if not cleaned:
+        return ""
+
+    if len(cleaned) <= SUMMARY_MAX_CHARS:
+        return cleaned
+
+    # 400 文字で切り出し、最後の改行位置で切る
+    truncated = cleaned[:SUMMARY_MAX_CHARS]
+    last_newline = truncated.rfind("\n")
+    if last_newline > SUMMARY_MAX_CHARS // 2:
+        truncated = truncated[:last_newline]
+
+    return truncated.rstrip() + "…"
+
+
 def send_slack(message: str, title: str = "") -> bool:
     """Send a message to Slack. Uses Bot Token API if available, else Webhook."""
     text = f"*{title}*\n{message}" if title else message
@@ -110,6 +150,12 @@ def handle_hook() -> None:
         print(f"[stop-notify] skip: event={event_name} (not Stop)", file=sys.stderr)
         sys.exit(0)
 
+    # 勤務時間外はスキップ
+    from lib.work_hours import is_work_hours
+    if not is_work_hours():
+        print("[stop-notify] skip: off work hours", file=sys.stderr)
+        sys.exit(0)
+
     # Filter 2: Recursion guard
     if data.get("stop_hook_active"):
         print("[stop-notify] skip: stop_hook_active=true", file=sys.stderr)
@@ -125,7 +171,13 @@ def handle_hook() -> None:
         sys.exit(0)
 
     now = datetime.now().strftime("%H:%M")
-    message = "作業が完了しました。結果を確認してください。"
+
+    try:
+        summary = extract_summary(assistant_message)
+    except Exception:
+        summary = ""
+
+    message = summary if summary else "作業が完了しました。結果を確認してください。"
 
     send_slack(
         message=message,
